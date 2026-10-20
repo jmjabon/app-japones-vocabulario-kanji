@@ -4,8 +4,8 @@ const defaultState = {
     version: 1,
     last_backup: Date.now(),
     progress: {
-        unlocked_vocab_themes": ["v_tema_01"],
-        unlocked_kanji_themes": ["k_tema_01"],
+        unlocked_vocab_themes: ["v_tema_01"],
+        unlocked_kanji_themes: ["k_tema_01"],
         completed_checkpoints: []
     },
     leitner: {}
