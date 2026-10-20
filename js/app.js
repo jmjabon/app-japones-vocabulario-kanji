@@ -55,10 +55,10 @@ const renderDashboard = () => {
             <section class="bg-white p-8 rounded-3xl apple-shadow border border-gray-100">
                 <h3 class="text-xl font-bold mb-6 text-gray-800">Aprender Nuevos Temas</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button id="btn-start-vocab" class="bg-primary text-white py-6 rounded-2xl font-bold shadow-md hover:bg-red-600 transition-transform hover:scale-[1.02] flex flex-col items-center justify-center gap-2 text-lg">
+                    <button id="btn-start-vocab" class="bg-red-500 text-white py-6 rounded-2xl font-bold shadow-md hover:bg-red-600 transition-transform hover:scale-[1.02] flex flex-col items-center justify-center gap-2 text-lg">
                         <i data-lucide="book-type" class="w-8 h-8 mb-1"></i> Vocabulario
                     </button>
-                    <button id="btn-start-kanji" class="bg-secondary text-white py-6 rounded-2xl font-bold shadow-md hover:bg-gray-800 transition-transform hover:scale-[1.02] flex flex-col items-center justify-center gap-2 text-lg">
+                    <button id="btn-start-kanji" class="bg-gray-800 text-white py-6 rounded-2xl font-bold shadow-md hover:bg-gray-900 transition-transform hover:scale-[1.02] flex flex-col items-center justify-center gap-2 text-lg">
                         <i data-lucide="pen-tool" class="w-8 h-8 mb-1"></i> Kanjis
                     </button>
                 </div>
