@@ -2,54 +2,54 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nihongo App - Kanji & Vocab</title>
+    <!-- Viewport ajustado para iOS: Evita zoom accidental y respeta las Safe Areas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- Tailwind CSS -->
+    <!-- Etiquetas PWA y Apple nativas -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="https://cdn.iconscout.com/icon/free/png-256/free-japan-flag-icon-download-in-svg-png-gif-file-formats--tokyo-country-national-pack-flags-icons-2860824.png">
+    
+    <title>KanjiMaster N5</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración para usar colores en las Safe Areas de Apple -->
+    <style>
+        body { 
+            background-color: #f9fafb; 
+            padding-bottom: env(safe-area-inset-bottom); /* Área segura inferior iOS */
+        }
+        /* Sombras premium tipo Apple */
+        .apple-shadow { box-shadow: 0 8px 30px rgba(0,0,0,0.04); }
+    </style>
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="text-gray-900 antialiased font-sans select-none overscroll-y-none">
     
-    <!-- Configuración básica de Tailwind para colores corporativos (opcional) -->
+    <!-- Contenedor general. Aquí usamos md:max-w-2xl para que en iPad sea más ancho -->
+    <main id="app-view" class="w-full h-full min-h-screen px-4 pb-8 md:max-w-3xl mx-auto"></main>
+
+    <!-- Archivos JS Modules -->
+    <script type="module" src="js/storage.js"></script>
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/dataService.js"></script>
+    <script type="module" src="js/audio.js"></script>
+    <script type="module" src="js/srs.js"></script>
+    <script type="module" src="js/app.js"></script>
+
+    <!-- Registro del Service Worker -->
     <script>
-        tailwind.config = {
-            theme: {
-                extend: { colors: { primary: '#EF4444', secondary: '#1F2937' } }
-            }
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
         }
     </script>
-</head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased min-h-screen flex flex-col">
-
-    <!-- Header App -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-            <h1 class="text-xl font-bold text-primary flex items-center gap-2">
-                <i data-lucide="book-open"></i> Nihongo App
-            </h1>
-            
-            <!-- Controles de Datos (Exportar / Importar) -->
-            <div class="flex items-center gap-3">
-                <button id="btn-export" class="p-2 text-gray-500 hover:text-primary transition-colors" title="Exportar Progreso">
-                    <i data-lucide="download"></i>
-                </button>
-                <label class="p-2 text-gray-500 hover:text-primary transition-colors cursor-pointer" title="Importar Progreso">
-                    <i data-lucide="upload"></i>
-                    <input type="file" id="input-import" accept=".json" class="hidden">
-                </label>
-            </div>
-        </div>
-    </header>
-
-    <!-- Contenedor Dinámico -->
-    <main id="app-view" class="flex-grow max-w-4xl mx-auto w-full p-4">
-        <!-- JS inyectará el contenido aquí -->
-        <div class="flex justify-center items-center h-full">
-            <i data-lucide="loader-2" class="animate-spin text-primary w-8 h-8"></i>
-        </div>
-    </main>
-
-    <!-- Punto de entrada JS (ES Module) -->
-    <script type="module" src="./js/app.js"></script>
 </body>
 </html>
