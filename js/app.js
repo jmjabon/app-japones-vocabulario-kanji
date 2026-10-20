@@ -335,7 +335,7 @@ const startVocabExercise = (vocabTheme, nextThemeId, allThemesData) => {
     showQuestion();
 };
 
-// --- MÓDULO KANJI (NUEVO CONTEXTO TOTAL) ---
+// --- MÓDULO KANJI REFACTORIZADO ---
 
 const renderKanjiThemeList = (kanjiThemes) => {
     if (!Array.isArray(kanjiThemes)) kanjiThemes = [kanjiThemes];
@@ -372,7 +372,6 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, allThemesData) => {
                         <p class="text-sm text-gray-500">Analiza y construye los kanjis.</p>
                     </div>
                 </button>
-
                 <button id="btn-m2" class="bg-white border-2 border-indigo-400 p-5 rounded-2xl shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-4 text-left">
                     <div class="bg-indigo-500 text-white p-3 rounded-xl"><i data-lucide="book-open"></i></div>
                     <div>
@@ -380,7 +379,6 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, allThemesData) => {
                         <p class="text-sm text-gray-500">Aprende palabras y lecturas reales.</p>
                     </div>
                 </button>
-
                 <button id="btn-m3" class="bg-gray-900 border-2 border-gray-900 p-5 rounded-2xl shadow-md hover:bg-gray-800 transition-colors flex items-center gap-4 text-left mt-4">
                     <div class="bg-yellow-500 text-gray-900 p-3 rounded-xl"><i data-lucide="award"></i></div>
                     <div>
@@ -474,24 +472,22 @@ const startKanjiMission1 = (kanjiTheme, allThemesData) => {
     showQuestion();
 };
 
+// --- LA NUEVA MISIÓN 2: PUZZLE SEMÁNTICO -> APRENDE -> PRÁCTICA ---
 const startKanjiMission2 = (kanjiTheme, allThemesData) => {
-    let phase3Items = [];
+    let exerciseQueue = [];
     kanjiTheme.items.forEach(item => {
         if (item.context_words) {
-            item.context_words.forEach(cw => phase3Items.push({
-                ...cw, 
-                parent_kanji: item.kanji, 
-                parent_on: item.onyomi.join(', '), 
-                parent_kun: item.kunyomi.join(', ')
+            item.context_words.forEach(cw => exerciseQueue.push({
+                ...cw, parent_kanji: item.kanji, parent_on: item.onyomi.join(', '), parent_kun: item.kunyomi.join(', ')
             }));
         }
     });
     
-    const exerciseQueue = shuffleArray(phase3Items);
+    exerciseQueue = shuffleArray(exerciseQueue);
     let currentIndex = 0;
-    let showingPresentation = true;
+    let subState = 'PUZZLE'; // PUZZLE -> PRESENTATION -> PRACTICE
 
-    const showQuestion = () => {
+    const showStep = () => {
         if (currentIndex >= exerciseQueue.length) {
             alert("¡Vocabulario completado! Haz la Misión 3 para terminar el tema.");
             return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
@@ -499,33 +495,98 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
 
         const currentItem = exerciseQueue[currentIndex];
 
-        if (showingPresentation) {
+        if (subState === 'PUZZLE') {
+            const correctChars = currentItem.word.split('');
+            const totalSlots = correctChars.length;
+            const dummyPieces = currentItem.dummy_pieces || ['日', '月', '木'];
+            const availablePieces = shuffleArray([...correctChars, ...dummyPieces]);
+            let selectedPieces = [];
+
+            const updateSemanticBoard = () => {
+                const slotsContainer = document.getElementById('sem-slots-container');
+                const piecesContainer = document.getElementById('sem-pieces-container');
+                
+                slotsContainer.innerHTML = Array.from({ length: totalSlots }).map((_, i) => `<div class="w-16 h-16 border-2 border-dashed ${selectedPieces[i] ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300'} rounded-xl flex items-center justify-center text-3xl font-bold text-gray-800 cursor-pointer" data-slot-index="${i}">${selectedPieces[i] ? selectedPieces[i].char : ''}</div>`).join('');
+                
+                piecesContainer.innerHTML = availablePieces.map((char, index) => {
+                    if (selectedPieces.some(p => p.originalIndex === index)) return `<div class="w-14 h-14 opacity-0"></div>`;
+                    return `<button class="sem-piece w-14 h-14 bg-white border-2 border-gray-200 rounded-lg shadow-sm text-2xl font-bold text-gray-700 hover:border-indigo-500 hover:text-indigo-600" data-char="${char}" data-original-index="${index}">${char}</button>`;
+                }).join('');
+
+                document.querySelectorAll('.sem-piece').forEach(btn => btn.addEventListener('click', (e) => {
+                    if (selectedPieces.length >= totalSlots) return;
+                    selectedPieces.push({ char: e.target.getAttribute('data-char'), originalIndex: parseInt(e.target.getAttribute('data-original-index')) });
+                    updateSemanticBoard(); checkSemanticVictory();
+                }));
+
+                document.querySelectorAll('#sem-slots-container > div').forEach(slot => slot.addEventListener('click', (e) => {
+                    const idx = e.currentTarget.getAttribute('data-slot-index');
+                    if (selectedPieces[idx]) { selectedPieces.splice(idx, 1); updateSemanticBoard(); }
+                }));
+            };
+
+            const checkSemanticVictory = () => {
+                if (selectedPieces.length !== totalSlots) return;
+                if (selectedPieces.map(p => p.char).join('') === correctChars.join('')) {
+                    document.getElementById('sem-slots-container').innerHTML = `<div class="px-8 py-4 bg-indigo-100 border-4 border-indigo-500 rounded-2xl flex items-center justify-center text-5xl font-bold text-indigo-700 shadow-lg scale-110">${currentItem.word}</div>`;
+                    setTimeout(() => { subState = 'PRESENTATION'; showStep(); }, 1200);
+                } else {
+                    const sc = document.getElementById('sem-slots-container');
+                    sc.classList.add('animate-pulse', 'border-red-500');
+                    setTimeout(() => { selectedPieces = []; sc.classList.remove('animate-pulse', 'border-red-500'); updateSemanticBoard(); }, 800);
+                }
+            };
+
+            document.getElementById('app-view').innerHTML = `
+                <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
+                    <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
+                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Paso 1: Construye</span>
+                        <span class="text-xs">${currentIndex + 1} / ${exerciseQueue.length}</span>
+                        <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
+                    </div>
+                    <div class="text-center mb-4">
+                        <p class="text-gray-500 text-sm font-bold uppercase mb-2">Une por significado</p>
+                        <h3 class="text-3xl font-bold text-gray-800 tracking-wide">"${currentItem.meaning}"</h3>
+                    </div>
+                    <div class="flex-grow flex flex-col items-center justify-center mb-6"><div id="sem-slots-container" class="flex gap-4 p-4 min-h-[6rem]"></div></div>
+                    <div class="bg-gray-100 p-6 rounded-t-3xl -mx-4 pb-12 shadow-inner border-t border-gray-200"><div id="sem-pieces-container" class="flex flex-wrap justify-center gap-3"></div></div>
+                </div>
+            `;
+            lucide.createIcons();
+            document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
+            updateSemanticBoard();
+
+        } else if (subState === 'PRESENTATION') {
+            let ruleColor = currentItem.rule === 'ON' ? 'bg-blue-100 text-blue-800 border-blue-200' 
+                          : currentItem.rule === 'KUN' ? 'bg-green-100 text-green-800 border-green-200' 
+                          : 'bg-red-100 text-red-800 border-red-200';
+
             document.getElementById('app-view').innerHTML = `
                 <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
                     <div class="flex justify-between items-center text-gray-500 font-bold mb-4">
-                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Aprende</span>
+                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Paso 2: Aprende</span>
                         <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
                     </div>
                     
                     <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 mb-2 w-full text-center flex flex-col gap-2 shadow-sm">
-                        <span class="text-xs font-bold text-gray-500 uppercase">Kanji: <span class="text-lg text-gray-800">${currentItem.parent_kanji}</span></span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">Kanji Objetivo: <span class="text-lg text-gray-800">${currentItem.parent_kanji}</span></span>
                         <div class="flex justify-center gap-2 text-xs">
-                            <span class="text-blue-700 bg-blue-100 border border-blue-200 px-2 py-1 rounded font-bold">ON: ${currentItem.parent_on}</span>
-                            <span class="text-green-700 bg-green-100 border border-green-200 px-2 py-1 rounded font-bold">KUN: ${currentItem.parent_kun}</span>
+                            <span class="text-blue-700 font-bold">ON: ${currentItem.parent_on}</span>
+                            <span class="text-green-700 font-bold">KUN: ${currentItem.parent_kun}</span>
                         </div>
                     </div>
 
-                    <div class="flex-grow flex flex-col items-center justify-center text-center gap-2">
+                    <div class="flex-grow flex flex-col items-center justify-center text-center gap-2 mt-2">
+                        <span class="${ruleColor} px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border mb-2">Regla: ${currentItem.rule || 'KUN'}</span>
                         <div class="text-lg font-bold text-indigo-600 tracking-widest">${currentItem.full_reading}</div>
                         <div class="text-6xl font-bold text-gray-800 mb-2">${currentItem.word}</div>
-                        <div class="text-lg font-bold text-gray-600 mb-2">"${currentItem.meaning}"</div>
                         
                         <div class="w-full bg-yellow-50 border border-yellow-200 p-4 rounded-xl text-left shadow-sm mt-2">
-                            <p class="text-xs font-bold text-yellow-800 uppercase mb-1 flex items-center gap-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Etimología</p>
-                            <p class="text-sm text-yellow-900">${currentItem.etymology || 'Palabra compuesta'}</p>
+                            <p class="text-xs font-bold text-yellow-800 uppercase mb-1 flex items-center gap-1"><i data-lucide="brain-circuit" class="w-4 h-4"></i> Lógica de lectura</p>
+                            <p class="text-sm text-yellow-900">${currentItem.etymology || 'Lectura compuesta.'}</p>
                         </div>
                         
-                        <button id="btn-audio" class="mt-4 p-5 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors shadow-sm"><i data-lucide="volume-2" class="w-8 h-8"></i></button>
+                        <button id="btn-audio" class="mt-4 p-4 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors shadow-sm"><i data-lucide="volume-2" class="w-8 h-8"></i></button>
                     </div>
 
                     <div class="pb-8 mt-4">
@@ -538,24 +599,19 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
 
             document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
             document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(currentItem.full_reading));
-            document.getElementById('btn-continue').addEventListener('click', () => {
-                showingPresentation = false;
-                showQuestion();
-            });
+            document.getElementById('btn-continue').addEventListener('click', () => { subState = 'PRACTICE'; showStep(); });
 
-        } else {
+        } else if (subState === 'PRACTICE') {
             const options = shuffleArray([currentItem.full_reading, ...currentItem.distractors.slice(0, 3)]);
-            const highlightedWord = currentItem.word.replace(currentItem.target, `<span class="text-indigo-600">${currentItem.target}</span>`);
-
             document.getElementById('app-view').innerHTML = `
                 <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
                     <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
-                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Práctica</span>
+                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Paso 3: Práctica</span>
                         <span class="text-xs">${currentIndex + 1} / ${exerciseQueue.length}</span>
                     </div>
                     <div class="flex-grow flex flex-col items-center justify-center text-center mb-8">
                         <p class="text-gray-500 text-sm font-bold uppercase mb-2">¿Cómo se lee esta palabra?</p>
-                        <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${highlightedWord}</div>
+                        <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${currentItem.word}</div>
                         <div class="bg-gray-100 text-gray-700 py-2 px-6 rounded-xl inline-block font-bold border border-gray-200 shadow-sm">"${currentItem.meaning}"</div>
                     </div>
                     <div class="grid grid-cols-2 gap-3 pb-8 w-full" id="options-container">
@@ -576,15 +632,11 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
                     e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
                     Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.full_reading).classList.add('bg-green-100', 'border-green-500', 'text-green-700');
                 }
-                setTimeout(() => { 
-                    currentIndex++; 
-                    showingPresentation = true; 
-                    showQuestion(); 
-                }, 1800);
+                setTimeout(() => { currentIndex++; subState = 'PUZZLE'; showStep(); }, 1800);
             }));
         }
     };
-    showQuestion();
+    showStep();
 };
 
 const startKanjiMission3 = (kanjiTheme, nextThemeId, allThemesData) => {

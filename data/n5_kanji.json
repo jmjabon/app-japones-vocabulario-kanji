@@ -7,24 +7,24 @@
         "id": "k5_001", "kanji": "休", "meaning": "Descansar", "onyomi": ["キュウ"], "kunyomi": ["やす-む"], 
         "mnemonic": "Una persona apoyada contra un árbol.", "radicals": ["亻", "木"], "dummy_radicals": ["日", "氵", "口"],
         "context_words": [
-          { "word": "休み", "target": "休", "full_reading": "やすみ", "distractors": ["きゅうみ", "やすむ", "きゅみ"], "meaning": "Descanso / Vacaciones", "etymology": "休 (Descansar) + み (Sufijo)" },
-          { "word": "休日", "target": "休", "full_reading": "きゅうじつ", "distractors": ["やすみひ", "きゅうにち", "やすじつ"], "meaning": "Día festivo", "etymology": "休 (Descansar) + 日 (Día)" }
+          { "word": "休み", "target": "休", "full_reading": "やすみ", "distractors": ["きゅうみ", "やすむ", "きゅみ"], "meaning": "Descanso / Vacaciones", "rule": "KUN", "etymology": "Kanji + Hiragana. Se usa la lectura nativa.", "dummy_pieces": ["ま", "む", "体"] },
+          { "word": "休日", "target": "休", "full_reading": "きゅうじつ", "distractors": ["やすみひ", "きゅうにち", "やすじつ"], "meaning": "Día festivo", "rule": "ON", "etymology": "Kanji + Kanji. Se lee con su pronunciación china (Kyuu + Jitsu).", "dummy_pieces": ["月", "木", "体"] }
         ]
       },
       { 
         "id": "k5_002", "kanji": "明", "meaning": "Brillante / Luz", "onyomi": ["メイ", "ミョウ"], "kunyomi": ["あか-るい"], 
         "mnemonic": "El sol y la luna juntos dan mucha luz.", "radicals": ["日", "月"], "dummy_radicals": ["田", "目", "白"],
         "context_words": [
-          { "word": "明るい", "target": "明", "full_reading": "あかるい", "distractors": ["めいるい", "あかい", "みょうるい"], "meaning": "Luminoso / Alegre", "etymology": "明 (Brillante) + るい (Sufijo adj)" },
-          { "word": "明日", "target": "明", "full_reading": "あした", "distractors": ["めいにち", "あかにち", "あかるいひ"], "meaning": "Mañana (día siguiente)", "etymology": "明 (Brillante) + 日 (Día) = Lectura Especial (Jukujikun)" }
+          { "word": "明るい", "target": "明", "full_reading": "あかるい", "distractors": ["めいるい", "あかい", "みょうるい"], "meaning": "Luminoso / Alegre", "rule": "KUN", "etymology": "Al llevar hiragana (るい) usa la raíz nativa (あか).", "dummy_pieces": ["り", "ろ", "日"] },
+          { "word": "明日", "target": "明", "full_reading": "あした", "distractors": ["めいにち", "あかにち", "あかるいひ"], "meaning": "Mañana (día siguiente)", "rule": "IRREGULAR", "etymology": "Jukujikun. Ignora la fonética. Se lee la palabra completa nativa para 'Día Brillante'.", "dummy_pieces": ["月", "星", "白"] }
         ]
       },
       { 
         "id": "k5_003", "kanji": "男", "meaning": "Hombre", "onyomi": ["ダン", "ナン"], "kunyomi": ["おとこ"], 
         "mnemonic": "Fuerza trabajando en el campo de arroz.", "radicals": ["田", "力"], "dummy_radicals": ["口", "刀", "土"],
         "context_words": [
-          { "word": "男の人", "target": "男", "full_reading": "おとこのひと", "distractors": ["だんのひと", "おとこのじん", "なんのひと"], "meaning": "Hombre (persona)", "etymology": "男 (Hombre) + の (de) + 人 (Persona)" },
-          { "word": "男性", "target": "男", "full_reading": "だんせい", "distractors": ["おとこせい", "なんせい", "だんしょう"], "meaning": "Género masculino", "etymology": "男 (Hombre) + 性 (Género)" }
+          { "word": "男の人", "target": "男", "full_reading": "おとこのひと", "distractors": ["だんのひと", "おとこのじん", "なんのひと"], "meaning": "Hombre (persona)", "rule": "KUN", "etymology": "Kanjis separados por la partícula 'no'. Mantienen lectura nativa.", "dummy_pieces": ["な", "入", "女"] },
+          { "word": "男性", "target": "男", "full_reading": "だんせい", "distractors": ["おとこせい", "なんせい", "だんしょう"], "meaning": "Género masculino", "rule": "ON", "etymology": "Compuesto directo (Jukugo). Usa lecturas chinas (Dan + Sei).", "dummy_pieces": ["星", "生", "女"] }
         ]
       }
     ]
@@ -37,8 +37,8 @@
         "id": "k5_004", "kanji": "中", "meaning": "Centro / Dentro", "onyomi": ["チュウ"], "kunyomi": ["なか"], 
         "mnemonic": "Una línea vertical que atraviesa el centro de una caja cuadrada.", "radicals": ["口", "丨"], "dummy_radicals": ["日", "一", "木"],
         "context_words": [
-          { "word": "中", "target": "中", "full_reading": "なか", "distractors": ["ちゅう", "うえ", "した"], "meaning": "Dentro / Interior", "etymology": "Lectura aislada básica" },
-          { "word": "中国", "target": "中", "full_reading": "ちゅうごく", "distractors": ["なかごく", "ちゅうこく", "なかこく"], "meaning": "China", "etymology": "中 (Centro) + 国 (País) = País del centro" }
+          { "word": "中", "target": "中", "full_reading": "なか", "distractors": ["ちゅう", "うえ", "した"], "meaning": "Dentro / Interior", "rule": "KUN", "etymology": "Va solo en la frase. Usa la palabra nativa.", "dummy_pieces": ["口", "日", "本"] },
+          { "word": "中国", "target": "中", "full_reading": "ちゅうごく", "distractors": ["なかごく", "ちゅうこく", "なかこく"], "meaning": "China", "rule": "ON", "etymology": "Compuesto (País del Centro). Usa sonido chino (Chuu + Goku).", "dummy_pieces": ["口", "玉", "四"] }
         ]
       }
     ]
