@@ -156,44 +156,46 @@ const renderKanjiThemeList = (kanjiData) => {
 };
 
 const startKanjiExercise = (kanjiData) => {
-    const exerciseItems = shuffleArray(kanjiData.items);
+    // 1. Crear una cola de ejercicios en 2 bloques (Fase 1 primero, luego Fase 2 barajada)
+    const baseItems = shuffleArray(kanjiData.items);
+    const exerciseQueue = [
+        ...baseItems.map(item => ({ ...item, phase: 1 })),
+        ...shuffleArray(baseItems).map(item => ({ ...item, phase: 2 })) // Se barajan de nuevo para la Fase 2
+    ];
+    
     let currentIndex = 0;
 
     const showQuestion = () => {
-        if (currentIndex >= exerciseItems.length) {
-            alert("¡Tema de Kanjis completado!");
+        if (currentIndex >= exerciseQueue.length) {
+            alert("¡Tema de Kanjis completado con éxito! Has dominado el análisis y la retención.");
             return renderDashboard();
         }
 
-        const currentItem = exerciseItems[currentIndex];
+        const currentItem = exerciseQueue[currentIndex];
+        const isPhase1 = currentItem.phase === 1;
+
         const correctRadicals = currentItem.radicals;
         const totalSlots = correctRadicals.length;
-        
-        // Mezclamos piezas reales con falsas
         const availablePieces = shuffleArray([...correctRadicals, ...currentItem.dummy_radicals]);
         
-        // Estado local de esta pantalla
         let selectedPieces = [];
 
-        // Función de mini-renderizado para actualizar la UI sin recargar todo el DOM
         const updateBoard = () => {
             const slotsContainer = document.getElementById('slots-container');
             const piecesContainer = document.getElementById('pieces-container');
             
-            // Dibujar huecos (vacíos o con la pieza seleccionada)
             slotsContainer.innerHTML = Array.from({ length: totalSlots }).map((_, i) => {
                 const piece = selectedPieces[i];
                 return `
-                    <div class="w-16 h-16 border-2 border-dashed ${piece ? 'border-secondary bg-gray-100' : 'border-gray-300'} rounded-xl flex items-center justify-center text-3xl font-bold text-gray-800 cursor-pointer" data-slot-index="${i}">
+                    <div class="w-16 h-16 border-2 border-dashed ${piece ? 'border-secondary bg-gray-100' : 'border-gray-300'} rounded-xl flex items-center justify-center text-3xl font-bold text-gray-800 cursor-pointer transition-colors" data-slot-index="${i}">
                         ${piece ? piece.char : ''}
                     </div>
                 `;
             }).join('');
 
-            // Dibujar piezas disponibles (solo las que no han sido seleccionadas)
             piecesContainer.innerHTML = availablePieces.map((char, index) => {
                 const isSelected = selectedPieces.some(p => p.originalIndex === index);
-                if (isSelected) return `<div class="w-14 h-14 opacity-0"></div>`; // Mantiene el espacio
+                if (isSelected) return `<div class="w-14 h-14 opacity-0"></div>`;
                 return `
                     <button class="radical-piece w-14 h-14 bg-white border-2 border-gray-200 rounded-lg shadow-sm text-2xl font-bold text-gray-700 hover:border-secondary hover:text-secondary transition-colors" data-char="${char}" data-original-index="${index}">
                         ${char}
@@ -207,26 +209,27 @@ const startKanjiExercise = (kanjiData) => {
         const checkVictory = () => {
             if (selectedPieces.length !== totalSlots) return;
 
-            // Ordenamos ambos arrays de caracteres para comparar sin importar el orden en que los introdujo el usuario
             const userChars = selectedPieces.map(p => p.char).sort().join('');
             const targetChars = correctRadicals.slice().sort().join('');
-
             const slotsContainer = document.getElementById('slots-container');
 
             if (userChars === targetChars) {
-                // Éxito: Animación de fusión y mostrar el Kanji
-                slotsContainer.innerHTML = `
-                    <div class="w-32 h-32 bg-green-100 border-4 border-green-500 rounded-2xl flex items-center justify-center text-6xl font-bold text-green-700 shadow-lg scale-110 transition-transform duration-300">
-                        ${currentItem.kanji}
-                    </div>
-                `;
-                // Pasar al siguiente tras un retraso corto
-                setTimeout(() => { currentIndex++; showQuestion(); }, 1800);
+                if (isPhase1) {
+                    // Fase 1: Feedback de acierto rápido
+                    slotsContainer.innerHTML = `<div class="text-xl font-bold text-green-600 bg-green-100 px-6 py-4 rounded-xl border-2 border-green-500">¡Piezas correctas!</div>`;
+                } else {
+                    // Fase 2: Animación visual fusionando las piezas en el Kanji final
+                    slotsContainer.innerHTML = `
+                        <div class="w-32 h-32 bg-green-100 border-4 border-green-500 rounded-2xl flex items-center justify-center text-6xl font-bold text-green-700 shadow-lg scale-110 transition-transform duration-300">
+                            ${currentItem.kanji}
+                        </div>
+                    `;
+                }
+                setTimeout(() => { currentIndex++; showQuestion(); }, 1600);
             } else {
-                // Fallo: Animación de error y limpiar
                 slotsContainer.classList.add('animate-pulse', 'border-red-500');
                 setTimeout(() => {
-                    selectedPieces = []; // Resetear selección
+                    selectedPieces = [];
                     slotsContainer.classList.remove('animate-pulse', 'border-red-500');
                     updateBoard();
                 }, 800);
@@ -234,7 +237,6 @@ const startKanjiExercise = (kanjiData) => {
         };
 
         const bindPuzzleEvents = () => {
-            // Tocar una pieza disponible para subirla
             document.querySelectorAll('.radical-piece').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     if (selectedPieces.length >= totalSlots) return;
@@ -247,7 +249,6 @@ const startKanjiExercise = (kanjiData) => {
                 });
             });
 
-            // Tocar un hueco ocupado para devolver la pieza
             document.querySelectorAll('#slots-container > div').forEach((slot) => {
                 slot.addEventListener('click', (e) => {
                     const idx = e.currentTarget.getAttribute('data-slot-index');
@@ -259,26 +260,44 @@ const startKanjiExercise = (kanjiData) => {
             });
         };
 
-        document.getElementById('app-view').innerHTML = `
-            <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
-                <div class="flex justify-between text-gray-500 text-sm font-bold mb-4">
-                    <span>Kanji ${currentIndex + 1} de ${exerciseItems.length}</span>
-                    <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
+        // --- RENDERIZADO DIFERENCIADO POR FASES ---
+
+        const headerBadge = isPhase1 
+            ? `<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-blue-200">Fase 1: Análisis</span>`
+            : `<span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-purple-200">Fase 2: Memoria</span>`;
+
+        // En Fase 1 mostramos el Kanji en grande. En Fase 2 mostramos la Mnemotecnia.
+        const questionContent = isPhase1
+            ? `
+                <div class="text-center mb-4">
+                    <div class="text-8xl font-bold text-gray-800 mb-2 drop-shadow-sm">${currentItem.kanji}</div>
+                    <h3 class="text-xl font-bold text-gray-700 uppercase tracking-wide mb-1">${currentItem.meaning}</h3>
+                    <p class="text-gray-500 text-sm">Identifica los componentes de este kanji.</p>
                 </div>
-                
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-8 text-center">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2 uppercase tracking-wide">${currentItem.meaning}</h3>
+              `
+            : `
+                <div class="bg-purple-50 p-6 rounded-2xl border border-purple-100 mb-6 text-center shadow-inner">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3 uppercase tracking-wide">${currentItem.meaning}</h3>
                     <p class="text-gray-600 text-sm italic">"${currentItem.mnemonic}"</p>
                 </div>
+              `;
 
-                <div class="flex-grow flex flex-col items-center justify-center mb-8 gap-8">
-                    <!-- Contenedor de Huecos (Target) -->
-                    <div id="slots-container" class="flex gap-4 p-4"></div>
+        document.getElementById('app-view').innerHTML = `
+            <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
+                <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
+                    ${headerBadge}
+                    <span class="text-xs">Paso ${currentIndex + 1} de ${exerciseQueue.length}</span>
+                    <button id="btn-quit" class="hover:text-primary transition-colors"><i data-lucide="x"></i></button>
+                </div>
+                
+                ${questionContent}
+
+                <div class="flex-grow flex flex-col items-center justify-center mb-6">
+                    <div id="slots-container" class="flex gap-4 p-4 min-h-[6rem]"></div>
                 </div>
 
-                <!-- Contenedor de Piezas Disponibles -->
-                <div class="bg-gray-100 p-6 rounded-t-3xl -mx-4 pb-12">
-                    <p class="text-center text-xs font-bold text-gray-400 mb-4 uppercase">Elige ${totalSlots} componentes</p>
+                <div class="bg-gray-100 p-6 rounded-t-3xl -mx-4 pb-12 shadow-inner border-t border-gray-200">
+                    <p class="text-center text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest">Elige ${totalSlots} componentes</p>
                     <div id="pieces-container" class="flex flex-wrap justify-center gap-3"></div>
                 </div>
             </div>
@@ -286,7 +305,7 @@ const startKanjiExercise = (kanjiData) => {
         lucide.createIcons();
         document.getElementById('btn-quit').addEventListener('click', renderDashboard);
         
-        updateBoard(); // Render inicial del tablero interactivo
+        updateBoard();
     };
 
     showQuestion();

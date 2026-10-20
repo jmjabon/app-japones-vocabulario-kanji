@@ -8,7 +8,7 @@
       "meaning": "Descansar",
       "onyomi": ["キュウ"],
       "kunyomi": ["やす-む"],
-      "mnemonic": "Una persona (亻) apoyada contra un árbol (木).",
+      "mnemonic": "Una persona apoyada contra un árbol.",
       "radicals": ["亻", "木"],
       "dummy_radicals": ["日", "氵", "口"]
     },
@@ -18,7 +18,7 @@
       "meaning": "Brillante / Luz",
       "onyomi": ["メイ", "ミョウ"],
       "kunyomi": ["あか-るい"],
-      "mnemonic": "El sol (日) y la luna (月) juntos dan mucha luz.",
+      "mnemonic": "El sol y la luna juntos dan mucha luz.",
       "radicals": ["日", "月"],
       "dummy_radicals": ["田", "目", "白"]
     },
@@ -28,7 +28,7 @@
       "meaning": "Hombre",
       "onyomi": ["ダン", "ナン"],
       "kunyomi": ["おとこ"],
-      "mnemonic": "Fuerza (力) trabajando en el campo de arroz (田).",
+      "mnemonic": "Fuerza trabajando en el campo de arroz.",
       "radicals": ["田", "力"],
       "dummy_radicals": ["口", "刀", "土"]
     }
