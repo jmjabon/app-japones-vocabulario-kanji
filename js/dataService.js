@@ -1,6 +1,5 @@
 const fetchJSON = async (url) => {
     try {
-        // Añadimos '?t=timestamp' para engañar al navegador y obligarle a descargar el archivo real
         const cacheBusterUrl = `${url}?t=${Date.now()}`;
         const response = await fetch(cacheBusterUrl);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);

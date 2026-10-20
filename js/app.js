@@ -206,7 +206,7 @@ const renderKanjiThemeList = (kanjiThemes) => {
     // --- PARCHE DE SEGURIDAD ---
     if (!kanjiThemes) return alert("Error de lectura en el JSON de Kanjis.");
     if (!Array.isArray(kanjiThemes)) kanjiThemes = [kanjiThemes]; // Lo fuerza a ser un Array
-    
+
     const appView = document.getElementById('app-view');
     
     const themeCardsHtml = kanjiThemes.map((theme, index) => {
@@ -256,9 +256,22 @@ const renderKanjiThemeList = (kanjiThemes) => {
 
 const startKanjiExercise = (kanjiTheme, nextThemeId, allThemesData) => {
     const baseItems = shuffleArray(kanjiTheme.items);
+    
+    // Extraer y barajar las palabras de contexto para la Fase 3
+    let phase3Items = [];
+    baseItems.forEach(item => {
+        if (item.context_words) {
+            item.context_words.forEach(cw => {
+                phase3Items.push({ ...cw, phase: 3 });
+            });
+        }
+    });
+
+    // Construir la cola final: Fase 1 (Visual) -> Fase 2 (Memoria) -> Fase 3 (Jukugo)
     const exerciseQueue = [
         ...baseItems.map(item => ({ ...item, phase: 1 })),
-        ...shuffleArray(baseItems).map(item => ({ ...item, phase: 2 }))
+        ...shuffleArray(baseItems).map(item => ({ ...item, phase: 2 })),
+        ...shuffleArray(phase3Items)
     ];
     
     let currentIndex = 0;
@@ -270,8 +283,18 @@ const startKanjiExercise = (kanjiTheme, nextThemeId, allThemesData) => {
         }
 
         const currentItem = exerciseQueue[currentIndex];
-        const isPhase1 = currentItem.phase === 1;
 
+        // Decidir qué pantalla pintar según la fase
+        if (currentItem.phase === 3) {
+            renderJukugo(currentItem);
+        } else {
+            renderPuzzle(currentItem);
+        }
+    };
+
+    // --- RENDERIZADO DEL PUZZLE (Fase 1 y Fase 2) ---
+    const renderPuzzle = (currentItem) => {
+        const isPhase1 = currentItem.phase === 1;
         const correctRadicals = currentItem.radicals;
         const totalSlots = correctRadicals.length;
         const availablePieces = shuffleArray([...correctRadicals, ...currentItem.dummy_radicals]);
@@ -301,38 +324,7 @@ const startKanjiExercise = (kanjiTheme, nextThemeId, allThemesData) => {
                 `;
             }).join('');
 
-            bindPuzzleEvents();
-        };
-
-        const checkVictory = () => {
-            if (selectedPieces.length !== totalSlots) return;
-
-            const userChars = selectedPieces.map(p => p.char).sort().join('');
-            const targetChars = correctRadicals.slice().sort().join('');
-            const slotsContainer = document.getElementById('slots-container');
-
-            if (userChars === targetChars) {
-                if (isPhase1) {
-                    slotsContainer.innerHTML = `<div class="text-xl font-bold text-green-600 bg-green-100 px-6 py-4 rounded-xl border-2 border-green-500 shadow-sm">¡Piezas correctas!</div>`;
-                } else {
-                    slotsContainer.innerHTML = `
-                        <div class="w-32 h-32 bg-green-100 border-4 border-green-500 rounded-2xl flex items-center justify-center text-6xl font-bold text-green-700 shadow-lg scale-110 transition-transform duration-300">
-                            ${currentItem.kanji}
-                        </div>
-                    `;
-                }
-                setTimeout(() => { currentIndex++; showQuestion(); }, 1600);
-            } else {
-                slotsContainer.classList.add('animate-pulse', 'border-red-500');
-                setTimeout(() => {
-                    selectedPieces = [];
-                    slotsContainer.classList.remove('animate-pulse', 'border-red-500');
-                    updateBoard();
-                }, 800);
-            }
-        };
-
-        const bindPuzzleEvents = () => {
+            // Eventos del puzzle
             document.querySelectorAll('.radical-piece').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     if (selectedPieces.length >= totalSlots) return;
@@ -356,51 +348,112 @@ const startKanjiExercise = (kanjiTheme, nextThemeId, allThemesData) => {
             });
         };
 
+        const checkVictory = () => {
+            if (selectedPieces.length !== totalSlots) return;
+
+            const userChars = selectedPieces.map(p => p.char).sort().join('');
+            const targetChars = correctRadicals.slice().sort().join('');
+            const slotsContainer = document.getElementById('slots-container');
+
+            if (userChars === targetChars) {
+                if (isPhase1) {
+                    slotsContainer.innerHTML = `<div class="text-xl font-bold text-green-600 bg-green-100 px-6 py-4 rounded-xl border-2 border-green-500 shadow-sm">¡Correcto!</div>`;
+                } else {
+                    slotsContainer.innerHTML = `<div class="w-32 h-32 bg-green-100 border-4 border-green-500 rounded-2xl flex items-center justify-center text-6xl font-bold text-green-700 shadow-lg scale-110 transition-transform duration-300">${currentItem.kanji}</div>`;
+                }
+                setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
+            } else {
+                slotsContainer.classList.add('animate-pulse', 'border-red-500');
+                setTimeout(() => {
+                    selectedPieces = [];
+                    slotsContainer.classList.remove('animate-pulse', 'border-red-500');
+                    updateBoard();
+                }, 800);
+            }
+        };
+
         const headerBadge = isPhase1 
             ? `<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-blue-200">Fase 1: Análisis</span>`
             : `<span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-purple-200">Fase 2: Memoria</span>`;
 
         const questionContent = isPhase1
-            ? `
-                <div class="text-center mb-4">
-                    <div class="text-8xl font-bold text-gray-800 mb-2 drop-shadow-sm">${currentItem.kanji}</div>
-                    <h3 class="text-xl font-bold text-gray-700 uppercase tracking-wide mb-1">${currentItem.meaning}</h3>
-                    <p class="text-gray-500 text-sm">Identifica los componentes de este kanji.</p>
-                </div>
-              `
-            : `
-                <div class="bg-purple-50 p-6 rounded-2xl border border-purple-100 mb-6 text-center shadow-inner">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-3 uppercase tracking-wide">${currentItem.meaning}</h3>
-                    <p class="text-gray-600 text-sm italic">"${currentItem.mnemonic}"</p>
-                </div>
-              `;
+            ? `<div class="text-center mb-4"><div class="text-8xl font-bold text-gray-800 mb-2 drop-shadow-sm">${currentItem.kanji}</div><h3 class="text-xl font-bold text-gray-700 uppercase tracking-wide mb-1">${currentItem.meaning}</h3></div>`
+            : `<div class="bg-purple-50 p-6 rounded-2xl border border-purple-100 mb-6 text-center shadow-inner"><h3 class="text-2xl font-bold text-gray-800 mb-3 uppercase tracking-wide">${currentItem.meaning}</h3><p class="text-gray-600 text-sm italic">"${currentItem.mnemonic}"</p></div>`;
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
                 <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
                     ${headerBadge}
-                    <span class="text-xs">Paso ${currentIndex + 1} de ${exerciseQueue.length}</span>
+                    <span class="text-xs">${currentIndex + 1} / ${exerciseQueue.length}</span>
                     <button id="btn-quit" class="hover:text-primary transition-colors"><i data-lucide="x"></i></button>
                 </div>
-                
                 ${questionContent}
-
-                <div class="flex-grow flex flex-col items-center justify-center mb-6">
-                    <div id="slots-container" class="flex gap-4 p-4 min-h-[6rem]"></div>
-                </div>
-
+                <div class="flex-grow flex flex-col items-center justify-center mb-6"><div id="slots-container" class="flex gap-4 p-4 min-h-[6rem]"></div></div>
                 <div class="bg-gray-100 p-6 rounded-t-3xl -mx-4 pb-12 shadow-inner border-t border-gray-200">
-                    <p class="text-center text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest">Elige ${totalSlots} componentes</p>
                     <div id="pieces-container" class="flex flex-wrap justify-center gap-3"></div>
                 </div>
             </div>
         `;
         lucide.createIcons();
         document.getElementById('btn-quit').addEventListener('click', renderDashboard);
-        
         updateBoard();
     };
 
+    // --- RENDERIZADO DE LECTURA JUKUGO (Fase 3 NUEVA) ---
+    const renderJukugo = (currentItem) => {
+        // Barajamos la correcta con los 3 distractores
+        const options = shuffleArray([currentItem.correct, ...currentItem.distractors.slice(0, 3)]);
+        
+        // Resaltamos el kanji que el usuario debe leer (en color rojo/primario)
+        const highlightedWord = currentItem.word.replace(currentItem.target, `<span class="text-primary">${currentItem.target}</span>`);
+
+        document.getElementById('app-view').innerHTML = `
+            <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
+                <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
+                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Fase 3: Contexto</span>
+                    <span class="text-xs">${currentIndex + 1} / ${exerciseQueue.length}</span>
+                    <button id="btn-quit" class="hover:text-primary transition-colors"><i data-lucide="x"></i></button>
+                </div>
+
+                <div class="flex-grow flex flex-col items-center justify-center text-center mb-8">
+                    <p class="text-gray-500 text-sm font-bold uppercase mb-2">¿Cómo se lee el kanji en rojo?</p>
+                    <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${highlightedWord}</div>
+                    <div class="bg-gray-100 text-gray-700 py-2 px-6 rounded-xl inline-block font-bold border border-gray-200 shadow-sm">
+                        "${currentItem.meaning}"
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pb-8 w-full" id="options-container">
+                    ${options.map(opt => `
+                        <button class="option-btn bg-white border-2 border-gray-200 py-5 rounded-xl font-bold text-xl text-gray-700 hover:border-indigo-500 hover:text-indigo-600 transition-colors shadow-sm" data-answer="${opt}">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+        document.getElementById('btn-quit').addEventListener('click', renderDashboard);
+
+        const optionButtons = document.querySelectorAll('.option-btn');
+        optionButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const selectedAnswer = e.currentTarget.getAttribute('data-answer');
+                optionButtons.forEach(b => b.disabled = true); // Bloquear doble click
+
+                if (selectedAnswer === currentItem.correct) {
+                    e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                } else {
+                    e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.correct).classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                }
+
+                setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
+            });
+        });
+    };
+
+    // Iniciar la primera pregunta
     showQuestion();
 };
 
