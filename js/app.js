@@ -32,7 +32,7 @@ const buildMasterDictionary = async () => {
     return dict;
 };
 
-// --- RENDERIZADORES COMPARTIDOS ---
+// --- RENDERIZADORES COMPARTIDOS Y DASHBOARD ---
 
 const renderDashboard = () => {
     appState = loadProgress(); 
@@ -45,12 +45,16 @@ const renderDashboard = () => {
             <section class="bg-indigo-600 p-6 rounded-2xl shadow-lg border border-indigo-500 text-white relative overflow-hidden">
                 <div class="absolute -right-4 -top-4 opacity-10 transform rotate-12"><i data-lucide="brain-circuit" class="w-32 h-32"></i></div>
                 <h2 class="text-2xl font-bold mb-1 relative z-10">Repaso Diario</h2>
-                <p class="text-indigo-200 mb-6 relative z-10 text-sm">Sistema de Memoria a Largo Plazo</p>
+                <p class="text-indigo-200 mb-4 relative z-10 text-sm">Sistema de Memoria a Largo Plazo</p>
                 <button id="btn-start-srs" class="w-full bg-white text-indigo-600 py-4 px-4 rounded-xl font-bold shadow-md hover:bg-gray-50 transition-colors flex items-center justify-between gap-2 ${dueCount === 0 ? 'opacity-90 cursor-not-allowed' : ''}" ${dueCount === 0 ? 'disabled' : ''}>
                     <span class="flex items-center gap-2">${dueCount > 0 ? '<i data-lucide="play-circle"></i> Iniciar Sesión' : '<i data-lucide="check-circle"></i> Todo al día'}</span>
                     <span class="${dueCount > 0 ? 'bg-red-500 text-white' : 'bg-green-100 text-green-700'} px-3 py-1 rounded-full text-sm shadow-inner">${dueCount} pendientes</span>
                 </button>
+                <button id="btn-srs-stats" class="w-full bg-indigo-700 text-indigo-100 py-3 rounded-xl font-bold shadow-sm hover:bg-indigo-800 transition-colors flex justify-center items-center gap-2 mt-3 relative z-10 text-sm border border-indigo-500">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Mi Memoria (Estadísticas)
+                </button>
             </section>
+
             <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <h3 class="text-lg font-bold mb-4 text-gray-800">Aprender Nuevos Temas</h3>
                 <div class="flex flex-col gap-4">
@@ -65,17 +69,52 @@ const renderDashboard = () => {
     if (dueCount > 0) document.getElementById('btn-start-srs').addEventListener('click', () => startSRSSession(dueItems));
     document.getElementById('btn-start-vocab').addEventListener('click', async () => renderVocabThemeList(await getVocabData(manifestData.levels[0].vocab_file)));
     document.getElementById('btn-start-kanji').addEventListener('click', async () => renderKanjiThemeList(await getKanjiData(manifestData.levels[0].kanji_file)));
+    document.getElementById('btn-srs-stats').addEventListener('click', renderSRSStats);
+};
+
+const renderSRSStats = () => {
+    const state = loadProgress();
+    const boxes = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    Object.values(state.leitner).forEach(item => { if(boxes[item.box] !== undefined) boxes[item.box]++; });
+
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col gap-6 w-full max-w-md mx-auto mt-4 pb-8 animate-fade-in">
+            <button id="btn-back-dash" class="text-gray-500 flex items-center gap-1 self-start"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button>
+            <h2 class="text-2xl font-bold text-gray-800">Estado de Memoria (SRS)</h2>
+            <p class="text-sm text-gray-500 mb-2">Así retiene la información tu cerebro a largo plazo. La Caja 5 son palabras que ya no olvidarás.</p>
+            
+            <div class="flex flex-col gap-3">
+                <div class="bg-red-50 border border-red-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
+                    <span class="font-bold text-red-800">Caja 1 (Aprendiendo / Fallos)</span><span class="bg-red-200 text-red-900 px-3 py-1 rounded-full font-bold">${boxes[1]}</span>
+                </div>
+                <div class="bg-orange-50 border border-orange-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
+                    <span class="font-bold text-orange-800">Caja 2 (A corto plazo)</span><span class="bg-orange-200 text-orange-900 px-3 py-1 rounded-full font-bold">${boxes[2]}</span>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
+                    <span class="font-bold text-yellow-800">Caja 3 (Consolidando)</span><span class="bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full font-bold">${boxes[3]}</span>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
+                    <span class="font-bold text-blue-800">Caja 4 (Medio plazo)</span><span class="bg-blue-200 text-blue-900 px-3 py-1 rounded-full font-bold">${boxes[4]}</span>
+                </div>
+                <div class="bg-green-50 border border-green-300 p-4 rounded-xl flex justify-between items-center shadow-md">
+                    <span class="font-bold text-green-800"><i data-lucide="award" class="inline w-4 h-4 mb-1"></i> Caja 5 (Memoria a Largo Plazo)</span><span class="bg-green-500 text-white px-3 py-1 rounded-full font-bold">${boxes[5]}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    lucide.createIcons();
+    document.getElementById('btn-back-dash').addEventListener('click', renderDashboard);
 };
 
 const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col items-center justify-center h-full max-w-md mx-auto w-full text-center px-4 animate-fade-in pt-8">
             <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6 border-4 border-green-400 shadow-md"><i data-lucide="award" class="w-12 h-12 text-green-600"></i></div>
-            <h2 class="text-3xl font-bold text-gray-800 mb-2">¡Completado!</h2>
-            <p class="text-gray-600 mb-8">Has dominado "${currentTheme.theme_title}".</p>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">¡Maestría Alcanzada!</h2>
+            <p class="text-gray-600 mb-8">Has superado el examen de "${currentTheme.theme_title}" con un 100%.</p>
             <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 w-full mb-8 text-left flex items-start gap-4 shadow-sm">
                 <i data-lucide="layers" class="w-6 h-6 text-blue-500 mt-1"></i>
-                <div><p class="font-bold text-gray-800 text-sm">Añadidos al Repaso Diario</p><p class="text-xs text-gray-500">${itemsCount} elementos transferidos.</p></div>
+                <div><p class="font-bold text-gray-800 text-sm">Tema Desbloqueado y Guardado</p><p class="text-xs text-gray-500">${itemsCount} elementos inyectados en tu memoria SRS.</p></div>
             </div>
             <button id="btn-success-back" class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold shadow-md hover:bg-gray-800 transition-colors">Continuar</button>
         </div>
@@ -88,21 +127,17 @@ const generateThemeListHtml = (themes, type) => {
     return themes.map((theme, index) => {
         const unlockedKey = `unlocked_${type}_themes`;
         const completedKey = `completed_${type}_themes`;
-        
         const isUnlocked = appState.progress[unlockedKey].includes(theme.theme_id);
         const isCompleted = appState.progress[completedKey].includes(theme.theme_id);
         const nextThemeId = themes[index + 1] ? themes[index + 1].theme_id : null;
         const isCheckpoint = theme.type === 'checkpoint';
         
-        let statusIcon, borderClass;
+        let statusIcon = isCompleted ? (isCheckpoint ? '<i data-lucide="award" class="text-yellow-500"></i>' : '<i data-lucide="check-circle" class="text-green-500"></i>') 
+                     : (isUnlocked ? (isCheckpoint ? '<i data-lucide="swords" class="text-red-500 animate-pulse"></i>' : '<i data-lucide="unlock" class="text-blue-500"></i>') 
+                     : '<i data-lucide="lock" class="text-gray-400"></i>');
 
-        if (isCheckpoint) {
-            statusIcon = isCompleted ? '<i data-lucide="award" class="text-yellow-500"></i>' : (isUnlocked ? '<i data-lucide="swords" class="text-red-500 animate-pulse"></i>' : '<i data-lucide="lock" class="text-gray-400"></i>');
-            borderClass = isCompleted ? 'border-yellow-500 bg-yellow-50' : (isUnlocked ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-gray-100 opacity-70');
-        } else {
-            statusIcon = isCompleted ? '<i data-lucide="check-circle" class="text-green-500"></i>' : (isUnlocked ? '<i data-lucide="unlock" class="text-blue-500"></i>' : '<i data-lucide="lock" class="text-gray-400"></i>');
-            borderClass = isCompleted ? 'border-green-500 bg-green-50' : (isUnlocked ? (type === 'vocab' ? 'border-primary bg-white' : 'border-secondary bg-white') : 'border-gray-200 bg-gray-100 opacity-70');
-        }
+        let borderClass = isCompleted ? (isCheckpoint ? 'border-yellow-500 bg-yellow-50' : 'border-green-500 bg-green-50') 
+                        : (isUnlocked ? (isCheckpoint ? 'border-red-500 bg-red-50' : (type === 'vocab' ? 'border-primary bg-white' : 'border-secondary bg-white')) : 'border-gray-200 bg-gray-100 opacity-70');
 
         return `
             <div class="${borderClass} border-2 p-5 rounded-xl shadow-sm transition-transform transform hover:scale-[1.02] cursor-pointer theme-card" data-index="${index}" data-unlocked="${isUnlocked}" data-next="${nextThemeId}" data-checkpoint="${isCheckpoint}">
@@ -115,8 +150,7 @@ const generateThemeListHtml = (themes, type) => {
         `;
     }).join('');
 };
-
-// --- MOTOR SRS ---
+// --- MOTOR SRS Y CHECKPOINTS ---
 
 const startSRSSession = async (dueItemsIds) => {
     const dict = await buildMasterDictionary();
@@ -176,8 +210,6 @@ const startSRSSession = async (dueItemsIds) => {
     };
     showReviewCard();
 };
-
-// --- MOTOR DE CHECKPOINTS ---
 
 const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
     const numThemesRequired = checkpointData.requires_count || 2;
@@ -262,7 +294,7 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
                 <div class="w-24 h-24 ${passed ? 'bg-green-100 border-green-400 text-green-600' : 'bg-red-100 border-red-400 text-red-600'} rounded-full flex items-center justify-center mb-4 border-4 shadow-md"><i data-lucide="${passed ? 'trophy' : 'alert-triangle'}" class="w-12 h-12"></i></div>
                 <h2 class="text-3xl font-bold text-gray-800 mb-1">${passed ? '¡Prueba Superada!' : 'Prueba Fallida'}</h2>
                 <p class="text-gray-500 font-bold mb-6">Nota: ${finalScore}%</p>
-                <div class="bg-white border border-gray-200 rounded-xl p-5 w-full mb-8 text-left shadow-sm"><h4 class="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">Diagnóstico por Temas</h4>${diagnosticsHtml}${!passed ? '<p class="text-xs text-red-500 mt-4 font-bold bg-red-50 p-2 rounded">Necesitas un 80% para desbloquear el siguiente tema.</p>' : ''}</div>
+                <div class="bg-white border border-gray-200 rounded-xl p-5 w-full mb-8 text-left shadow-sm"><h4 class="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">Diagnóstico por Temas</h4>${diagnosticsHtml}${!passed ? '<p class="text-xs text-red-500 mt-4 font-bold bg-red-50 p-2 rounded">Necesitas un 80% para avanzar.</p>' : ''}</div>
                 <button id="btn-success-back" class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold shadow-md hover:bg-gray-800 transition-colors">Volver</button>
             </div>
         `;
@@ -272,70 +304,225 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
 
     showExamQuestion();
 };
-
-// --- MÓDULO VOCABULARIO ---
+// --- MÓDULO VOCABULARIO (NUEVA ARQUITECTURA MODULAR) ---
 
 const renderVocabThemeList = (vocabThemes) => {
     if (!Array.isArray(vocabThemes)) vocabThemes = [vocabThemes];
-    const themeCardsHtml = generateThemeListHtml(vocabThemes, 'vocab');
-    document.getElementById('app-view').innerHTML = `<div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8"><button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button><h2 class="text-2xl font-bold text-gray-800 mb-2">Vocabulario</h2>${themeCardsHtml}</div>`;
+    document.getElementById('app-view').innerHTML = `<div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8"><button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button><h2 class="text-2xl font-bold text-gray-800 mb-2">Vocabulario</h2>${generateThemeListHtml(vocabThemes, 'vocab')}</div>`;
     lucide.createIcons();
     document.getElementById('btn-back').addEventListener('click', renderDashboard);
     
     document.querySelectorAll('.theme-card').forEach(card => {
         card.addEventListener('click', (e) => {
-            const isUnlocked = e.currentTarget.getAttribute('data-unlocked') === 'true';
-            if (!isUnlocked) return alert('Desbloquea primero el tema anterior.');
+            if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Desbloquea primero el tema anterior.');
             const index = parseInt(e.currentTarget.getAttribute('data-index'));
             const isCp = e.currentTarget.getAttribute('data-checkpoint') === 'true';
-            if (isCp) startCheckpoint(vocabThemes[index], index, vocabThemes, 'vocab');
-            else startVocabExercise(vocabThemes[index], e.currentTarget.getAttribute('data-next'), vocabThemes);
+            
+            if (isCp) startCheckpoint(vocabThemes[index], index, vocabThemes, 'vocab'); 
+            else renderVocabSubmenu(vocabThemes[index], e.currentTarget.getAttribute('data-next'), vocabThemes);
         });
     });
 };
 
-const startVocabExercise = (vocabTheme, nextThemeId, allThemesData) => {
-    const exerciseItems = shuffleArray(vocabTheme.items);
-    let currentIndex = 0;
-    const showQuestion = () => {
-        if (currentIndex >= exerciseItems.length) {
-            appState = markThemeCompleted('vocab', vocabTheme.theme_id, nextThemeId !== "null" ? nextThemeId : null, vocabTheme.items);
-            return renderSuccessScreen('vocab', vocabTheme, vocabTheme.items.length, () => renderVocabThemeList(allThemesData));
-        }
-        const item = exerciseItems[currentIndex];
-        const correct = item.meaning;
-        const options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
+const renderVocabSubmenu = (vocabTheme, nextThemeId, allThemesData) => {
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 pb-8 animate-fade-in">
+            <button id="btn-back-submenu" class="text-gray-500 flex items-center gap-1 self-start mb-6"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a temas</button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-1">${vocabTheme.theme_title}</h2>
+            <p class="text-gray-500 mb-6 text-sm">Entrena libremente. El tema se guardará cuando pases el Examen al 100%.</p>
+            
+            <h3 class="font-bold text-gray-400 uppercase tracking-widest text-xs mb-3">Zona de Entrenamiento (Libre)</h3>
+            <div class="flex flex-col gap-3 mb-6">
+                <button id="btn-v-study" class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:border-primary transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-blue-100 text-blue-600 p-3 rounded-xl"><i data-lucide="book-open"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Estudio (Flashcards)</h3><p class="text-xs text-gray-500">Aprende sin presión.</p></div>
+                </button>
+                <button id="btn-v-listen" class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:border-primary transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-purple-100 text-purple-600 p-3 rounded-xl"><i data-lucide="headphones"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Oído (Audio)</h3><p class="text-xs text-gray-500">Escucha y traduce.</p></div>
+                </button>
+                <button id="btn-v-inverse" class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:border-primary transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-orange-100 text-orange-600 p-3 rounded-xl"><i data-lucide="arrow-left-right"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Traducción Inversa</h3><p class="text-xs text-gray-500">Español -> Japonés.</p></div>
+                </button>
+                <button id="btn-v-read" class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:border-primary transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-green-100 text-green-600 p-3 rounded-xl"><i data-lucide="eye"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Lectura Rápida</h3><p class="text-xs text-gray-500">Japonés -> Español.</p></div>
+                </button>
+            </div>
 
+            <h3 class="font-bold text-red-400 uppercase tracking-widest text-xs mb-3">Zona de Evaluación</h3>
+            <button id="btn-v-exam" class="bg-red-50 border-2 border-red-500 p-5 rounded-xl shadow-md hover:bg-red-100 transition-colors flex items-center gap-4 text-left">
+                <div class="bg-red-500 text-white p-3 rounded-xl"><i data-lucide="award"></i></div>
+                <div><h3 class="font-bold text-red-900 text-lg">Examen del Tema</h3><p class="text-xs text-red-700">Requiere 100% para aprobar.</p></div>
+            </button>
+        </div>
+    `;
+    lucide.createIcons();
+    document.getElementById('btn-back-submenu').addEventListener('click', () => renderVocabThemeList(allThemesData));
+
+    document.getElementById('btn-v-study').addEventListener('click', () => startVocabStudy(vocabTheme, allThemesData));
+    document.getElementById('btn-v-listen').addEventListener('click', () => startVocabPractice('listening', vocabTheme, allThemesData));
+    document.getElementById('btn-v-inverse').addEventListener('click', () => startVocabPractice('inverse', vocabTheme, allThemesData));
+    document.getElementById('btn-v-read').addEventListener('click', () => startVocabPractice('reading', vocabTheme, allThemesData));
+    document.getElementById('btn-v-exam').addEventListener('click', () => startVocabExam(vocabTheme, nextThemeId, allThemesData));
+};
+
+const startVocabStudy = (vocabTheme, allThemesData) => {
+    let currentIndex = 0;
+    const showCard = () => {
+        if(currentIndex >= vocabTheme.items.length) {
+            alert("¡Repaso terminado! Listo para el gimnasio.");
+            return renderVocabSubmenu(vocabTheme, null, allThemesData);
+        }
+        const item = vocabTheme.items[currentIndex];
         document.getElementById('app-view').innerHTML = `
-            <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
-                <div class="flex justify-between text-gray-500 text-sm font-bold mb-6"><span>Pregunta ${currentIndex + 1} / ${exerciseItems.length}</span><button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button></div>
-                <div class="flex-grow flex flex-col items-center justify-center gap-8 mb-8"><h2 class="text-5xl font-bold text-gray-800 tracking-wider">${item.kanji || item.kana}</h2><button id="btn-audio" class="p-4 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100"><i data-lucide="volume-2" class="w-8 h-8"></i></button></div>
-                <div class="grid grid-cols-1 gap-3 pb-8" id="options-container">${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 p-4 rounded-xl font-bold text-gray-700 hover:border-primary hover:text-primary text-left" data-answer="${opt}">${opt}</button>`).join('')}</div>
+            <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
+                <div class="flex justify-between text-gray-500 font-bold mb-6">
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold uppercase">Estudio</span>
+                    <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
+                </div>
+                <div class="flex-grow flex flex-col items-center justify-center gap-4 mb-8 text-center">
+                    <p class="text-gray-400 font-bold tracking-widest">${item.kana}</p>
+                    <h2 class="text-7xl font-bold text-gray-800 tracking-wider">${item.kanji || item.kana}</h2>
+                    <div class="bg-blue-50 text-blue-700 font-bold text-xl py-2 px-6 rounded-xl border border-blue-200 mt-2">${item.meaning}</div>
+                    <button id="btn-audio" class="mt-6 p-6 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 shadow-sm"><i data-lucide="volume-2" class="w-10 h-10"></i></button>
+                </div>
+                <button id="btn-next" class="w-full bg-gray-900 text-white py-5 rounded-xl font-bold shadow-md hover:bg-gray-800 flex justify-center gap-2 pb-8">Siguiente <i data-lucide="arrow-right"></i></button>
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', renderDashboard);
-        document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(item.kana));
         playJapaneseAudio(item.kana);
+        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, null, allThemesData));
+        document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(item.kana));
+        document.getElementById('btn-next').addEventListener('click', () => { currentIndex++; showCard(); });
+    };
+    showCard();
+};
+
+const startVocabPractice = (mode, vocabTheme, allThemesData) => {
+    const exerciseItems = shuffleArray(vocabTheme.items);
+    let currentIndex = 0;
+
+    const showQuestion = () => {
+        if(currentIndex >= exerciseItems.length) {
+            alert("¡Entrenamiento completado!");
+            return renderVocabSubmenu(vocabTheme, null, allThemesData);
+        }
+
+        const item = exerciseItems[currentIndex];
+        let correct = '', options = [], topHtml = '';
+
+        if(mode === 'listening') {
+            correct = item.meaning;
+            options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
+            topHtml = `<button id="btn-audio-q" class="p-8 bg-purple-100 text-purple-600 rounded-full shadow-sm animate-pulse mb-4"><i data-lucide="volume-2" class="w-12 h-12"></i></button><p class="text-gray-500 font-bold uppercase tracking-widest text-sm">¿Qué significa?</p>`;
+        } else if (mode === 'inverse') {
+            correct = item.kanji || item.kana;
+            options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, item.kanji ? 'kanji' : 'kana', 3)]);
+            topHtml = `<p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Traduce al Japonés</p><h2 class="text-4xl font-bold text-gray-800 text-center">${item.meaning}</h2>`;
+        } else if (mode === 'reading') {
+            correct = item.meaning;
+            options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
+            topHtml = `<p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Traduce al Español</p><h2 class="text-6xl font-bold text-gray-800 text-center tracking-widest">${item.kanji || item.kana}</h2><button id="btn-audio-q" class="mt-4 p-3 bg-gray-100 text-gray-600 rounded-full"><i data-lucide="volume-2"></i></button>`;
+        }
+
+        document.getElementById('app-view').innerHTML = `
+            <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
+                <div class="flex justify-between text-gray-500 font-bold mb-6">
+                    <span class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-xs font-bold uppercase">Entrenamiento</span>
+                    <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
+                </div>
+                <div class="flex-grow flex flex-col items-center justify-center mb-8">${topHtml}</div>
+                <div class="grid grid-cols-1 gap-3 pb-8" id="options-container">
+                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 p-4 rounded-xl font-bold text-gray-700 hover:border-primary hover:text-primary text-left text-lg shadow-sm" data-answer="${opt}">${opt}</button>`).join('')}
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, null, allThemesData));
+        
+        if(document.getElementById('btn-audio-q')) {
+            document.getElementById('btn-audio-q').addEventListener('click', () => playJapaneseAudio(item.kana));
+            if(mode === 'listening') playJapaneseAudio(item.kana);
+        }
 
         const optionButtons = document.querySelectorAll('.option-btn');
-        optionButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const ans = e.target.getAttribute('data-answer');
-                optionButtons.forEach(b => b.disabled = true);
-                if (ans === correct) e.target.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
-                else {
-                    e.target.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
-                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct).classList.add('bg-green-100', 'border-green-500');
-                }
-                setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
-            });
-        });
+        optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
+            const ans = e.target.getAttribute('data-answer');
+            optionButtons.forEach(b => b.disabled = true);
+            if (ans === correct) {
+                e.target.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                if(mode !== 'listening') playJapaneseAudio(item.kana);
+            } else {
+                e.target.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct).classList.add('bg-green-100', 'border-green-500');
+            }
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
+        }));
     };
     showQuestion();
 };
 
-// --- MÓDULO KANJI REFACTORIZADO ---
+const startVocabExam = (vocabTheme, nextThemeId, allThemesData) => {
+    const exerciseItems = shuffleArray([...vocabTheme.items, ...vocabTheme.items]); 
+    let currentIndex = 0;
+    let mistakes = 0;
+
+    const showQuestion = () => {
+        if(currentIndex >= exerciseItems.length) {
+            if(mistakes === 0) {
+                appState = markThemeCompleted('vocab', vocabTheme.theme_id, nextThemeId !== "null" ? nextThemeId : null, vocabTheme.items);
+                return renderSuccessScreen('vocab', vocabTheme, vocabTheme.items.length, () => renderVocabThemeList(allThemesData));
+            } else {
+                alert(`Has fallado ${mistakes} pregunta(s). Necesitas un 100% de aciertos para superar el tema. ¡Sigue entrenando!`);
+                return renderVocabSubmenu(vocabTheme, nextThemeId, allThemesData);
+            }
+        }
+
+        const item = exerciseItems[currentIndex];
+        const isInverse = currentIndex % 2 !== 0; 
+        const correct = isInverse ? (item.kanji || item.kana) : item.meaning;
+        const distractors = getDistractors(item, vocabTheme.items, isInverse ? (item.kanji ? 'kanji' : 'kana') : 'meaning', 3);
+        const options = shuffleArray([correct, ...distractors]);
+
+        document.getElementById('app-view').innerHTML = `
+            <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
+                <div class="flex justify-between text-red-500 font-bold mb-6">
+                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold uppercase"><i data-lucide="swords" class="inline w-3 h-3"></i> Examen Oficial</span>
+                    <span class="text-xs text-gray-500">${currentIndex + 1} / ${exerciseItems.length}</span>
+                    <button id="btn-quit" class="hover:text-red-700"><i data-lucide="x"></i></button>
+                </div>
+                <div class="flex-grow flex flex-col items-center justify-center mb-8 text-center">
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">${isInverse ? 'Traduce al Japonés' : 'Traduce al Español'}</p>
+                    <h2 class="${isInverse ? 'text-4xl' : 'text-6xl tracking-widest'} font-bold text-gray-800">${isInverse ? item.meaning : (item.kanji || item.kana)}</h2>
+                </div>
+                <div class="grid grid-cols-1 gap-3 pb-8" id="options-container">
+                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 p-4 rounded-xl font-bold text-gray-700 hover:border-red-500 hover:text-red-600 text-left text-lg shadow-sm" data-answer="${opt}">${opt}</button>`).join('')}
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, nextThemeId, allThemesData));
+        
+        const optionButtons = document.querySelectorAll('.option-btn');
+        optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
+            const ans = e.target.getAttribute('data-answer');
+            optionButtons.forEach(b => b.disabled = true);
+            if (ans === correct) {
+                e.target.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+            } else {
+                mistakes++;
+                e.target.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct).classList.add('bg-green-100', 'border-green-500');
+            }
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
+        }));
+    };
+    showQuestion();
+};
+
+// --- MÓDULO KANJI (EL MOTOR DEL PASO ANTERIOR) ---
 
 const renderKanjiThemeList = (kanjiThemes) => {
     if (!Array.isArray(kanjiThemes)) kanjiThemes = [kanjiThemes];
@@ -472,7 +659,6 @@ const startKanjiMission1 = (kanjiTheme, allThemesData) => {
     showQuestion();
 };
 
-// --- LA NUEVA MISIÓN 2: PUZZLE SEMÁNTICO -> APRENDE -> PRÁCTICA ---
 const startKanjiMission2 = (kanjiTheme, allThemesData) => {
     let exerciseQueue = [];
     kanjiTheme.items.forEach(item => {
@@ -485,7 +671,7 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
     
     exerciseQueue = shuffleArray(exerciseQueue);
     let currentIndex = 0;
-    let subState = 'PUZZLE'; // PUZZLE -> PRESENTATION -> PRACTICE
+    let subState = 'PUZZLE'; 
 
     const showStep = () => {
         if (currentIndex >= exerciseQueue.length) {
@@ -685,6 +871,8 @@ const startKanjiMission3 = (kanjiTheme, nextThemeId, allThemesData) => {
     };
     showQuestion();
 };
+
+// --- ARRANQUE DE LA APLICACIÓN ---
 
 const bootApp = async () => {
     try {
