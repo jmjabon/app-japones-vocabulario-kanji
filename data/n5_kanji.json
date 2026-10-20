@@ -1,6 +1,6 @@
 {
   "theme_id": "k_tema_01",
-  "theme_title": "Naturaleza básica",
+  "theme_title": "Naturaleza básica y conceptos",
   "items": [
     {
       "id": "k5_001",
@@ -8,9 +8,29 @@
       "meaning": "Descansar",
       "onyomi": ["キュウ"],
       "kunyomi": ["やす-む"],
-      "mnemonic": "Una persona apoyada contra un árbol.",
+      "mnemonic": "Una persona (亻) apoyada contra un árbol (木).",
       "radicals": ["亻", "木"],
       "dummy_radicals": ["日", "氵", "口"]
+    },
+    {
+      "id": "k5_002",
+      "kanji": "明",
+      "meaning": "Brillante / Luz",
+      "onyomi": ["メイ", "ミョウ"],
+      "kunyomi": ["あか-るい"],
+      "mnemonic": "El sol (日) y la luna (月) juntos dan mucha luz.",
+      "radicals": ["日", "月"],
+      "dummy_radicals": ["田", "目", "白"]
+    },
+    {
+      "id": "k5_003",
+      "kanji": "男",
+      "meaning": "Hombre",
+      "onyomi": ["ダン", "ナン"],
+      "kunyomi": ["おとこ"],
+      "mnemonic": "Fuerza (力) trabajando en el campo de arroz (田).",
+      "radicals": ["田", "力"],
+      "dummy_radicals": ["口", "刀", "土"]
     }
   ]
 }
