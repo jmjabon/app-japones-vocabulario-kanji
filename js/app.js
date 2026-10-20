@@ -86,6 +86,10 @@ const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
 // --- MÓDULO VOCABULARIO ---
 
 const renderVocabThemeList = (vocabThemes) => {
+    // --- PARCHE DE SEGURIDAD ---
+    if (!vocabThemes) return alert("Error de lectura en el JSON de Vocabulario.");
+    if (!Array.isArray(vocabThemes)) vocabThemes = [vocabThemes]; // Lo fuerza a ser un Array
+
     const appView = document.getElementById('app-view');
     
     const themeCardsHtml = vocabThemes.map((theme, index) => {
@@ -199,6 +203,10 @@ const startVocabExercise = (vocabTheme, nextThemeId, allThemesData) => {
 // --- MÓDULO KANJI ---
 
 const renderKanjiThemeList = (kanjiThemes) => {
+    // --- PARCHE DE SEGURIDAD ---
+    if (!kanjiThemes) return alert("Error de lectura en el JSON de Kanjis.");
+    if (!Array.isArray(kanjiThemes)) kanjiThemes = [kanjiThemes]; // Lo fuerza a ser un Array
+    
     const appView = document.getElementById('app-view');
     
     const themeCardsHtml = kanjiThemes.map((theme, index) => {
