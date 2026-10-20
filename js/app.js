@@ -72,23 +72,46 @@ const renderDashboard = () => {
     document.getElementById('btn-srs-stats').addEventListener('click', renderSRSStats);
 };
 
-const renderSRSStats = () => {
+const renderSRSStats = async () => {
     const state = loadProgress();
+    const dict = await buildMasterDictionary();
     const boxes = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    Object.values(state.leitner).forEach(item => { if(boxes[item.box] !== undefined) boxes[item.box]++; });
+    const box1Items = [];
+
+    Object.keys(state.leitner).forEach(itemId => {
+        const itemData = state.leitner[itemId];
+        if(boxes[itemData.box] !== undefined) boxes[itemData.box]++;
+        if(itemData.box === 1 && dict[itemId]) {
+            box1Items.push(dict[itemId]);
+        }
+    });
+
+    const box1Html = box1Items.length > 0 
+        ? `<div class="mt-4 bg-white p-4 rounded-xl shadow-inner border border-red-100 max-h-40 overflow-y-auto">
+            <p class="text-xs font-bold text-gray-500 uppercase mb-2">Palabras atascadas:</p>
+            <div class="flex flex-wrap gap-2">
+                ${box1Items.map(item => `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm">${item.kanji || item.kana}</span>`).join('')}
+            </div>
+           </div>
+           <button id="btn-train-mistakes" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold shadow-md hover:bg-red-700 mt-4"><i data-lucide="dumbbell" class="inline w-4 h-4 mr-1"></i> Entrenar Fallos (Infinito)</button>`
+        : `<p class="text-sm text-green-600 mt-2 font-bold"><i data-lucide="check-circle" class="inline w-4 h-4"></i> ¡No tienes fallos pendientes!</p>`;
 
     document.getElementById('app-view').innerHTML = `
-        <div class="flex flex-col gap-6 w-full max-w-md mx-auto mt-4 pb-8 animate-fade-in">
+        <div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8 animate-fade-in">
             <button id="btn-back-dash" class="text-gray-500 flex items-center gap-1 self-start"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button>
-            <h2 class="text-2xl font-bold text-gray-800">Estado de Memoria (SRS)</h2>
-            <p class="text-sm text-gray-500 mb-2">Así retiene la información tu cerebro a largo plazo. La Caja 5 son palabras que ya no olvidarás.</p>
+            <h2 class="text-2xl font-bold text-gray-800">Estado de Memoria</h2>
+            <p class="text-sm text-gray-500 mb-2">Así retiene la información tu cerebro.</p>
             
             <div class="flex flex-col gap-3">
-                <div class="bg-red-50 border border-red-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
-                    <span class="font-bold text-red-800">Caja 1 (Aprendiendo / Fallos)</span><span class="bg-red-200 text-red-900 px-3 py-1 rounded-full font-bold">${boxes[1]}</span>
+                <div class="bg-red-50 border border-red-200 p-4 rounded-xl shadow-sm">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-red-800">Caja 1 (Fallos / Recientes)</span>
+                        <span class="bg-red-200 text-red-900 px-3 py-1 rounded-full font-bold">${boxes[1]}</span>
+                    </div>
+                    ${box1Html}
                 </div>
                 <div class="bg-orange-50 border border-orange-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
-                    <span class="font-bold text-orange-800">Caja 2 (A corto plazo)</span><span class="bg-orange-200 text-orange-900 px-3 py-1 rounded-full font-bold">${boxes[2]}</span>
+                    <span class="font-bold text-orange-800">Caja 2 (Corto plazo)</span><span class="bg-orange-200 text-orange-900 px-3 py-1 rounded-full font-bold">${boxes[2]}</span>
                 </div>
                 <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
                     <span class="font-bold text-yellow-800">Caja 3 (Consolidando)</span><span class="bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full font-bold">${boxes[3]}</span>
@@ -97,13 +120,16 @@ const renderSRSStats = () => {
                     <span class="font-bold text-blue-800">Caja 4 (Medio plazo)</span><span class="bg-blue-200 text-blue-900 px-3 py-1 rounded-full font-bold">${boxes[4]}</span>
                 </div>
                 <div class="bg-green-50 border border-green-300 p-4 rounded-xl flex justify-between items-center shadow-md">
-                    <span class="font-bold text-green-800"><i data-lucide="award" class="inline w-4 h-4 mb-1"></i> Caja 5 (Memoria a Largo Plazo)</span><span class="bg-green-500 text-white px-3 py-1 rounded-full font-bold">${boxes[5]}</span>
+                    <span class="font-bold text-green-800"><i data-lucide="award" class="inline w-4 h-4 mb-1"></i> Caja 5 (Largo Plazo)</span><span class="bg-green-500 text-white px-3 py-1 rounded-full font-bold">${boxes[5]}</span>
                 </div>
             </div>
         </div>
     `;
     lucide.createIcons();
     document.getElementById('btn-back-dash').addEventListener('click', renderDashboard);
+    if(document.getElementById('btn-train-mistakes')) {
+        document.getElementById('btn-train-mistakes').addEventListener('click', () => startMistakesReview(box1Items));
+    }
 };
 
 const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
@@ -150,7 +176,8 @@ const generateThemeListHtml = (themes, type) => {
         `;
     }).join('');
 };
-// --- MOTOR SRS Y CHECKPOINTS ---
+
+// --- MOTOR SRS, REPASO DE FALLOS Y CHECKPOINTS ---
 
 const startSRSSession = async (dueItemsIds) => {
     const dict = await buildMasterDictionary();
@@ -171,7 +198,7 @@ const startSRSSession = async (dueItemsIds) => {
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
                 <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
-                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Repaso SRS</span>
+                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Repaso Oficial</span>
                     <span class="text-xs">${currentIndex + 1} / ${sessionQueue.length}</span>
                     <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
                 </div>
@@ -209,6 +236,61 @@ const startSRSSession = async (dueItemsIds) => {
         });
     };
     showReviewCard();
+};
+
+const startMistakesReview = (box1Items) => {
+    let queue = shuffleArray([...box1Items]);
+    let currentIndex = 0;
+
+    const showCard = () => {
+        if(currentIndex >= queue.length) {
+            if(confirm("Vuelta completada. ¿Quieres hacer otra ronda con estos mismos fallos?")) {
+                currentIndex = 0;
+                queue = shuffleArray([...box1Items]);
+                return showCard();
+            } else {
+                return renderSRSStats();
+            }
+        }
+        
+        const item = queue[currentIndex];
+        let flipped = false;
+
+        const renderState = () => {
+            document.getElementById('app-view').innerHTML = `
+                <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
+                    <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Entrenando Fallos</span>
+                        <span class="text-xs">${currentIndex + 1} / ${queue.length}</span>
+                        <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
+                    </div>
+                    
+                    <div id="flashcard" class="flex-grow flex flex-col items-center justify-center text-center gap-6 cursor-pointer bg-white border-2 ${flipped ? 'border-indigo-400' : 'border-gray-200'} rounded-2xl shadow-sm p-6 mb-8 hover:bg-gray-50 transition-all">
+                        <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">${flipped ? 'Solución' : 'Toca para revelar'}</p>
+                        ${flipped && item.kana ? `<p class="text-lg text-gray-500">${item.kana}</p>` : ''}
+                        <h2 class="text-7xl font-bold text-gray-800">${item.kanji || item.kana}</h2>
+                        ${flipped ? `<div class="bg-indigo-50 text-indigo-700 font-bold text-2xl py-3 px-6 rounded-xl border border-indigo-200 mt-4 w-full">${item.meaning}</div>` : ''}
+                    </div>
+
+                    ${flipped ? `<button id="btn-next" class="w-full bg-gray-900 text-white py-5 rounded-xl font-bold shadow-md hover:bg-gray-800 flex justify-center gap-2 pb-8">Siguiente <i data-lucide="arrow-right"></i></button>` : ''}
+                </div>
+            `;
+            lucide.createIcons();
+            document.getElementById('btn-quit').addEventListener('click', renderSRSStats);
+            
+            if(!flipped) {
+                document.getElementById('flashcard').addEventListener('click', () => {
+                    flipped = true;
+                    if(item.kana) playJapaneseAudio(item.kana);
+                    renderState();
+                });
+            } else {
+                document.getElementById('btn-next').addEventListener('click', () => { currentIndex++; showCard(); });
+            }
+        };
+        renderState();
+    };
+    showCard();
 };
 
 const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
@@ -304,7 +386,8 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
 
     showExamQuestion();
 };
-// --- MÓDULO VOCABULARIO (NUEVA ARQUITECTURA MODULAR) ---
+
+// --- MÓDULO VOCABULARIO ---
 
 const renderVocabThemeList = (vocabThemes) => {
     if (!Array.isArray(vocabThemes)) vocabThemes = [vocabThemes];
@@ -522,19 +605,17 @@ const startVocabExam = (vocabTheme, nextThemeId, allThemesData) => {
     showQuestion();
 };
 
-// --- MÓDULO KANJI (EL MOTOR DEL PASO ANTERIOR) ---
+// --- MÓDULO KANJI (NUEVA ARQUITECTURA MODULAR HUB) ---
 
 const renderKanjiThemeList = (kanjiThemes) => {
     if (!Array.isArray(kanjiThemes)) kanjiThemes = [kanjiThemes];
-    const themeCardsHtml = generateThemeListHtml(kanjiThemes, 'kanji');
-    document.getElementById('app-view').innerHTML = `<div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8"><button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button><h2 class="text-2xl font-bold text-gray-800 mb-2">Kanjis</h2>${themeCardsHtml}</div>`;
+    document.getElementById('app-view').innerHTML = `<div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8"><button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button><h2 class="text-2xl font-bold text-gray-800 mb-2">Kanjis</h2>${generateThemeListHtml(kanjiThemes, 'kanji')}</div>`;
     lucide.createIcons();
     document.getElementById('btn-back').addEventListener('click', renderDashboard);
     
     document.querySelectorAll('.theme-card').forEach(card => {
         card.addEventListener('click', (e) => {
-            const isUnlocked = e.currentTarget.getAttribute('data-unlocked') === 'true';
-            if (!isUnlocked) return alert('Desbloquea primero el tema anterior.');
+            if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Desbloquea primero el tema anterior.');
             const index = parseInt(e.currentTarget.getAttribute('data-index'));
             const isCp = e.currentTarget.getAttribute('data-checkpoint') === 'true';
             
@@ -548,55 +629,94 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, allThemesData) => {
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 pb-8 animate-fade-in">
             <button id="btn-back-submenu" class="text-gray-500 flex items-center gap-1 self-start mb-6"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a temas</button>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">${kanjiTheme.theme_title}</h2>
-            <p class="text-gray-600 mb-8 text-sm">Elige qué habilidad quieres practicar.</p>
+            <h2 class="text-2xl font-bold text-gray-800 mb-1">${kanjiTheme.theme_title}</h2>
+            <p class="text-gray-500 mb-6 text-sm">Entrena libremente. Supera el Examen al 100% para avanzar.</p>
             
-            <div class="flex flex-col gap-4">
-                <button id="btn-m1" class="bg-white border-2 border-secondary p-5 rounded-2xl shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-4 text-left">
-                    <div class="bg-secondary text-white p-3 rounded-xl"><i data-lucide="puzzle"></i></div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 text-lg">Misión 1: Estructura</h3>
-                        <p class="text-sm text-gray-500">Analiza y construye los kanjis.</p>
-                    </div>
+            <h3 class="font-bold text-gray-400 uppercase tracking-widest text-xs mb-3">Zona de Entrenamiento</h3>
+            <div class="flex flex-col gap-3 mb-6">
+                <button id="btn-k-gallery" class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:border-secondary transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-blue-100 text-blue-600 p-3 rounded-xl"><i data-lucide="book-open"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Galería (Estudio)</h3><p class="text-xs text-gray-500">Mnemotecnias y trazos.</p></div>
                 </button>
-                <button id="btn-m2" class="bg-white border-2 border-indigo-400 p-5 rounded-2xl shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-4 text-left">
-                    <div class="bg-indigo-500 text-white p-3 rounded-xl"><i data-lucide="book-open"></i></div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 text-lg">Misión 2: Vocabulario</h3>
-                        <p class="text-sm text-gray-500">Aprende palabras y lecturas reales.</p>
-                    </div>
+                <button id="btn-k-despiece" class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:border-secondary transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-purple-100 text-purple-600 p-3 rounded-xl"><i data-lucide="scissors"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Despiece</h3><p class="text-xs text-gray-500">Separa en radicales.</p></div>
                 </button>
-                <button id="btn-m3" class="bg-gray-900 border-2 border-gray-900 p-5 rounded-2xl shadow-md hover:bg-gray-800 transition-colors flex items-center gap-4 text-left mt-4">
-                    <div class="bg-yellow-500 text-gray-900 p-3 rounded-xl"><i data-lucide="award"></i></div>
-                    <div>
-                        <h3 class="font-bold text-white text-lg">Misión 3: Integración</h3>
-                        <p class="text-sm text-gray-300">Prueba final para completar el tema.</p>
-                    </div>
+                <button id="btn-k-forja" class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:border-secondary transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-orange-100 text-orange-600 p-3 rounded-xl"><i data-lucide="hammer"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Forja</h3><p class="text-xs text-gray-500">Construye desde cero.</p></div>
+                </button>
+                <button id="btn-k-jukugo" class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:border-secondary transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-indigo-100 text-indigo-600 p-3 rounded-xl"><i data-lucide="message-circle"></i></div>
+                    <div><h3 class="font-bold text-gray-800">Jukugos</h3><p class="text-xs text-gray-500">Palabras y lecturas.</p></div>
                 </button>
             </div>
+
+            <h3 class="font-bold text-red-400 uppercase tracking-widest text-xs mb-3">Zona de Evaluación</h3>
+            <button id="btn-k-exam" class="bg-red-50 border-2 border-red-500 p-5 rounded-xl shadow-md hover:bg-red-100 transition-colors flex items-center gap-4 text-left">
+                <div class="bg-red-500 text-white p-3 rounded-xl"><i data-lucide="award"></i></div>
+                <div><h3 class="font-bold text-red-900 text-lg">Examen del Tema</h3><p class="text-xs text-red-700">Requiere 100% para aprobar.</p></div>
+            </button>
         </div>
     `;
     lucide.createIcons();
     document.getElementById('btn-back-submenu').addEventListener('click', () => renderKanjiThemeList(allThemesData));
 
-    document.getElementById('btn-m1').addEventListener('click', () => startKanjiMission1(kanjiTheme, allThemesData));
-    document.getElementById('btn-m2').addEventListener('click', () => startKanjiMission2(kanjiTheme, allThemesData));
-    document.getElementById('btn-m3').addEventListener('click', () => startKanjiMission3(kanjiTheme, nextThemeId, allThemesData));
+    document.getElementById('btn-k-gallery').addEventListener('click', () => startKanjiGallery(kanjiTheme, allThemesData));
+    document.getElementById('btn-k-despiece').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, allThemesData, 1));
+    document.getElementById('btn-k-forja').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, allThemesData, 2));
+    document.getElementById('btn-k-jukugo').addEventListener('click', () => startKanjiJukugo(kanjiTheme, allThemesData));
+    document.getElementById('btn-k-exam').addEventListener('click', () => startKanjiExam(kanjiTheme, nextThemeId, allThemesData));
 };
 
-const startKanjiMission1 = (kanjiTheme, allThemesData) => {
-    const baseItems = shuffleArray(kanjiTheme.items);
-    const exerciseQueue = [...baseItems.map(item => ({ ...item, phase: 1 })), ...shuffleArray(baseItems).map(item => ({ ...item, phase: 2 }))];
+const startKanjiGallery = (kanjiTheme, allThemesData) => {
+    let currentIndex = 0;
+    const showCard = () => {
+        if(currentIndex >= kanjiTheme.items.length) {
+            alert("Galería terminada.");
+            return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
+        }
+        const item = kanjiTheme.items[currentIndex];
+        document.getElementById('app-view').innerHTML = `
+            <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
+                <div class="flex justify-between text-gray-500 font-bold mb-6">
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold uppercase">Galería</span>
+                    <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
+                </div>
+                <div class="flex-grow flex flex-col items-center justify-center gap-4 mb-8 text-center">
+                    <h2 class="text-8xl font-bold text-gray-800 tracking-wider">${item.kanji}</h2>
+                    <div class="bg-secondary text-white font-bold text-xl py-2 px-6 rounded-xl shadow-sm mt-2">${item.meaning}</div>
+                    
+                    <div class="w-full bg-gray-50 border border-gray-200 p-4 rounded-xl text-left shadow-sm mt-4">
+                        <p class="text-xs font-bold text-gray-500 uppercase mb-1">Mnemotecnia</p>
+                        <p class="text-sm text-gray-700 italic">"${item.mnemonic}"</p>
+                        <div class="mt-3 flex gap-2 justify-center">
+                            ${item.radicals.map(r => `<span class="bg-white border border-gray-300 px-3 py-1 rounded text-lg font-bold">${r}</span>`).join('+')}
+                        </div>
+                    </div>
+                </div>
+                <button id="btn-next" class="w-full bg-gray-900 text-white py-5 rounded-xl font-bold shadow-md hover:bg-gray-800 flex justify-center gap-2 pb-8">Siguiente <i data-lucide="arrow-right"></i></button>
+            </div>
+        `;
+        lucide.createIcons();
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
+        document.getElementById('btn-next').addEventListener('click', () => { currentIndex++; showCard(); });
+    };
+    showCard();
+};
+
+const startKanjiPuzzle = (kanjiTheme, allThemesData, phase) => {
+    const exerciseQueue = shuffleArray(kanjiTheme.items);
     let currentIndex = 0;
 
     const showQuestion = () => {
         if (currentIndex >= exerciseQueue.length) {
-            alert("¡Estructura dominada! Pasa a la Misión 2.");
+            alert(phase === 1 ? "¡Despiece dominado!" : "¡Forja completada!");
             return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
         }
 
         const currentItem = exerciseQueue[currentIndex];
-        const isPhase1 = currentItem.phase === 1;
+        const isPhase1 = phase === 1;
         const totalSlots = currentItem.radicals.length;
         const availablePieces = shuffleArray([...currentItem.radicals, ...currentItem.dummy_radicals]);
         let selectedPieces = [];
@@ -639,12 +759,12 @@ const startKanjiMission1 = (kanjiTheme, allThemesData) => {
 
         const questionContent = isPhase1
             ? `<div class="text-center mb-4"><div class="text-8xl font-bold text-gray-800 mb-2 drop-shadow-sm">${currentItem.kanji}</div><h3 class="text-xl font-bold text-gray-700 uppercase tracking-wide mb-1">${currentItem.meaning}</h3></div>`
-            : `<div class="bg-purple-50 p-6 rounded-2xl border border-purple-100 mb-6 text-center shadow-inner"><h3 class="text-2xl font-bold text-gray-800 mb-3 uppercase tracking-wide">${currentItem.meaning}</h3><p class="text-gray-600 text-sm italic">"${currentItem.mnemonic}"</p></div>`;
+            : `<div class="bg-orange-50 p-6 rounded-2xl border border-orange-100 mb-6 text-center shadow-inner"><h3 class="text-2xl font-bold text-gray-800 mb-3 uppercase tracking-wide">${currentItem.meaning}</h3><p class="text-gray-600 text-sm italic">"${currentItem.mnemonic}"</p></div>`;
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
                 <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
-                    <span class="${isPhase1 ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-purple-100 text-purple-800 border-purple-200'} px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border">Misión 1</span>
+                    <span class="${isPhase1 ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-orange-100 text-orange-800 border-orange-200'} px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border">${isPhase1 ? 'Despiece' : 'Forja'}</span>
                     <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
                 </div>
                 ${questionContent}
@@ -659,7 +779,7 @@ const startKanjiMission1 = (kanjiTheme, allThemesData) => {
     showQuestion();
 };
 
-const startKanjiMission2 = (kanjiTheme, allThemesData) => {
+const startKanjiJukugo = (kanjiTheme, allThemesData) => {
     let exerciseQueue = [];
     kanjiTheme.items.forEach(item => {
         if (item.context_words) {
@@ -675,7 +795,7 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
 
     const showStep = () => {
         if (currentIndex >= exerciseQueue.length) {
-            alert("¡Vocabulario completado! Haz la Misión 3 para terminar el tema.");
+            alert("¡Jukugos dominados!");
             return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
         }
 
@@ -825,54 +945,79 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
     showStep();
 };
 
-const startKanjiMission3 = (kanjiTheme, nextThemeId, allThemesData) => {
-    let phase3Items = [];
-    kanjiTheme.items.forEach(item => { if (item.context_words) item.context_words.forEach(cw => phase3Items.push({ ...cw })); });
-    const exerciseQueue = shuffleArray(phase3Items).slice(0, 10);
+const startKanjiExam = (kanjiTheme, nextThemeId, allThemesData) => {
+    // Para el examen de kanji mezclamos preguntas de significado (Fase 1) y de lectura de jukugos.
+    let exerciseQueue = [];
+    kanjiTheme.items.forEach(item => {
+        exerciseQueue.push({ type: 'meaning', data: item });
+        if (item.context_words) item.context_words.forEach(cw => exerciseQueue.push({ type: 'reading', data: cw }));
+    });
+    
+    exerciseQueue = shuffleArray(exerciseQueue);
     let currentIndex = 0;
+    let mistakes = 0;
 
     const showQuestion = () => {
         if (currentIndex >= exerciseQueue.length) {
-            appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId !== "null" ? nextThemeId : null, kanjiTheme.items);
-            return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => renderKanjiThemeList(allThemesData));
+            if(mistakes === 0) {
+                appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId !== "null" ? nextThemeId : null, kanjiTheme.items);
+                return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => renderKanjiThemeList(allThemesData));
+            } else {
+                alert(`Has fallado ${mistakes} pregunta(s). Necesitas un 100% de aciertos para superar el tema. ¡Sigue entrenando!`);
+                return renderKanjiSubmenu(kanjiTheme, nextThemeId, allThemesData);
+            }
         }
         
-        const currentItem = exerciseQueue[currentIndex];
-        const options = shuffleArray([currentItem.full_reading, ...currentItem.distractors.slice(0, 3)]);
+        const q = exerciseQueue[currentIndex];
+        let correct, distractors, display;
+
+        if(q.type === 'meaning') {
+            correct = q.data.meaning;
+            distractors = getDistractors(q.data, kanjiTheme.items, 'meaning', 3);
+            display = q.data.kanji;
+        } else {
+            correct = q.data.full_reading;
+            distractors = q.data.distractors.slice(0, 3);
+            display = q.data.word;
+        }
+
+        const options = shuffleArray([correct, ...distractors]);
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
-                <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
-                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-yellow-200"><i data-lucide="award" class="w-3 h-3 inline"></i> Examen Final</span>
-                    <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
+                <div class="flex justify-between items-center text-red-500 font-bold mb-6">
+                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-red-200"><i data-lucide="award" class="w-3 h-3 inline"></i> Examen Final</span>
+                    <span class="text-xs text-gray-500">${currentIndex + 1} / ${exerciseQueue.length}</span>
+                    <button id="btn-quit" class="hover:text-red-700"><i data-lucide="x"></i></button>
                 </div>
                 <div class="flex-grow flex flex-col items-center justify-center text-center mb-8">
-                    <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${currentItem.word}</div>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">${q.type === 'meaning' ? 'Traduce al Español' : '¿Cómo se lee?'}</p>
+                    <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${display}</div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 pb-8 w-full" id="options-container">
-                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-5 rounded-xl font-bold text-xl text-gray-700 hover:border-yellow-500 hover:text-yellow-600 shadow-sm" data-answer="${opt}">${opt}</button>`).join('')}
+                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-5 rounded-xl font-bold text-xl text-gray-700 hover:border-red-500 hover:text-red-600 shadow-sm" data-answer="${opt}">${opt}</button>`).join('')}
                 </div>
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, nextThemeId, allThemesData));
 
         const optionButtons = document.querySelectorAll('.option-btn');
         optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
-            const isCorrect = e.currentTarget.getAttribute('data-answer') === currentItem.full_reading;
+            const isCorrect = e.currentTarget.getAttribute('data-answer') === correct;
             optionButtons.forEach(b => b.disabled = true);
-            if (isCorrect) e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
-            else {
+            if (isCorrect) {
+                e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+            } else {
+                mistakes++;
                 e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
-                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.full_reading).classList.add('bg-green-100', 'border-green-500');
+                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct).classList.add('bg-green-100', 'border-green-500');
             }
             setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
         }));
     };
     showQuestion();
 };
-
-// --- ARRANQUE DE LA APLICACIÓN ---
 
 const bootApp = async () => {
     try {

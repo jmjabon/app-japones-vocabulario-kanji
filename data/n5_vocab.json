@@ -3,10 +3,10 @@
     "theme_id": "v_tema_01",
     "theme_title": "Saludos y cortesía",
     "items": [
-      { "id": "v5_001", "kanji": "今日は", "kana": "こんにちは", "meaning": "Hola / Buenas tardes" },
-      { "id": "v5_002", "kanji": "お早う", "kana": "おはよう", "meaning": "Buenos días" },
-      { "id": "v5_003", "kanji": "今晩は", "kana": "こんばんは", "meaning": "Buenas noches" },
-      { "id": "v5_004", "kanji": "有難う", "kana": "ありがとう", "meaning": "Gracias" }
+      { "id": "v5_001", "kana": "こんにちは", "meaning": "Hola / Buenas tardes" },
+      { "id": "v5_002", "kana": "おはよう", "meaning": "Buenos días" },
+      { "id": "v5_003", "kana": "こんばんは", "meaning": "Buenas noches" },
+      { "id": "v5_004", "kana": "ありがとう", "meaning": "Gracias" }
     ]
   },
   {
