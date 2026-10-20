@@ -1,0 +1,16 @@
+{
+  "theme_id": "k_tema_01",
+  "theme_title": "Naturaleza básica",
+  "items": [
+    {
+      "id": "k5_001",
+      "kanji": "休",
+      "meaning": "Descansar",
+      "onyomi": ["キュウ"],
+      "kunyomi": ["やす-む"],
+      "mnemonic": "Una persona apoyada contra un árbol.",
+      "radicals": ["亻", "木"],
+      "dummy_radicals": ["日", "氵", "口"]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "theme_id": "v_tema_01",
+  "theme_title": "Saludos y cortesía",
+  "items": [
+    {
+      "id": "v5_001",
+      "kanji": "今日は",
+      "kana": "こんにちは",
+      "romaji": "konnichiwa",
+      "meaning": "Hola / Buenas tardes",
+      "example_ja": "皆さん、今日は。",
+      "example_es": "Hola a todos."
+    }
+  ]
+}
