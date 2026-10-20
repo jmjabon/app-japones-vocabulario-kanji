@@ -1,34 +1,46 @@
 [
   {
-    "theme_id": "v_tema_01",
-    "theme_title": "Saludos y cortesía",
-    "items": [
-      { "id": "v5_001", "kana": "こんにちは", "meaning": "Hola / Buenas tardes" },
-      { "id": "v5_002", "kana": "おはよう", "meaning": "Buenos días" },
-      { "id": "v5_003", "kana": "こんばんは", "meaning": "Buenas noches" },
-      { "id": "v5_004", "kana": "ありがとう", "meaning": "Gracias" }
+    "block_id": "v_block_01",
+    "block_title": "Bloque 1: Saludos y Básicos",
+    "themes": [
+      {
+        "theme_id": "v_tema_01",
+        "theme_title": "Saludos y cortesía",
+        "items": [
+          { "id": "v5_001", "kana": "こんにちは", "meaning": "Hola / Buenas tardes" },
+          { "id": "v5_002", "kana": "おはよう", "meaning": "Buenos días" },
+          { "id": "v5_003", "kana": "こんばんは", "meaning": "Buenas noches" },
+          { "id": "v5_004", "kana": "ありがとう", "meaning": "Gracias" }
+        ]
+      },
+      {
+        "theme_id": "v_tema_02",
+        "theme_title": "Números básicos",
+        "items": [
+          { "id": "v5_005", "kanji": "一", "kana": "いち", "meaning": "Uno" },
+          { "id": "v5_006", "kanji": "二", "kana": "に", "meaning": "Dos" },
+          { "id": "v5_007", "kanji": "三", "kana": "さん", "meaning": "Tres" },
+          { "id": "v5_008", "kanji": "四", "kana": "よん", "meaning": "Cuatro" }
+        ]
+      },
+      {
+        "theme_id": "cp_vocab_01",
+        "type": "checkpoint",
+        "theme_title": "Examen: Temas 1 y 2",
+        "requires_count": 2,
+        "items": []
+      }
     ]
   },
   {
-    "theme_id": "v_tema_02",
-    "theme_title": "Números básicos",
-    "items": [
-      { "id": "v5_005", "kanji": "一", "kana": "いち", "meaning": "Uno" },
-      { "id": "v5_006", "kanji": "二", "kana": "に", "meaning": "Dos" },
-      { "id": "v5_007", "kanji": "三", "kana": "さん", "meaning": "Tres" },
-      { "id": "v5_008", "kanji": "四", "kana": "よん", "meaning": "Cuatro" }
+    "block_id": "v_block_02",
+    "block_title": "Bloque 2: Vida Diaria",
+    "themes": [
+      {
+        "theme_id": "v_tema_03",
+        "theme_title": "Días de la semana",
+        "items": []
+      }
     ]
-  },
-  {
-    "theme_id": "cp_vocab_01",
-    "type": "checkpoint",
-    "theme_title": "Examen: Temas 1 y 2",
-    "requires_count": 2,
-    "items": []
-  },
-  {
-    "theme_id": "v_tema_03",
-    "theme_title": "Días de la semana",
-    "items": []
   }
 ]

@@ -27,12 +27,13 @@ const buildMasterDictionary = async () => {
     if (!Array.isArray(kanjiData)) kanjiData = [kanjiData];
 
     const dict = {};
-    vocabData.forEach(theme => theme.items?.forEach(item => dict[item.id] = { ...item, type: 'vocab', allItems: theme.items }));
-    kanjiData.forEach(theme => theme.items?.forEach(item => dict[item.id] = { ...item, type: 'kanji', allItems: theme.items }));
+    // Ahora iteramos también por los bloques
+    vocabData.forEach(block => block.themes?.forEach(theme => theme.items?.forEach(item => dict[item.id] = { ...item, type: 'vocab', allItems: theme.items })));
+    kanjiData.forEach(block => block.themes?.forEach(theme => theme.items?.forEach(item => dict[item.id] = { ...item, type: 'kanji', allItems: theme.items })));
     return dict;
 };
 
-// --- RENDERIZADORES COMPARTIDOS Y DASHBOARD ---
+// --- RENDERIZADORES GLOBALES ---
 
 const renderDashboard = () => {
     appState = loadProgress(); 
@@ -67,8 +68,9 @@ const renderDashboard = () => {
     lucide.createIcons();
 
     if (dueCount > 0) document.getElementById('btn-start-srs').addEventListener('click', () => startSRSSession(dueItems));
-    document.getElementById('btn-start-vocab').addEventListener('click', async () => renderVocabThemeList(await getVocabData(manifestData.levels[0].vocab_file)));
-    document.getElementById('btn-start-kanji').addEventListener('click', async () => renderKanjiThemeList(await getKanjiData(manifestData.levels[0].kanji_file)));
+    
+    document.getElementById('btn-start-vocab').addEventListener('click', async () => renderBlockList(await getVocabData(manifestData.levels[0].vocab_file), 'vocab'));
+    document.getElementById('btn-start-kanji').addEventListener('click', async () => renderBlockList(await getKanjiData(manifestData.levels[0].kanji_file), 'kanji'));
     document.getElementById('btn-srs-stats').addEventListener('click', renderSRSStats);
 };
 
@@ -132,6 +134,55 @@ const renderSRSStats = async () => {
     }
 };
 
+const renderBlockList = (blocksData, type) => {
+    // Aplanamos los temas de todos los bloques para saber la secuencia global
+    const flatThemes = blocksData.flatMap(b => b.themes);
+    
+    const html = blocksData.map((block, index) => {
+        const themesInBlock = block.themes.length;
+        const completedInBlock = block.themes.filter(t => appState.progress[`completed_${type}_themes`].includes(t.theme_id)).length;
+        
+        // Un bloque está desbloqueado si su primer tema está desbloqueado en el progreso
+        const firstThemeId = block.themes[0].theme_id;
+        const isUnlocked = appState.progress[`unlocked_${type}_themes`].includes(firstThemeId);
+
+        return `
+            <div class="border-2 ${isUnlocked ? 'border-indigo-500 bg-white cursor-pointer hover:scale-[1.02]' : 'border-gray-200 bg-gray-50 opacity-70'} p-5 rounded-2xl shadow-sm transition-transform block-card" data-index="${index}" data-unlocked="${isUnlocked}">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-lg text-gray-800">${block.block_title}</h3>
+                    ${isUnlocked ? (completedInBlock === themesInBlock ? '<i data-lucide="check-circle" class="text-green-500"></i>' : '<i data-lucide="folder-open" class="text-indigo-500"></i>') : '<i data-lucide="lock" class="text-gray-400"></i>'}
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-2 overflow-hidden">
+                    <div class="bg-indigo-500 h-2 rounded-full transition-all" style="width: ${(completedInBlock/themesInBlock)*100}%"></div>
+                </div>
+                <p class="text-xs text-gray-500 font-bold text-right">${completedInBlock} / ${themesInBlock} temas</p>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8 animate-fade-in">
+            <button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Menú Principal</button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-1">${type === 'vocab' ? 'Vocabulario (N5)' : 'Kanjis (N5)'}</h2>
+            <p class="text-sm text-gray-500 mb-2">Selecciona un bloque de estudio.</p>
+            ${html}
+        </div>
+    `;
+    lucide.createIcons();
+    document.getElementById('btn-back').addEventListener('click', renderDashboard);
+
+    document.querySelectorAll('.block-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Bloque bloqueado. Supera los temas del bloque anterior.');
+            const bIdx = parseInt(e.currentTarget.getAttribute('data-index'));
+            // Contexto que pasaremos entre vistas
+            const ctx = { type, blocks: blocksData, bIdx, flat: flatThemes };
+            if(type === 'vocab') renderVocabThemeList(ctx);
+            else renderKanjiThemeList(ctx);
+        });
+    });
+};
+
 const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col items-center justify-center h-full max-w-md mx-auto w-full text-center px-4 animate-fade-in pt-8">
@@ -149,24 +200,28 @@ const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
     document.getElementById('btn-success-back').addEventListener('click', backCallback);
 };
 
-const generateThemeListHtml = (themes, type) => {
-    return themes.map((theme, index) => {
-        const unlockedKey = `unlocked_${type}_themes`;
-        const completedKey = `completed_${type}_themes`;
+const generateThemeListHtml = (ctx) => {
+    const blockThemes = ctx.blocks[ctx.bIdx].themes;
+    return blockThemes.map((theme, index) => {
+        const unlockedKey = `unlocked_${ctx.type}_themes`;
+        const completedKey = `completed_${ctx.type}_themes`;
         const isUnlocked = appState.progress[unlockedKey].includes(theme.theme_id);
         const isCompleted = appState.progress[completedKey].includes(theme.theme_id);
-        const nextThemeId = themes[index + 1] ? themes[index + 1].theme_id : null;
         const isCheckpoint = theme.type === 'checkpoint';
+        
+        // Calculamos el índice plano absoluto para saber cuál es el siguiente tema general
+        const flatIndex = ctx.flat.findIndex(t => t.theme_id === theme.theme_id);
+        const nextThemeId = ctx.flat[flatIndex + 1] ? ctx.flat[flatIndex + 1].theme_id : null;
         
         let statusIcon = isCompleted ? (isCheckpoint ? '<i data-lucide="award" class="text-yellow-500"></i>' : '<i data-lucide="check-circle" class="text-green-500"></i>') 
                      : (isUnlocked ? (isCheckpoint ? '<i data-lucide="swords" class="text-red-500 animate-pulse"></i>' : '<i data-lucide="unlock" class="text-blue-500"></i>') 
                      : '<i data-lucide="lock" class="text-gray-400"></i>');
 
         let borderClass = isCompleted ? (isCheckpoint ? 'border-yellow-500 bg-yellow-50' : 'border-green-500 bg-green-50') 
-                        : (isUnlocked ? (isCheckpoint ? 'border-red-500 bg-red-50' : (type === 'vocab' ? 'border-primary bg-white' : 'border-secondary bg-white')) : 'border-gray-200 bg-gray-100 opacity-70');
+                        : (isUnlocked ? (isCheckpoint ? 'border-red-500 bg-red-50' : (ctx.type === 'vocab' ? 'border-primary bg-white' : 'border-secondary bg-white')) : 'border-gray-200 bg-gray-100 opacity-70');
 
         return `
-            <div class="${borderClass} border-2 p-5 rounded-xl shadow-sm transition-transform transform hover:scale-[1.02] cursor-pointer theme-card" data-index="${index}" data-unlocked="${isUnlocked}" data-next="${nextThemeId}" data-checkpoint="${isCheckpoint}">
+            <div class="${borderClass} border-2 p-5 rounded-xl shadow-sm transition-transform transform hover:scale-[1.02] cursor-pointer theme-card" data-flat-index="${flatIndex}" data-unlocked="${isUnlocked}" data-next="${nextThemeId}" data-checkpoint="${isCheckpoint}">
                 <div class="flex justify-between items-center">
                     <h3 class="font-bold text-lg ${isCheckpoint && !isCompleted && isUnlocked ? 'text-red-700' : 'text-gray-800'}">${theme.theme_title}</h3>
                     ${statusIcon}
@@ -177,7 +232,7 @@ const generateThemeListHtml = (themes, type) => {
     }).join('');
 };
 
-// --- MOTOR SRS, REPASO DE FALLOS Y CHECKPOINTS ---
+// --- MOTOR SRS Y CHECKPOINTS ---
 
 const startSRSSession = async (dueItemsIds) => {
     const dict = await buildMasterDictionary();
@@ -293,9 +348,9 @@ const startMistakesReview = (box1Items) => {
     showCard();
 };
 
-const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
+const startCheckpoint = (checkpointData, flatIndex, ctx) => {
     const numThemesRequired = checkpointData.requires_count || 2;
-    const themesToTest = allThemes.slice(currentIndex - numThemesRequired, currentIndex);
+    const themesToTest = ctx.flat.slice(flatIndex - numThemesRequired, flatIndex);
     let questionPool = [];
     
     themesToTest.forEach(theme => {
@@ -334,7 +389,7 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', renderDashboard);
+        document.getElementById('btn-quit').addEventListener('click', () => ctx.type === 'vocab' ? renderVocabThemeList(ctx) : renderKanjiThemeList(ctx));
 
         const optionButtons = document.querySelectorAll('.option-btn');
         optionButtons.forEach(btn => {
@@ -367,8 +422,8 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
         const passed = finalScore >= 80;
 
         if (passed) {
-            const nextThemeId = allThemes[currentIndex + 1] ? allThemes[currentIndex + 1].theme_id : null;
-            appState = markThemeCompleted(type, checkpointData.theme_id, nextThemeId, []);
+            const nextThemeId = ctx.flat[flatIndex + 1] ? ctx.flat[flatIndex + 1].theme_id : null;
+            appState = markThemeCompleted(ctx.type, checkpointData.theme_id, nextThemeId, []);
         }
 
         document.getElementById('app-view').innerHTML = `
@@ -381,7 +436,7 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-success-back').addEventListener('click', () => type === 'vocab' ? renderVocabThemeList(allThemes) : renderKanjiThemeList(allThemes));
+        document.getElementById('btn-success-back').addEventListener('click', () => ctx.type === 'vocab' ? renderVocabThemeList(ctx) : renderKanjiThemeList(ctx));
     };
 
     showExamQuestion();
@@ -389,25 +444,33 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
 
 // --- MÓDULO VOCABULARIO ---
 
-const renderVocabThemeList = (vocabThemes) => {
-    if (!Array.isArray(vocabThemes)) vocabThemes = [vocabThemes];
-    document.getElementById('app-view').innerHTML = `<div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8"><button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button><h2 class="text-2xl font-bold text-gray-800 mb-2">Vocabulario</h2>${generateThemeListHtml(vocabThemes, 'vocab')}</div>`;
+const renderVocabThemeList = (ctx) => {
+    const blockTitle = ctx.blocks[ctx.bIdx].block_title;
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8 animate-fade-in">
+            <button id="btn-back-blocks" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a Bloques</button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">${blockTitle}</h2>
+            ${generateThemeListHtml(ctx)}
+        </div>
+    `;
     lucide.createIcons();
-    document.getElementById('btn-back').addEventListener('click', renderDashboard);
+    document.getElementById('btn-back-blocks').addEventListener('click', () => renderBlockList(ctx.blocks, 'vocab'));
     
     document.querySelectorAll('.theme-card').forEach(card => {
         card.addEventListener('click', (e) => {
             if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Desbloquea primero el tema anterior.');
-            const index = parseInt(e.currentTarget.getAttribute('data-index'));
+            const flatIndex = parseInt(e.currentTarget.getAttribute('data-flat-index'));
+            const nextThemeId = e.currentTarget.getAttribute('data-next');
             const isCp = e.currentTarget.getAttribute('data-checkpoint') === 'true';
+            const theme = ctx.flat[flatIndex];
             
-            if (isCp) startCheckpoint(vocabThemes[index], index, vocabThemes, 'vocab'); 
-            else renderVocabSubmenu(vocabThemes[index], e.currentTarget.getAttribute('data-next'), vocabThemes);
+            if (isCp) startCheckpoint(theme, flatIndex, ctx); 
+            else renderVocabSubmenu(theme, nextThemeId, ctx);
         });
     });
 };
 
-const renderVocabSubmenu = (vocabTheme, nextThemeId, allThemesData) => {
+const renderVocabSubmenu = (vocabTheme, nextThemeId, ctx) => {
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 pb-8 animate-fade-in">
             <button id="btn-back-submenu" class="text-gray-500 flex items-center gap-1 self-start mb-6"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a temas</button>
@@ -442,21 +505,21 @@ const renderVocabSubmenu = (vocabTheme, nextThemeId, allThemesData) => {
         </div>
     `;
     lucide.createIcons();
-    document.getElementById('btn-back-submenu').addEventListener('click', () => renderVocabThemeList(allThemesData));
+    document.getElementById('btn-back-submenu').addEventListener('click', () => renderVocabThemeList(ctx));
 
-    document.getElementById('btn-v-study').addEventListener('click', () => startVocabStudy(vocabTheme, allThemesData));
-    document.getElementById('btn-v-listen').addEventListener('click', () => startVocabPractice('listening', vocabTheme, allThemesData));
-    document.getElementById('btn-v-inverse').addEventListener('click', () => startVocabPractice('inverse', vocabTheme, allThemesData));
-    document.getElementById('btn-v-read').addEventListener('click', () => startVocabPractice('reading', vocabTheme, allThemesData));
-    document.getElementById('btn-v-exam').addEventListener('click', () => startVocabExam(vocabTheme, nextThemeId, allThemesData));
+    document.getElementById('btn-v-study').addEventListener('click', () => startVocabStudy(vocabTheme, ctx));
+    document.getElementById('btn-v-listen').addEventListener('click', () => startVocabPractice('listening', vocabTheme, ctx));
+    document.getElementById('btn-v-inverse').addEventListener('click', () => startVocabPractice('inverse', vocabTheme, ctx));
+    document.getElementById('btn-v-read').addEventListener('click', () => startVocabPractice('reading', vocabTheme, ctx));
+    document.getElementById('btn-v-exam').addEventListener('click', () => startVocabExam(vocabTheme, nextThemeId, ctx));
 };
 
-const startVocabStudy = (vocabTheme, allThemesData) => {
+const startVocabStudy = (vocabTheme, ctx) => {
     let currentIndex = 0;
     const showCard = () => {
         if(currentIndex >= vocabTheme.items.length) {
             alert("¡Repaso terminado! Listo para el gimnasio.");
-            return renderVocabSubmenu(vocabTheme, null, allThemesData);
+            return renderVocabSubmenu(vocabTheme, null, ctx);
         }
         const item = vocabTheme.items[currentIndex];
         document.getElementById('app-view').innerHTML = `
@@ -476,21 +539,21 @@ const startVocabStudy = (vocabTheme, allThemesData) => {
         `;
         lucide.createIcons();
         playJapaneseAudio(item.kana);
-        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, null, allThemesData));
+        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, null, ctx));
         document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(item.kana));
         document.getElementById('btn-next').addEventListener('click', () => { currentIndex++; showCard(); });
     };
     showCard();
 };
 
-const startVocabPractice = (mode, vocabTheme, allThemesData) => {
+const startVocabPractice = (mode, vocabTheme, ctx) => {
     const exerciseItems = shuffleArray(vocabTheme.items);
     let currentIndex = 0;
 
     const showQuestion = () => {
         if(currentIndex >= exerciseItems.length) {
             alert("¡Entrenamiento completado!");
-            return renderVocabSubmenu(vocabTheme, null, allThemesData);
+            return renderVocabSubmenu(vocabTheme, null, ctx);
         }
 
         const item = exerciseItems[currentIndex];
@@ -523,7 +586,7 @@ const startVocabPractice = (mode, vocabTheme, allThemesData) => {
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, null, allThemesData));
+        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, null, ctx));
         
         if(document.getElementById('btn-audio-q')) {
             document.getElementById('btn-audio-q').addEventListener('click', () => playJapaneseAudio(item.kana));
@@ -547,7 +610,7 @@ const startVocabPractice = (mode, vocabTheme, allThemesData) => {
     showQuestion();
 };
 
-const startVocabExam = (vocabTheme, nextThemeId, allThemesData) => {
+const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
     const exerciseItems = shuffleArray([...vocabTheme.items, ...vocabTheme.items]); 
     let currentIndex = 0;
     let mistakes = 0;
@@ -555,11 +618,11 @@ const startVocabExam = (vocabTheme, nextThemeId, allThemesData) => {
     const showQuestion = () => {
         if(currentIndex >= exerciseItems.length) {
             if(mistakes === 0) {
-                appState = markThemeCompleted('vocab', vocabTheme.theme_id, nextThemeId !== "null" ? nextThemeId : null, vocabTheme.items);
-                return renderSuccessScreen('vocab', vocabTheme, vocabTheme.items.length, () => renderVocabThemeList(allThemesData));
+                appState = markThemeCompleted('vocab', vocabTheme.theme_id, nextThemeId !== "null" && nextThemeId !== null ? nextThemeId : null, vocabTheme.items);
+                return renderSuccessScreen('vocab', vocabTheme, vocabTheme.items.length, () => renderVocabThemeList(ctx));
             } else {
                 alert(`Has fallado ${mistakes} pregunta(s). Necesitas un 100% de aciertos para superar el tema. ¡Sigue entrenando!`);
-                return renderVocabSubmenu(vocabTheme, nextThemeId, allThemesData);
+                return renderVocabSubmenu(vocabTheme, nextThemeId, ctx);
             }
         }
 
@@ -586,7 +649,7 @@ const startVocabExam = (vocabTheme, nextThemeId, allThemesData) => {
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, nextThemeId, allThemesData));
+        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, nextThemeId, ctx));
         
         const optionButtons = document.querySelectorAll('.option-btn');
         optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
@@ -605,27 +668,35 @@ const startVocabExam = (vocabTheme, nextThemeId, allThemesData) => {
     showQuestion();
 };
 
-// --- MÓDULO KANJI (NUEVA ARQUITECTURA MODULAR HUB) ---
+// --- MÓDULO KANJI ---
 
-const renderKanjiThemeList = (kanjiThemes) => {
-    if (!Array.isArray(kanjiThemes)) kanjiThemes = [kanjiThemes];
-    document.getElementById('app-view').innerHTML = `<div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8"><button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button><h2 class="text-2xl font-bold text-gray-800 mb-2">Kanjis</h2>${generateThemeListHtml(kanjiThemes, 'kanji')}</div>`;
+const renderKanjiThemeList = (ctx) => {
+    const blockTitle = ctx.blocks[ctx.bIdx].block_title;
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8 animate-fade-in">
+            <button id="btn-back-blocks" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a Bloques</button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">${blockTitle}</h2>
+            ${generateThemeListHtml(ctx)}
+        </div>
+    `;
     lucide.createIcons();
-    document.getElementById('btn-back').addEventListener('click', renderDashboard);
+    document.getElementById('btn-back-blocks').addEventListener('click', () => renderBlockList(ctx.blocks, 'kanji'));
     
     document.querySelectorAll('.theme-card').forEach(card => {
         card.addEventListener('click', (e) => {
             if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Desbloquea primero el tema anterior.');
-            const index = parseInt(e.currentTarget.getAttribute('data-index'));
+            const flatIndex = parseInt(e.currentTarget.getAttribute('data-flat-index'));
+            const nextThemeId = e.currentTarget.getAttribute('data-next');
             const isCp = e.currentTarget.getAttribute('data-checkpoint') === 'true';
+            const theme = ctx.flat[flatIndex];
             
-            if (isCp) startCheckpoint(kanjiThemes[index], index, kanjiThemes, 'kanji');
-            else renderKanjiSubmenu(kanjiThemes[index], e.currentTarget.getAttribute('data-next'), kanjiThemes);
+            if (isCp) startCheckpoint(theme, flatIndex, ctx);
+            else renderKanjiSubmenu(theme, nextThemeId, ctx);
         });
     });
 };
 
-const renderKanjiSubmenu = (kanjiTheme, nextThemeId, allThemesData) => {
+const renderKanjiSubmenu = (kanjiTheme, nextThemeId, ctx) => {
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 pb-8 animate-fade-in">
             <button id="btn-back-submenu" class="text-gray-500 flex items-center gap-1 self-start mb-6"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a temas</button>
@@ -660,21 +731,21 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, allThemesData) => {
         </div>
     `;
     lucide.createIcons();
-    document.getElementById('btn-back-submenu').addEventListener('click', () => renderKanjiThemeList(allThemesData));
+    document.getElementById('btn-back-submenu').addEventListener('click', () => renderKanjiThemeList(ctx));
 
-    document.getElementById('btn-k-gallery').addEventListener('click', () => startKanjiGallery(kanjiTheme, allThemesData));
-    document.getElementById('btn-k-despiece').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, allThemesData, 1));
-    document.getElementById('btn-k-forja').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, allThemesData, 2));
-    document.getElementById('btn-k-jukugo').addEventListener('click', () => startKanjiJukugo(kanjiTheme, allThemesData));
-    document.getElementById('btn-k-exam').addEventListener('click', () => startKanjiExam(kanjiTheme, nextThemeId, allThemesData));
+    document.getElementById('btn-k-gallery').addEventListener('click', () => startKanjiGallery(kanjiTheme, ctx));
+    document.getElementById('btn-k-despiece').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, ctx, 1));
+    document.getElementById('btn-k-forja').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, ctx, 2));
+    document.getElementById('btn-k-jukugo').addEventListener('click', () => startKanjiJukugo(kanjiTheme, ctx));
+    document.getElementById('btn-k-exam').addEventListener('click', () => startKanjiExam(kanjiTheme, nextThemeId, ctx));
 };
 
-const startKanjiGallery = (kanjiTheme, allThemesData) => {
+const startKanjiGallery = (kanjiTheme, ctx) => {
     let currentIndex = 0;
     const showCard = () => {
         if(currentIndex >= kanjiTheme.items.length) {
             alert("Galería terminada.");
-            return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
+            return renderKanjiSubmenu(kanjiTheme, null, ctx);
         }
         const item = kanjiTheme.items[currentIndex];
         document.getElementById('app-view').innerHTML = `
@@ -699,20 +770,20 @@ const startKanjiGallery = (kanjiTheme, allThemesData) => {
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, ctx));
         document.getElementById('btn-next').addEventListener('click', () => { currentIndex++; showCard(); });
     };
     showCard();
 };
 
-const startKanjiPuzzle = (kanjiTheme, allThemesData, phase) => {
+const startKanjiPuzzle = (kanjiTheme, ctx, phase) => {
     const exerciseQueue = shuffleArray(kanjiTheme.items);
     let currentIndex = 0;
 
     const showQuestion = () => {
         if (currentIndex >= exerciseQueue.length) {
             alert(phase === 1 ? "¡Despiece dominado!" : "¡Forja completada!");
-            return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
+            return renderKanjiSubmenu(kanjiTheme, null, ctx);
         }
 
         const currentItem = exerciseQueue[currentIndex];
@@ -773,13 +844,13 @@ const startKanjiPuzzle = (kanjiTheme, allThemesData, phase) => {
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, ctx));
         updateBoard();
     };
     showQuestion();
 };
 
-const startKanjiJukugo = (kanjiTheme, allThemesData) => {
+const startKanjiJukugo = (kanjiTheme, ctx) => {
     let exerciseQueue = [];
     kanjiTheme.items.forEach(item => {
         if (item.context_words) {
@@ -796,7 +867,7 @@ const startKanjiJukugo = (kanjiTheme, allThemesData) => {
     const showStep = () => {
         if (currentIndex >= exerciseQueue.length) {
             alert("¡Jukugos dominados!");
-            return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
+            return renderKanjiSubmenu(kanjiTheme, null, ctx);
         }
 
         const currentItem = exerciseQueue[currentIndex];
@@ -859,7 +930,7 @@ const startKanjiJukugo = (kanjiTheme, allThemesData) => {
                 </div>
             `;
             lucide.createIcons();
-            document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
+            document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, ctx));
             updateSemanticBoard();
 
         } else if (subState === 'PRESENTATION') {
@@ -903,7 +974,7 @@ const startKanjiJukugo = (kanjiTheme, allThemesData) => {
             lucide.createIcons();
             playJapaneseAudio(currentItem.full_reading); 
 
-            document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
+            document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, ctx));
             document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(currentItem.full_reading));
             document.getElementById('btn-continue').addEventListener('click', () => { subState = 'PRACTICE'; showStep(); });
 
@@ -945,8 +1016,7 @@ const startKanjiJukugo = (kanjiTheme, allThemesData) => {
     showStep();
 };
 
-const startKanjiExam = (kanjiTheme, nextThemeId, allThemesData) => {
-    // Para el examen de kanji mezclamos preguntas de significado (Fase 1) y de lectura de jukugos.
+const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
     let exerciseQueue = [];
     kanjiTheme.items.forEach(item => {
         exerciseQueue.push({ type: 'meaning', data: item });
@@ -960,11 +1030,11 @@ const startKanjiExam = (kanjiTheme, nextThemeId, allThemesData) => {
     const showQuestion = () => {
         if (currentIndex >= exerciseQueue.length) {
             if(mistakes === 0) {
-                appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId !== "null" ? nextThemeId : null, kanjiTheme.items);
-                return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => renderKanjiThemeList(allThemesData));
+                appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId !== "null" && nextThemeId !== null ? nextThemeId : null, kanjiTheme.items);
+                return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => renderKanjiThemeList(ctx));
             } else {
                 alert(`Has fallado ${mistakes} pregunta(s). Necesitas un 100% de aciertos para superar el tema. ¡Sigue entrenando!`);
-                return renderKanjiSubmenu(kanjiTheme, nextThemeId, allThemesData);
+                return renderKanjiSubmenu(kanjiTheme, nextThemeId, ctx);
             }
         }
         
@@ -1000,7 +1070,7 @@ const startKanjiExam = (kanjiTheme, nextThemeId, allThemesData) => {
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, nextThemeId, allThemesData));
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, nextThemeId, ctx));
 
         const optionButtons = document.querySelectorAll('.option-btn');
         optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
