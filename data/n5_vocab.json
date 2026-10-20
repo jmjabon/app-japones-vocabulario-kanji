@@ -1,36 +1,34 @@
 [
-    {
+  {
     "theme_id": "v_tema_01",
     "theme_title": "Saludos y cortesía",
     "items": [
-        {
-        "id": "v5_001",
-        "kanji": "今日は",
-        "kana": "こんにちは",
-        "romaji": "konnichiwa",
-        "meaning": "Hola / Buenas tardes"
-        },
-        {
-        "id": "v5_002",
-        "kanji": "お早う",
-        "kana": "おはよう",
-        "romaji": "ohayou",
-        "meaning": "Buenos días"
-        },
-        {
-        "id": "v5_003",
-        "kanji": "今晩は",
-        "kana": "こんばんは",
-        "romaji": "konbanwa",
-        "meaning": "Buenas noches"
-        },
-        {
-        "id": "v5_004",
-        "kanji": "有難う",
-        "kana": "ありがとう",
-        "romaji": "arigatou",
-        "meaning": "Gracias"
-        }
+      { "id": "v5_001", "kanji": "今日は", "kana": "こんにちは", "meaning": "Hola / Buenas tardes" },
+      { "id": "v5_002", "kanji": "お早う", "kana": "おはよう", "meaning": "Buenos días" },
+      { "id": "v5_003", "kanji": "今晩は", "kana": "こんばんは", "meaning": "Buenas noches" },
+      { "id": "v5_004", "kanji": "有難う", "kana": "ありがとう", "meaning": "Gracias" }
     ]
-    }
+  },
+  {
+    "theme_id": "v_tema_02",
+    "theme_title": "Números básicos",
+    "items": [
+      { "id": "v5_005", "kanji": "一", "kana": "いち", "meaning": "Uno" },
+      { "id": "v5_006", "kanji": "二", "kana": "に", "meaning": "Dos" },
+      { "id": "v5_007", "kanji": "三", "kana": "さん", "meaning": "Tres" },
+      { "id": "v5_008", "kanji": "四", "kana": "よん", "meaning": "Cuatro" }
+    ]
+  },
+  {
+    "theme_id": "cp_vocab_01",
+    "type": "checkpoint",
+    "theme_title": "Examen: Temas 1 y 2",
+    "requires_count": 2,
+    "items": []
+  },
+  {
+    "theme_id": "v_tema_03",
+    "theme_title": "Días de la semana",
+    "items": []
+  }
 ]
