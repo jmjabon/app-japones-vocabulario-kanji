@@ -7,24 +7,24 @@
         "id": "k5_001", "kanji": "休", "meaning": "Descansar", "onyomi": ["キュウ"], "kunyomi": ["やす-む"], 
         "mnemonic": "Una persona apoyada contra un árbol.", "radicals": ["亻", "木"], "dummy_radicals": ["日", "氵", "口"],
         "context_words": [
-          { "word": "休み", "target": "休", "correct": "やす", "distractors": ["きゅう", "やみ", "きゅ"], "meaning": "Descanso / Vacaciones" },
-          { "word": "休日", "target": "休", "correct": "きゅう", "distractors": ["やす", "きゅ", "ぐ"], "meaning": "Día festivo" }
+          { "word": "休み", "target": "休", "correct": "やす", "distractors": ["きゅう", "やみ", "きゅ"], "meaning": "Descanso / Vacaciones", "etymology": "休 (Descansar) + み (Sufijo)", "type_reading": "KUN" },
+          { "word": "休日", "target": "休", "correct": "きゅう", "distractors": ["やす", "きゅ", "ぐ"], "meaning": "Día festivo", "etymology": "休 (Descansar) + 日 (Día)", "type_reading": "ON" }
         ]
       },
       { 
         "id": "k5_002", "kanji": "明", "meaning": "Brillante / Luz", "onyomi": ["メイ", "ミョウ"], "kunyomi": ["あか-るい"], 
         "mnemonic": "El sol y la luna juntos dan mucha luz.", "radicals": ["日", "月"], "dummy_radicals": ["田", "目", "白"],
         "context_words": [
-          { "word": "明るい", "target": "明", "correct": "あか", "distractors": ["めい", "あ", "みょう"], "meaning": "Luminoso / Alegre" },
-          { "word": "明日", "target": "明", "correct": "あし", "distractors": ["あか", "めい", "みょう"], "meaning": "Mañana (día siguiente)" }
+          { "word": "明るい", "target": "明", "correct": "あか", "distractors": ["めい", "あ", "みょう"], "meaning": "Luminoso / Alegre", "etymology": "明 (Brillante) + るい (Sufijo adj)", "type_reading": "KUN" },
+          { "word": "明日", "target": "明", "correct": "あし", "distractors": ["あか", "めい", "みょう"], "meaning": "Mañana (día siguiente)", "etymology": "明 (Brillante) + 日 (Día)", "type_reading": "IRREGULAR" }
         ]
       },
       { 
         "id": "k5_003", "kanji": "男", "meaning": "Hombre", "onyomi": ["ダン", "ナン"], "kunyomi": ["おとこ"], 
         "mnemonic": "Fuerza trabajando en el campo de arroz.", "radicals": ["田", "力"], "dummy_radicals": ["口", "刀", "土"],
         "context_words": [
-          { "word": "男の人", "target": "男", "correct": "おとこ", "distractors": ["だん", "なん", "おと"], "meaning": "Hombre (persona)" },
-          { "word": "男性", "target": "男", "correct": "だん", "distractors": ["おとこ", "なん", "だ"], "meaning": "Género masculino" }
+          { "word": "男の人", "target": "男", "correct": "おとこ", "distractors": ["だん", "なん", "おと"], "meaning": "Hombre (persona)", "etymology": "男 (Hombre) + の (de) + 人 (Persona)", "type_reading": "KUN" },
+          { "word": "男性", "target": "男", "correct": "だん", "distractors": ["おとこ", "なん", "だ"], "meaning": "Género masculino", "etymology": "男 (Hombre) + 性 (Género)", "type_reading": "ON" }
         ]
       }
     ]
@@ -37,10 +37,22 @@
         "id": "k5_004", "kanji": "中", "meaning": "Centro / Dentro", "onyomi": ["チュウ"], "kunyomi": ["なか"], 
         "mnemonic": "Una línea vertical que atraviesa el centro de una caja cuadrada.", "radicals": ["口", "丨"], "dummy_radicals": ["日", "一", "木"],
         "context_words": [
-          { "word": "中", "target": "中", "correct": "なか", "distractors": ["ちゅう", "うえ", "した"], "meaning": "Dentro / Interior" },
-          { "word": "中国", "target": "中", "correct": "ちゅう", "distractors": ["なか", "ちゅ", "じゅう"], "meaning": "China" }
+          { "word": "中", "target": "中", "correct": "なか", "distractors": ["ちゅう", "うえ", "した"], "meaning": "Dentro / Interior", "etymology": "Lectura aislada básica", "type_reading": "KUN" },
+          { "word": "中国", "target": "中", "correct": "ちゅう", "distractors": ["なか", "ちゅ", "じゅう"], "meaning": "China", "etymology": "中 (Centro) + 国 (País) = País del centro", "type_reading": "ON" }
         ]
       }
     ]
+  },
+  {
+    "theme_id": "cp_kanji_01",
+    "type": "checkpoint",
+    "theme_title": "Examen: Temas 1 y 2",
+    "requires_count": 2,
+    "items": []
+  },
+  {
+    "theme_id": "k_tema_03",
+    "theme_title": "Tiempo y Vida",
+    "items": []
   }
 ]

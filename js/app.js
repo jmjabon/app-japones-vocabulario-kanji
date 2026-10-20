@@ -84,8 +84,6 @@ const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
     document.getElementById('btn-success-back').addEventListener('click', backCallback);
 };
 
-// --- RENDERIZADOR DE TARJETAS DE TEMA (SOPORTA CHECKPOINTS) ---
-
 const generateThemeListHtml = (themes, type) => {
     return themes.map((theme, index) => {
         const unlockedKey = `unlocked_${type}_themes`;
@@ -116,7 +114,7 @@ const generateThemeListHtml = (themes, type) => {
                     <h3 class="font-bold text-lg ${isCheckpoint && !isCompleted && isUnlocked ? 'text-red-700' : 'text-gray-800'}">${theme.theme_title}</h3>
                     ${statusIcon}
                 </div>
-                <p class="text-sm text-gray-500 mt-1">${isCheckpoint ? 'Examen de control' : `${theme.items.length} ítems`}</p>
+                <p class="text-sm text-gray-500 mt-1">${isCheckpoint ? 'Examen de control' : `${theme.items?.length || 0} ítems`}</p>
             </div>
         `;
     }).join('');
@@ -183,25 +181,21 @@ const startSRSSession = async (dueItemsIds) => {
     showReviewCard();
 };
 
-// --- MOTOR DE CHECKPOINTS (NUEVO FASE 7) ---
+// --- MOTOR DE CHECKPOINTS ---
 
 const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
-    // Recopilar preguntas de los temas anteriores
     const numThemesRequired = checkpointData.requires_count || 2;
     const themesToTest = allThemes.slice(currentIndex - numThemesRequired, currentIndex);
-    
     let questionPool = [];
+    
     themesToTest.forEach(theme => {
-        theme.items.forEach(item => {
+        theme.items?.forEach(item => {
             questionPool.push({ ...item, sourceThemeId: theme.theme_id, sourceThemeTitle: theme.theme_title, allItems: theme.items });
         });
     });
 
-    // Barajar y coger máximo 20 preguntas
     const examQuestions = shuffleArray(questionPool).slice(0, 20);
     let questionIndex = 0;
-    
-    // Diccionario para diagnóstico
     const stats = {};
     themesToTest.forEach(t => stats[t.theme_id] = { title: t.theme_title, total: 0, correct: 0 });
 
@@ -235,10 +229,8 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
         const optionButtons = document.querySelectorAll('.option-btn');
         optionButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const selectedAnswer = e.currentTarget.getAttribute('data-answer');
-                const isCorrect = selectedAnswer === correctAnswer;
+                const isCorrect = e.currentTarget.getAttribute('data-answer') === correctAnswer;
                 optionButtons.forEach(b => b.disabled = true);
-
                 stats[item.sourceThemeId].total += 1;
                 if (isCorrect) stats[item.sourceThemeId].correct += 1;
 
@@ -253,54 +245,33 @@ const startCheckpoint = (checkpointData, currentIndex, allThemes, type) => {
     };
 
     const renderCheckpointResults = () => {
-        let totalQuestions = 0;
-        let totalCorrect = 0;
-        let diagnosticsHtml = '';
-
+        let totalQuestions = 0, totalCorrect = 0, diagnosticsHtml = '';
         Object.values(stats).forEach(themeStat => {
             if (themeStat.total === 0) return;
             totalQuestions += themeStat.total;
             totalCorrect += themeStat.correct;
             const pct = Math.round((themeStat.correct / themeStat.total) * 100);
-            diagnosticsHtml += `
-                <div class="flex justify-between items-center mb-2 border-b border-gray-100 pb-2">
-                    <span class="text-sm font-bold text-gray-700">${themeStat.title}</span>
-                    <span class="text-sm ${pct < 80 ? 'text-red-500 font-bold' : 'text-green-600'}">${pct}%</span>
-                </div>
-            `;
+            diagnosticsHtml += `<div class="flex justify-between items-center mb-2 border-b border-gray-100 pb-2"><span class="text-sm font-bold text-gray-700">${themeStat.title}</span><span class="text-sm ${pct < 80 ? 'text-red-500 font-bold' : 'text-green-600'}">${pct}%</span></div>`;
         });
-
         const finalScore = Math.round((totalCorrect / totalQuestions) * 100);
         const passed = finalScore >= 80;
 
         if (passed) {
-            // Guardamos el checkpoint como completado usando un array vacío (ya no hay ítems nuevos que inyectar al Leitner)
             const nextThemeId = allThemes[currentIndex + 1] ? allThemes[currentIndex + 1].theme_id : null;
             appState = markThemeCompleted(type, checkpointData.theme_id, nextThemeId, []);
         }
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col items-center justify-center h-full max-w-md mx-auto w-full text-center px-4 pt-4">
-                <div class="w-24 h-24 ${passed ? 'bg-green-100 border-green-400 text-green-600' : 'bg-red-100 border-red-400 text-red-600'} rounded-full flex items-center justify-center mb-4 border-4 shadow-md">
-                    <i data-lucide="${passed ? 'trophy' : 'alert-triangle'}" class="w-12 h-12"></i>
-                </div>
+                <div class="w-24 h-24 ${passed ? 'bg-green-100 border-green-400 text-green-600' : 'bg-red-100 border-red-400 text-red-600'} rounded-full flex items-center justify-center mb-4 border-4 shadow-md"><i data-lucide="${passed ? 'trophy' : 'alert-triangle'}" class="w-12 h-12"></i></div>
                 <h2 class="text-3xl font-bold text-gray-800 mb-1">${passed ? '¡Prueba Superada!' : 'Prueba Fallida'}</h2>
                 <p class="text-gray-500 font-bold mb-6">Nota: ${finalScore}%</p>
-                
-                <div class="bg-white border border-gray-200 rounded-xl p-5 w-full mb-8 text-left shadow-sm">
-                    <h4 class="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">Diagnóstico por Temas</h4>
-                    ${diagnosticsHtml}
-                    ${!passed ? '<p class="text-xs text-red-500 mt-4 font-bold bg-red-50 p-2 rounded">Necesitas un 80% para desbloquear el siguiente tema.</p>' : ''}
-                </div>
-
+                <div class="bg-white border border-gray-200 rounded-xl p-5 w-full mb-8 text-left shadow-sm"><h4 class="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">Diagnóstico por Temas</h4>${diagnosticsHtml}${!passed ? '<p class="text-xs text-red-500 mt-4 font-bold bg-red-50 p-2 rounded">Necesitas un 80% para desbloquear el siguiente tema.</p>' : ''}</div>
                 <button id="btn-success-back" class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold shadow-md hover:bg-gray-800 transition-colors">Volver</button>
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-success-back').addEventListener('click', () => {
-            if (type === 'vocab') renderVocabThemeList(allThemes);
-            else renderKanjiThemeList(allThemes);
-        });
+        document.getElementById('btn-success-back').addEventListener('click', () => type === 'vocab' ? renderVocabThemeList(allThemes) : renderKanjiThemeList(allThemes));
     };
 
     showExamQuestion();
@@ -319,10 +290,8 @@ const renderVocabThemeList = (vocabThemes) => {
         card.addEventListener('click', (e) => {
             const isUnlocked = e.currentTarget.getAttribute('data-unlocked') === 'true';
             if (!isUnlocked) return alert('Desbloquea primero el tema anterior.');
-            
             const index = parseInt(e.currentTarget.getAttribute('data-index'));
             const isCp = e.currentTarget.getAttribute('data-checkpoint') === 'true';
-            
             if (isCp) startCheckpoint(vocabThemes[index], index, vocabThemes, 'vocab');
             else startVocabExercise(vocabThemes[index], e.currentTarget.getAttribute('data-next'), vocabThemes);
         });
@@ -370,21 +339,12 @@ const startVocabExercise = (vocabTheme, nextThemeId, allThemesData) => {
     showQuestion();
 };
 
-// --- MÓDULO KANJI (FUSIÓN COMPLETA) ---
+// --- MÓDULO KANJI REFACTORIZADO (MISIONES MODULARES) ---
 
 const renderKanjiThemeList = (kanjiThemes) => {
     if (!Array.isArray(kanjiThemes)) kanjiThemes = [kanjiThemes];
     const themeCardsHtml = generateThemeListHtml(kanjiThemes, 'kanji');
-    
-    document.getElementById('app-view').innerHTML = `
-        <div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8">
-            <button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2">
-                <i data-lucide="arrow-left" class="w-5 h-5"></i> Volver
-            </button>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Kanjis</h2>
-            ${themeCardsHtml}
-        </div>
-    `;
+    document.getElementById('app-view').innerHTML = `<div class="flex flex-col gap-4 w-full max-w-md mx-auto mt-4 pb-8"><button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start mb-2"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver</button><h2 class="text-2xl font-bold text-gray-800 mb-2">Kanjis</h2>${themeCardsHtml}</div>`;
     lucide.createIcons();
     document.getElementById('btn-back').addEventListener('click', renderDashboard);
     
@@ -392,137 +352,109 @@ const renderKanjiThemeList = (kanjiThemes) => {
         card.addEventListener('click', (e) => {
             const isUnlocked = e.currentTarget.getAttribute('data-unlocked') === 'true';
             if (!isUnlocked) return alert('Desbloquea primero el tema anterior.');
-            
             const index = parseInt(e.currentTarget.getAttribute('data-index'));
             const isCp = e.currentTarget.getAttribute('data-checkpoint') === 'true';
             
-            if (isCp) {
-                startCheckpoint(kanjiThemes[index], index, kanjiThemes, 'kanji');
-            } else {
-                // AQUÍ ES DONDE ESTABA EL ALERT. Ahora llama a la función correctamente:
-                startKanjiExercise(kanjiThemes[index], e.currentTarget.getAttribute('data-next'), kanjiThemes);
-            }
+            if (isCp) startCheckpoint(kanjiThemes[index], index, kanjiThemes, 'kanji');
+            else renderKanjiSubmenu(kanjiThemes[index], e.currentTarget.getAttribute('data-next'), kanjiThemes);
         });
     });
 };
 
-// ESTA ES LA FUNCIÓN INTACTA DE LA FASE 5 QUE HABÍA OMITIDO
-const startKanjiExercise = (kanjiTheme, nextThemeId, allThemesData) => {
-    const baseItems = shuffleArray(kanjiTheme.items);
-    
-    let phase3Items = [];
-    baseItems.forEach(item => {
-        if (item.context_words) {
-            item.context_words.forEach(cw => {
-                phase3Items.push({ ...cw, phase: 3 });
-            });
-        }
-    });
+const renderKanjiSubmenu = (kanjiTheme, nextThemeId, allThemesData) => {
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 pb-8 animate-fade-in">
+            <button id="btn-back-submenu" class="text-gray-500 flex items-center gap-1 self-start mb-6"><i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a temas</button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">${kanjiTheme.theme_title}</h2>
+            <p class="text-gray-600 mb-8 text-sm">Elige qué habilidad quieres practicar.</p>
+            
+            <div class="flex flex-col gap-4">
+                <button id="btn-m1" class="bg-white border-2 border-secondary p-5 rounded-2xl shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-secondary text-white p-3 rounded-xl"><i data-lucide="puzzle"></i></div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-lg">Misión 1: Estructura</h3>
+                        <p class="text-sm text-gray-500">Analiza y construye los kanjis.</p>
+                    </div>
+                </button>
 
-    const exerciseQueue = [
-        ...baseItems.map(item => ({ ...item, phase: 1 })),
-        ...shuffleArray(baseItems).map(item => ({ ...item, phase: 2 })),
-        ...shuffleArray(phase3Items)
-    ];
-    
+                <button id="btn-m2" class="bg-white border-2 border-indigo-400 p-5 rounded-2xl shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-4 text-left">
+                    <div class="bg-indigo-500 text-white p-3 rounded-xl"><i data-lucide="book-open"></i></div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-lg">Misión 2: Vocabulario</h3>
+                        <p class="text-sm text-gray-500">Aprende Jukugos y sus lecturas.</p>
+                    </div>
+                </button>
+
+                <button id="btn-m3" class="bg-gray-900 border-2 border-gray-900 p-5 rounded-2xl shadow-md hover:bg-gray-800 transition-colors flex items-center gap-4 text-left mt-4">
+                    <div class="bg-yellow-500 text-gray-900 p-3 rounded-xl"><i data-lucide="award"></i></div>
+                    <div>
+                        <h3 class="font-bold text-white text-lg">Misión 3: Integración</h3>
+                        <p class="text-sm text-gray-300">Prueba final para completar el tema.</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    `;
+    lucide.createIcons();
+    document.getElementById('btn-back-submenu').addEventListener('click', () => renderKanjiThemeList(allThemesData));
+
+    document.getElementById('btn-m1').addEventListener('click', () => startKanjiMission1(kanjiTheme, allThemesData));
+    document.getElementById('btn-m2').addEventListener('click', () => startKanjiMission2(kanjiTheme, allThemesData));
+    document.getElementById('btn-m3').addEventListener('click', () => startKanjiMission3(kanjiTheme, nextThemeId, allThemesData));
+};
+
+const startKanjiMission1 = (kanjiTheme, allThemesData) => {
+    const baseItems = shuffleArray(kanjiTheme.items);
+    const exerciseQueue = [...baseItems.map(item => ({ ...item, phase: 1 })), ...shuffleArray(baseItems).map(item => ({ ...item, phase: 2 }))];
     let currentIndex = 0;
 
     const showQuestion = () => {
         if (currentIndex >= exerciseQueue.length) {
-            appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId !== "null" ? nextThemeId : null, kanjiTheme.items);
-            return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => renderKanjiThemeList(allThemesData));
+            alert("¡Estructura dominada! Pasa a la Misión 2.");
+            return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
         }
 
         const currentItem = exerciseQueue[currentIndex];
-
-        if (currentItem.phase === 3) {
-            renderJukugo(currentItem);
-        } else {
-            renderPuzzle(currentItem);
-        }
-    };
-
-    const renderPuzzle = (currentItem) => {
         const isPhase1 = currentItem.phase === 1;
-        const correctRadicals = currentItem.radicals;
-        const totalSlots = correctRadicals.length;
-        const availablePieces = shuffleArray([...correctRadicals, ...currentItem.dummy_radicals]);
-        
+        const totalSlots = currentItem.radicals.length;
+        const availablePieces = shuffleArray([...currentItem.radicals, ...currentItem.dummy_radicals]);
         let selectedPieces = [];
 
         const updateBoard = () => {
             const slotsContainer = document.getElementById('slots-container');
             const piecesContainer = document.getElementById('pieces-container');
             
-            slotsContainer.innerHTML = Array.from({ length: totalSlots }).map((_, i) => {
-                const piece = selectedPieces[i];
-                return `
-                    <div class="w-16 h-16 border-2 border-dashed ${piece ? 'border-secondary bg-gray-100' : 'border-gray-300'} rounded-xl flex items-center justify-center text-3xl font-bold text-gray-800 cursor-pointer transition-colors" data-slot-index="${i}">
-                        ${piece ? piece.char : ''}
-                    </div>
-                `;
-            }).join('');
-
+            slotsContainer.innerHTML = Array.from({ length: totalSlots }).map((_, i) => `<div class="w-16 h-16 border-2 border-dashed ${selectedPieces[i] ? 'border-secondary bg-gray-100' : 'border-gray-300'} rounded-xl flex items-center justify-center text-3xl font-bold text-gray-800 cursor-pointer" data-slot-index="${i}">${selectedPieces[i] ? selectedPieces[i].char : ''}</div>`).join('');
             piecesContainer.innerHTML = availablePieces.map((char, index) => {
-                const isSelected = selectedPieces.some(p => p.originalIndex === index);
-                if (isSelected) return `<div class="w-14 h-14 opacity-0"></div>`;
-                return `
-                    <button class="radical-piece w-14 h-14 bg-white border-2 border-gray-200 rounded-lg shadow-sm text-2xl font-bold text-gray-700 hover:border-secondary hover:text-secondary transition-colors" data-char="${char}" data-original-index="${index}">
-                        ${char}
-                    </button>
-                `;
+                if (selectedPieces.some(p => p.originalIndex === index)) return `<div class="w-14 h-14 opacity-0"></div>`;
+                return `<button class="radical-piece w-14 h-14 bg-white border-2 border-gray-200 rounded-lg shadow-sm text-2xl font-bold text-gray-700 hover:border-secondary hover:text-secondary" data-char="${char}" data-original-index="${index}">${char}</button>`;
             }).join('');
 
-            document.querySelectorAll('.radical-piece').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    if (selectedPieces.length >= totalSlots) return;
-                    selectedPieces.push({
-                        char: e.target.getAttribute('data-char'),
-                        originalIndex: parseInt(e.target.getAttribute('data-original-index'))
-                    });
-                    updateBoard();
-                    checkVictory();
-                });
-            });
+            document.querySelectorAll('.radical-piece').forEach(btn => btn.addEventListener('click', (e) => {
+                if (selectedPieces.length >= totalSlots) return;
+                selectedPieces.push({ char: e.target.getAttribute('data-char'), originalIndex: parseInt(e.target.getAttribute('data-original-index')) });
+                updateBoard(); checkVictory();
+            }));
 
-            document.querySelectorAll('#slots-container > div').forEach((slot) => {
-                slot.addEventListener('click', (e) => {
-                    const idx = e.currentTarget.getAttribute('data-slot-index');
-                    if (selectedPieces[idx]) {
-                        selectedPieces.splice(idx, 1);
-                        updateBoard();
-                    }
-                });
-            });
+            document.querySelectorAll('#slots-container > div').forEach(slot => slot.addEventListener('click', (e) => {
+                const idx = e.currentTarget.getAttribute('data-slot-index');
+                if (selectedPieces[idx]) { selectedPieces.splice(idx, 1); updateBoard(); }
+            }));
         };
 
         const checkVictory = () => {
             if (selectedPieces.length !== totalSlots) return;
-
-            const userChars = selectedPieces.map(p => p.char).sort().join('');
-            const targetChars = correctRadicals.slice().sort().join('');
-            const slotsContainer = document.getElementById('slots-container');
-
-            if (userChars === targetChars) {
-                if (isPhase1) {
-                    slotsContainer.innerHTML = `<div class="text-xl font-bold text-green-600 bg-green-100 px-6 py-4 rounded-xl border-2 border-green-500 shadow-sm">¡Correcto!</div>`;
-                } else {
-                    slotsContainer.innerHTML = `<div class="w-32 h-32 bg-green-100 border-4 border-green-500 rounded-2xl flex items-center justify-center text-6xl font-bold text-green-700 shadow-lg scale-110 transition-transform duration-300">${currentItem.kanji}</div>`;
-                }
+            if (selectedPieces.map(p => p.char).sort().join('') === currentItem.radicals.slice().sort().join('')) {
+                document.getElementById('slots-container').innerHTML = isPhase1 
+                    ? `<div class="text-xl font-bold text-green-600 bg-green-100 px-6 py-4 rounded-xl border-2 border-green-500 shadow-sm">¡Correcto!</div>`
+                    : `<div class="w-32 h-32 bg-green-100 border-4 border-green-500 rounded-2xl flex items-center justify-center text-6xl font-bold text-green-700 shadow-lg scale-110">${currentItem.kanji}</div>`;
                 setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
             } else {
-                slotsContainer.classList.add('animate-pulse', 'border-red-500');
-                setTimeout(() => {
-                    selectedPieces = [];
-                    slotsContainer.classList.remove('animate-pulse', 'border-red-500');
-                    updateBoard();
-                }, 800);
+                const sc = document.getElementById('slots-container');
+                sc.classList.add('animate-pulse', 'border-red-500');
+                setTimeout(() => { selectedPieces = []; sc.classList.remove('animate-pulse', 'border-red-500'); updateBoard(); }, 800);
             }
         };
-
-        const headerBadge = isPhase1 
-            ? `<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-blue-200">Fase 1: Análisis</span>`
-            : `<span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-purple-200">Fase 2: Memoria</span>`;
 
         const questionContent = isPhase1
             ? `<div class="text-center mb-4"><div class="text-8xl font-bold text-gray-800 mb-2 drop-shadow-sm">${currentItem.kanji}</div><h3 class="text-xl font-bold text-gray-700 uppercase tracking-wide mb-1">${currentItem.meaning}</h3></div>`
@@ -531,72 +463,163 @@ const startKanjiExercise = (kanjiTheme, nextThemeId, allThemesData) => {
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
                 <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
-                    ${headerBadge}
-                    <span class="text-xs">${currentIndex + 1} / ${exerciseQueue.length}</span>
-                    <button id="btn-quit" class="hover:text-primary transition-colors"><i data-lucide="x"></i></button>
+                    <span class="${isPhase1 ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-purple-100 text-purple-800 border-purple-200'} px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border">Misión 1</span>
+                    <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
                 </div>
                 ${questionContent}
                 <div class="flex-grow flex flex-col items-center justify-center mb-6"><div id="slots-container" class="flex gap-4 p-4 min-h-[6rem]"></div></div>
-                <div class="bg-gray-100 p-6 rounded-t-3xl -mx-4 pb-12 shadow-inner border-t border-gray-200">
-                    <div id="pieces-container" class="flex flex-wrap justify-center gap-3"></div>
-                </div>
+                <div class="bg-gray-100 p-6 rounded-t-3xl -mx-4 pb-12 shadow-inner border-t border-gray-200"><div id="pieces-container" class="flex flex-wrap justify-center gap-3"></div></div>
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', renderDashboard);
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
         updateBoard();
     };
+    showQuestion();
+};
 
-    const renderJukugo = (currentItem) => {
+const startKanjiMission2 = (kanjiTheme, allThemesData) => {
+    let phase3Items = [];
+    kanjiTheme.items.forEach(item => {
+        if (item.context_words) item.context_words.forEach(cw => phase3Items.push({ ...cw }));
+    });
+    const exerciseQueue = shuffleArray(phase3Items);
+    let currentIndex = 0;
+    let showingPresentation = true;
+
+    const showQuestion = () => {
+        if (currentIndex >= exerciseQueue.length) {
+            alert("¡Vocabulario completado! Haz la Misión 3 para terminar.");
+            return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
+        }
+
+        const currentItem = exerciseQueue[currentIndex];
+
+        if (showingPresentation) {
+            // TARJETA DE PRESENTACIÓN DOCENTE
+            document.getElementById('app-view').innerHTML = `
+                <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
+                    <div class="flex justify-between items-center text-gray-500 font-bold mb-2">
+                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Aprende</span>
+                        <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
+                    </div>
+                    
+                    <div class="flex-grow flex flex-col items-center justify-center text-center gap-4">
+                        <div class="text-sm font-bold text-gray-400 tracking-widest">${currentItem.type_reading || 'ON'}</div>
+                        <div class="text-7xl font-bold text-gray-800 mb-2">${currentItem.word}</div>
+                        <div class="text-xl font-bold text-indigo-600 mb-4 bg-indigo-50 px-6 py-2 rounded-xl">${currentItem.meaning}</div>
+                        
+                        <div class="w-full bg-yellow-50 border border-yellow-200 p-4 rounded-xl text-left shadow-sm mt-4">
+                            <p class="text-xs font-bold text-yellow-800 uppercase mb-1 flex items-center gap-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Etimología</p>
+                            <p class="text-sm text-yellow-900">${currentItem.etymology || 'Forma compuesta'}</p>
+                        </div>
+                        
+                        <button id="btn-audio" class="mt-4 p-5 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors shadow-sm"><i data-lucide="volume-2" class="w-8 h-8"></i></button>
+                    </div>
+
+                    <div class="pb-8 mt-6">
+                        <button id="btn-continue" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-md hover:bg-indigo-700 transition-colors flex justify-center items-center gap-2">Practicar Lectura <i data-lucide="arrow-right"></i></button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+            playJapaneseAudio(currentItem.correct); // Autoplay
+
+            document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
+            document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(currentItem.correct));
+            document.getElementById('btn-continue').addEventListener('click', () => {
+                showingPresentation = false;
+                showQuestion();
+            });
+
+        } else {
+            // TARJETA DE EVALUACIÓN
+            const options = shuffleArray([currentItem.correct, ...currentItem.distractors.slice(0, 3)]);
+            const highlightedWord = currentItem.word.replace(currentItem.target, `<span class="text-indigo-600">${currentItem.target}</span>`);
+
+            document.getElementById('app-view').innerHTML = `
+                <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
+                    <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
+                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Práctica</span>
+                        <span class="text-xs">${currentIndex + 1} / ${exerciseQueue.length}</span>
+                    </div>
+                    <div class="flex-grow flex flex-col items-center justify-center text-center mb-8">
+                        <p class="text-gray-500 text-sm font-bold uppercase mb-2">Lectura del kanji destacado</p>
+                        <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${highlightedWord}</div>
+                        <div class="bg-gray-100 text-gray-700 py-2 px-6 rounded-xl inline-block font-bold border border-gray-200 shadow-sm">"${currentItem.meaning}"</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 pb-8 w-full" id="options-container">
+                        ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-5 rounded-xl font-bold text-xl text-gray-700 hover:border-indigo-500 hover:text-indigo-600 shadow-sm" data-answer="${opt}">${opt}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+
+            const optionButtons = document.querySelectorAll('.option-btn');
+            optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
+                const ans = e.currentTarget.getAttribute('data-answer');
+                optionButtons.forEach(b => b.disabled = true);
+                if (ans === currentItem.correct) e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                else {
+                    e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.correct).classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                }
+                setTimeout(() => { 
+                    currentIndex++; 
+                    showingPresentation = true; // Resetea para la siguiente palabra
+                    showQuestion(); 
+                }, 1500);
+            }));
+        }
+    };
+    showQuestion();
+};
+
+const startKanjiMission3 = (kanjiTheme, nextThemeId, allThemesData) => {
+    // Mini-test final del tema actual (solo jukugos por rapidez)
+    let phase3Items = [];
+    kanjiTheme.items.forEach(item => { if (item.context_words) item.context_words.forEach(cw => phase3Items.push({ ...cw })); });
+    const exerciseQueue = shuffleArray(phase3Items).slice(0, 10); // Máximo 10 preguntas
+    let currentIndex = 0;
+
+    const showQuestion = () => {
+        if (currentIndex >= exerciseQueue.length) {
+            appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId !== "null" ? nextThemeId : null, kanjiTheme.items);
+            return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => renderKanjiThemeList(allThemesData));
+        }
+        
+        const currentItem = exerciseQueue[currentIndex];
         const options = shuffleArray([currentItem.correct, ...currentItem.distractors.slice(0, 3)]);
-        const highlightedWord = currentItem.word.replace(currentItem.target, `<span class="text-secondary">${currentItem.target}</span>`);
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
                 <div class="flex justify-between items-center text-gray-500 font-bold mb-6">
-                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Fase 3: Contexto</span>
-                    <span class="text-xs">${currentIndex + 1} / ${exerciseQueue.length}</span>
-                    <button id="btn-quit" class="hover:text-primary transition-colors"><i data-lucide="x"></i></button>
+                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-yellow-200"><i data-lucide="award" class="w-3 h-3 inline"></i> Examen Final</span>
+                    <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
                 </div>
-
                 <div class="flex-grow flex flex-col items-center justify-center text-center mb-8">
-                    <p class="text-gray-500 text-sm font-bold uppercase mb-2">¿Cómo se lee el kanji destacado?</p>
-                    <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${highlightedWord}</div>
-                    <div class="bg-gray-100 text-gray-700 py-2 px-6 rounded-xl inline-block font-bold border border-gray-200 shadow-sm">
-                        "${currentItem.meaning}"
-                    </div>
+                    <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${currentItem.word}</div>
                 </div>
-
                 <div class="grid grid-cols-2 gap-3 pb-8 w-full" id="options-container">
-                    ${options.map(opt => `
-                        <button class="option-btn bg-white border-2 border-gray-200 py-5 rounded-xl font-bold text-xl text-gray-700 hover:border-indigo-500 hover:text-indigo-600 transition-colors shadow-sm" data-answer="${opt}">
-                            ${opt}
-                        </button>
-                    `).join('')}
+                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-5 rounded-xl font-bold text-xl text-gray-700 hover:border-yellow-500 hover:text-yellow-600 shadow-sm" data-answer="${opt}">${opt}</button>`).join('')}
                 </div>
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', renderDashboard);
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
 
         const optionButtons = document.querySelectorAll('.option-btn');
-        optionButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const selectedAnswer = e.currentTarget.getAttribute('data-answer');
-                optionButtons.forEach(b => b.disabled = true);
-
-                if (selectedAnswer === currentItem.correct) {
-                    e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
-                } else {
-                    e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
-                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.correct).classList.add('bg-green-100', 'border-green-500', 'text-green-700');
-                }
-
-                setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
-            });
-        });
+        optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
+            const isCorrect = e.currentTarget.getAttribute('data-answer') === currentItem.correct;
+            optionButtons.forEach(b => b.disabled = true);
+            if (isCorrect) e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+            else {
+                e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.correct).classList.add('bg-green-100', 'border-green-500');
+            }
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
+        }));
     };
-
     showQuestion();
 };
 
