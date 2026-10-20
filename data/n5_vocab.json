@@ -7,9 +7,28 @@
       "kanji": "今日は",
       "kana": "こんにちは",
       "romaji": "konnichiwa",
-      "meaning": "Hola / Buenas tardes",
-      "example_ja": "皆さん、今日は。",
-      "example_es": "Hola a todos."
+      "meaning": "Hola / Buenas tardes"
+    },
+    {
+      "id": "v5_002",
+      "kanji": "お早う",
+      "kana": "おはよう",
+      "romaji": "ohayou",
+      "meaning": "Buenos días"
+    },
+    {
+      "id": "v5_003",
+      "kanji": "今晩は",
+      "kana": "こんばんは",
+      "romaji": "konbanwa",
+      "meaning": "Buenas noches"
+    },
+    {
+      "id": "v5_004",
+      "kanji": "有難う",
+      "kana": "ありがとう",
+      "romaji": "arigatou",
+      "meaning": "Gracias"
     }
   ]
 }
