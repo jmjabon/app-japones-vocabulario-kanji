@@ -97,15 +97,11 @@ const generateThemeListHtml = (themes, type) => {
         let statusIcon, borderClass;
 
         if (isCheckpoint) {
-            statusIcon = isCompleted ? '<i data-lucide="award" class="text-yellow-500"></i>' 
-                       : (isUnlocked ? '<i data-lucide="swords" class="text-red-500 animate-pulse"></i>' : '<i data-lucide="lock" class="text-gray-400"></i>');
-            borderClass = isCompleted ? 'border-yellow-500 bg-yellow-50' 
-                        : (isUnlocked ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-gray-100 opacity-70');
+            statusIcon = isCompleted ? '<i data-lucide="award" class="text-yellow-500"></i>' : (isUnlocked ? '<i data-lucide="swords" class="text-red-500 animate-pulse"></i>' : '<i data-lucide="lock" class="text-gray-400"></i>');
+            borderClass = isCompleted ? 'border-yellow-500 bg-yellow-50' : (isUnlocked ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-gray-100 opacity-70');
         } else {
-            statusIcon = isCompleted ? '<i data-lucide="check-circle" class="text-green-500"></i>' 
-                       : (isUnlocked ? '<i data-lucide="unlock" class="text-blue-500"></i>' : '<i data-lucide="lock" class="text-gray-400"></i>');
-            borderClass = isCompleted ? 'border-green-500 bg-green-50' 
-                        : (isUnlocked ? (type === 'vocab' ? 'border-primary bg-white' : 'border-secondary bg-white') : 'border-gray-200 bg-gray-100 opacity-70');
+            statusIcon = isCompleted ? '<i data-lucide="check-circle" class="text-green-500"></i>' : (isUnlocked ? '<i data-lucide="unlock" class="text-blue-500"></i>' : '<i data-lucide="lock" class="text-gray-400"></i>');
+            borderClass = isCompleted ? 'border-green-500 bg-green-50' : (isUnlocked ? (type === 'vocab' ? 'border-primary bg-white' : 'border-secondary bg-white') : 'border-gray-200 bg-gray-100 opacity-70');
         }
 
         return `
@@ -339,7 +335,7 @@ const startVocabExercise = (vocabTheme, nextThemeId, allThemesData) => {
     showQuestion();
 };
 
-// --- MÓDULO KANJI REFACTORIZADO (MISIONES MODULARES) ---
+// --- MÓDULO KANJI (NUEVO CONTEXTO TOTAL) ---
 
 const renderKanjiThemeList = (kanjiThemes) => {
     if (!Array.isArray(kanjiThemes)) kanjiThemes = [kanjiThemes];
@@ -381,7 +377,7 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, allThemesData) => {
                     <div class="bg-indigo-500 text-white p-3 rounded-xl"><i data-lucide="book-open"></i></div>
                     <div>
                         <h3 class="font-bold text-gray-800 text-lg">Misión 2: Vocabulario</h3>
-                        <p class="text-sm text-gray-500">Aprende Jukugos y sus lecturas.</p>
+                        <p class="text-sm text-gray-500">Aprende palabras y lecturas reales.</p>
                     </div>
                 </button>
 
@@ -481,60 +477,74 @@ const startKanjiMission1 = (kanjiTheme, allThemesData) => {
 const startKanjiMission2 = (kanjiTheme, allThemesData) => {
     let phase3Items = [];
     kanjiTheme.items.forEach(item => {
-        if (item.context_words) item.context_words.forEach(cw => phase3Items.push({ ...cw }));
+        if (item.context_words) {
+            item.context_words.forEach(cw => phase3Items.push({
+                ...cw, 
+                parent_kanji: item.kanji, 
+                parent_on: item.onyomi.join(', '), 
+                parent_kun: item.kunyomi.join(', ')
+            }));
+        }
     });
+    
     const exerciseQueue = shuffleArray(phase3Items);
     let currentIndex = 0;
     let showingPresentation = true;
 
     const showQuestion = () => {
         if (currentIndex >= exerciseQueue.length) {
-            alert("¡Vocabulario completado! Haz la Misión 3 para terminar.");
+            alert("¡Vocabulario completado! Haz la Misión 3 para terminar el tema.");
             return renderKanjiSubmenu(kanjiTheme, null, allThemesData);
         }
 
         const currentItem = exerciseQueue[currentIndex];
 
         if (showingPresentation) {
-            // TARJETA DE PRESENTACIÓN DOCENTE
             document.getElementById('app-view').innerHTML = `
                 <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4 animate-fade-in">
-                    <div class="flex justify-between items-center text-gray-500 font-bold mb-2">
+                    <div class="flex justify-between items-center text-gray-500 font-bold mb-4">
                         <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Aprende</span>
                         <button id="btn-quit" class="hover:text-primary"><i data-lucide="x"></i></button>
                     </div>
                     
-                    <div class="flex-grow flex flex-col items-center justify-center text-center gap-4">
-                        <div class="text-sm font-bold text-gray-400 tracking-widest">${currentItem.type_reading || 'ON'}</div>
-                        <div class="text-7xl font-bold text-gray-800 mb-2">${currentItem.word}</div>
-                        <div class="text-xl font-bold text-indigo-600 mb-4 bg-indigo-50 px-6 py-2 rounded-xl">${currentItem.meaning}</div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 mb-2 w-full text-center flex flex-col gap-2 shadow-sm">
+                        <span class="text-xs font-bold text-gray-500 uppercase">Kanji: <span class="text-lg text-gray-800">${currentItem.parent_kanji}</span></span>
+                        <div class="flex justify-center gap-2 text-xs">
+                            <span class="text-blue-700 bg-blue-100 border border-blue-200 px-2 py-1 rounded font-bold">ON: ${currentItem.parent_on}</span>
+                            <span class="text-green-700 bg-green-100 border border-green-200 px-2 py-1 rounded font-bold">KUN: ${currentItem.parent_kun}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-grow flex flex-col items-center justify-center text-center gap-2">
+                        <div class="text-lg font-bold text-indigo-600 tracking-widest">${currentItem.full_reading}</div>
+                        <div class="text-6xl font-bold text-gray-800 mb-2">${currentItem.word}</div>
+                        <div class="text-lg font-bold text-gray-600 mb-2">"${currentItem.meaning}"</div>
                         
-                        <div class="w-full bg-yellow-50 border border-yellow-200 p-4 rounded-xl text-left shadow-sm mt-4">
+                        <div class="w-full bg-yellow-50 border border-yellow-200 p-4 rounded-xl text-left shadow-sm mt-2">
                             <p class="text-xs font-bold text-yellow-800 uppercase mb-1 flex items-center gap-1"><i data-lucide="lightbulb" class="w-4 h-4"></i> Etimología</p>
-                            <p class="text-sm text-yellow-900">${currentItem.etymology || 'Forma compuesta'}</p>
+                            <p class="text-sm text-yellow-900">${currentItem.etymology || 'Palabra compuesta'}</p>
                         </div>
                         
                         <button id="btn-audio" class="mt-4 p-5 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors shadow-sm"><i data-lucide="volume-2" class="w-8 h-8"></i></button>
                     </div>
 
-                    <div class="pb-8 mt-6">
+                    <div class="pb-8 mt-4">
                         <button id="btn-continue" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-md hover:bg-indigo-700 transition-colors flex justify-center items-center gap-2">Practicar Lectura <i data-lucide="arrow-right"></i></button>
                     </div>
                 </div>
             `;
             lucide.createIcons();
-            playJapaneseAudio(currentItem.correct); // Autoplay
+            playJapaneseAudio(currentItem.full_reading); 
 
             document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, allThemesData));
-            document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(currentItem.correct));
+            document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(currentItem.full_reading));
             document.getElementById('btn-continue').addEventListener('click', () => {
                 showingPresentation = false;
                 showQuestion();
             });
 
         } else {
-            // TARJETA DE EVALUACIÓN
-            const options = shuffleArray([currentItem.correct, ...currentItem.distractors.slice(0, 3)]);
+            const options = shuffleArray([currentItem.full_reading, ...currentItem.distractors.slice(0, 3)]);
             const highlightedWord = currentItem.word.replace(currentItem.target, `<span class="text-indigo-600">${currentItem.target}</span>`);
 
             document.getElementById('app-view').innerHTML = `
@@ -544,7 +554,7 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
                         <span class="text-xs">${currentIndex + 1} / ${exerciseQueue.length}</span>
                     </div>
                     <div class="flex-grow flex flex-col items-center justify-center text-center mb-8">
-                        <p class="text-gray-500 text-sm font-bold uppercase mb-2">Lectura del kanji destacado</p>
+                        <p class="text-gray-500 text-sm font-bold uppercase mb-2">¿Cómo se lee esta palabra?</p>
                         <div class="text-6xl font-bold text-gray-800 mb-6 tracking-widest">${highlightedWord}</div>
                         <div class="bg-gray-100 text-gray-700 py-2 px-6 rounded-xl inline-block font-bold border border-gray-200 shadow-sm">"${currentItem.meaning}"</div>
                     </div>
@@ -559,16 +569,18 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
             optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
                 const ans = e.currentTarget.getAttribute('data-answer');
                 optionButtons.forEach(b => b.disabled = true);
-                if (ans === currentItem.correct) e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
-                else {
+                if (ans === currentItem.full_reading) {
+                    e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                    playJapaneseAudio(currentItem.full_reading);
+                } else {
                     e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
-                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.correct).classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.full_reading).classList.add('bg-green-100', 'border-green-500', 'text-green-700');
                 }
                 setTimeout(() => { 
                     currentIndex++; 
-                    showingPresentation = true; // Resetea para la siguiente palabra
+                    showingPresentation = true; 
                     showQuestion(); 
-                }, 1500);
+                }, 1800);
             }));
         }
     };
@@ -576,10 +588,9 @@ const startKanjiMission2 = (kanjiTheme, allThemesData) => {
 };
 
 const startKanjiMission3 = (kanjiTheme, nextThemeId, allThemesData) => {
-    // Mini-test final del tema actual (solo jukugos por rapidez)
     let phase3Items = [];
     kanjiTheme.items.forEach(item => { if (item.context_words) item.context_words.forEach(cw => phase3Items.push({ ...cw })); });
-    const exerciseQueue = shuffleArray(phase3Items).slice(0, 10); // Máximo 10 preguntas
+    const exerciseQueue = shuffleArray(phase3Items).slice(0, 10);
     let currentIndex = 0;
 
     const showQuestion = () => {
@@ -589,7 +600,7 @@ const startKanjiMission3 = (kanjiTheme, nextThemeId, allThemesData) => {
         }
         
         const currentItem = exerciseQueue[currentIndex];
-        const options = shuffleArray([currentItem.correct, ...currentItem.distractors.slice(0, 3)]);
+        const options = shuffleArray([currentItem.full_reading, ...currentItem.distractors.slice(0, 3)]);
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full max-w-md mx-auto w-full pt-4">
@@ -610,12 +621,12 @@ const startKanjiMission3 = (kanjiTheme, nextThemeId, allThemesData) => {
 
         const optionButtons = document.querySelectorAll('.option-btn');
         optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
-            const isCorrect = e.currentTarget.getAttribute('data-answer') === currentItem.correct;
+            const isCorrect = e.currentTarget.getAttribute('data-answer') === currentItem.full_reading;
             optionButtons.forEach(b => b.disabled = true);
             if (isCorrect) e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
             else {
                 e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
-                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.correct).classList.add('bg-green-100', 'border-green-500');
+                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === currentItem.full_reading).classList.add('bg-green-100', 'border-green-500');
             }
             setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
         }));
