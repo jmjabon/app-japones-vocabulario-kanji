@@ -30,8 +30,7 @@ const renderDashboard = () => {
     const dueItems = getDueItems();
     const dueCount = dueItems.length;
 
-    // Cálculo rápido de maestría global N5
-    const totalVocabThemes = manifestData.levels[0]?.vocab_file ? 3 : 1; 
+    // Cálculo del progreso global
     const completedVocab = appState.progress.completed_vocab_themes.length;
     const completedKanji = appState.progress.completed_kanji_themes.length;
     const totalMastery = Math.min(100, Math.round(((completedVocab + completedKanji) / 6) * 100));
@@ -39,96 +38,102 @@ const renderDashboard = () => {
     document.getElementById('app-view').innerHTML = `
         <div class="w-full pt-4 pb-[calc(3rem+env(safe-area-inset-bottom))] animate-fade-in space-y-6">
             
-            <!-- TOP BAR NATIVA: Selector de nivel y status -->
+            <!-- HEADER ESTILO APPS DE APPLE: Nivel activo + Barra de Maestría -->
             <header class="flex justify-between items-center px-1">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm tracking-wider shadow-sm">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm tracking-wider shadow-sm shadow-indigo-600/30">
                         N5
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-900 tracking-tight">Kanjis & Vocabulario</h1>
-                        <p class="text-xs text-gray-400 font-semibold tracking-wide uppercase">Progreso General: ${totalMastery}%</p>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-xl font-bold text-gray-900 tracking-tight">Kondo Japonés</h1>
+                            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                        </div>
+                        <p class="text-xs text-gray-400 font-medium">JLPT Inicial · ${totalMastery}% dominado</p>
                     </div>
                 </div>
-                <button id="btn-export-quick" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition-colors">
+                
+                <button id="btn-export-quick" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 flex items-center justify-center transition-all" title="Ajustes y Backup">
                     <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
                 </button>
             </header>
 
-            <!-- HERO WIDGET: Repaso Diario (Formato Tarjeta Apple Health/Fitness) -->
+            <!-- WIDGET SUPERIOR: Repaso Diario Leitner -->
             <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 text-white p-7 rounded-[2rem] shadow-xl shadow-indigo-500/10 border border-indigo-400/20">
                 <div class="absolute -right-6 -bottom-8 opacity-10 select-none text-9xl font-black font-serif pointer-events-none">
                     復
                 </div>
                 
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div class="space-y-1">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/15 text-indigo-100 backdrop-blur-md uppercase tracking-wider">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Repaso Espaciado
+                    <div class="space-y-1.5">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/15 text-indigo-100 backdrop-blur-md uppercase tracking-wider">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Repaso Espaciado (SRS)
                         </span>
-                        <h2 class="text-2xl font-bold tracking-tight text-white pt-1">Memoria a Largo Plazo</h2>
-                        <p class="text-sm text-indigo-200 max-w-sm">Consolida los caracteres que tu cerebro está a punto de olvidar.</p>
+                        <h2 class="text-2xl font-bold tracking-tight text-white">Memoria a Largo Plazo</h2>
+                        <p class="text-sm text-indigo-200 max-w-sm">Refuerza las tarjetas que tu cerebro está a punto de olvidar.</p>
                     </div>
 
                     <div class="flex items-center gap-3 w-full md:w-auto">
-                        <button id="btn-start-srs" class="flex-1 md:flex-initial bg-white text-indigo-900 hover:bg-indigo-50 active:scale-95 transition-all px-6 py-3.5 rounded-2xl font-bold text-base shadow-sm flex items-center justify-center gap-3 ${dueCount === 0 ? 'opacity-80' : ''}">
+                        <button id="btn-start-srs" class="flex-1 md:flex-initial bg-white text-indigo-900 hover:bg-indigo-50 active:scale-95 transition-all px-6 py-3.5 rounded-2xl font-bold text-base shadow-sm flex items-center justify-center gap-3 ${dueCount === 0 ? 'opacity-85' : ''}">
                             <span class="w-2.5 h-2.5 rounded-full ${dueCount > 0 ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'}"></span>
                             <span>${dueCount > 0 ? `Repasar (${dueCount})` : 'Al día'}</span>
                         </button>
-                        <button id="btn-srs-stats" class="w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white flex items-center justify-center transition-all backdrop-blur-md">
+                        <button id="btn-srs-stats" class="w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white flex items-center justify-center transition-all backdrop-blur-md" title="Ver Cajas de Memoria">
                             <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                         </button>
                     </div>
                 </div>
             </section>
 
-            <!-- TRACKS DE ESTUDIO: Vocabulario y Kanjis estilo App Store Cards -->
+            <!-- RUTAS DE APRENDIZAJE: Vocabulario y Kanjis -->
             <section class="space-y-3">
                 <div class="flex justify-between items-baseline px-1">
-                    <h3 class="text-lg font-bold text-gray-900">Rutas de Aprendizaje</h3>
+                    <h3 class="text-lg font-bold text-gray-900">Rutas de Estudio</h3>
                     <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Temario Oficial</span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
-                    <!-- Tarjeta Vocabulario -->
-                    <div id="btn-start-vocab" class="group relative overflow-hidden bg-white p-6 rounded-[1.75rem] border border-gray-200/70 shadow-sm hover:shadow-md hover:border-rose-200 active:scale-[0.99] transition-all cursor-pointer">
-                        <div class="absolute right-3 -bottom-2 text-8xl font-black text-rose-500/[0.06] select-none font-serif group-hover:scale-105 transition-transform">
+                    <!-- Tarjeta Vocabulario: Icono auténtico 'あ' (Hiragana) -->
+                    <div id="btn-start-vocab" class="group relative overflow-hidden bg-white p-6 rounded-[2rem] border border-gray-200/80 shadow-sm hover:shadow-md hover:border-rose-200 active:scale-[0.99] transition-all cursor-pointer">
+                        <div class="absolute right-4 -bottom-3 text-8xl font-black text-rose-500/[0.05] select-none font-serif group-hover:scale-105 transition-transform">
                             語
                         </div>
                         <div class="relative z-10 flex flex-col h-full justify-between gap-6">
                             <div class="flex items-start justify-between">
-                                <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 shadow-sm">
-                                    <i data-lucide="languages" class="w-6 h-6"></i>
+                                <!-- Badge auténtico de Hiragana / Vocabulario -->
+                                <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-serif font-black text-2xl shadow-sm">
+                                    あ
                                 </div>
-                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-rose-50 group-hover:text-rose-600 transition-colors">
+                                <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-rose-50 group-hover:text-rose-600 transition-colors">
                                     800 Palabras
                                 </span>
                             </div>
                             <div>
                                 <h4 class="text-xl font-bold text-gray-900 group-hover:text-rose-600 transition-colors">Vocabulario</h4>
-                                <p class="text-sm text-gray-500 mt-0.5">Léxico nativo, partículas y expresiones habituales.</p>
+                                <p class="text-sm text-gray-500 mt-1">Palabras en kana, katakana, expresiones y partículas esenciales.</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tarjeta Kanjis -->
-                    <div id="btn-start-kanji" class="group relative overflow-hidden bg-white p-6 rounded-[1.75rem] border border-gray-200/70 shadow-sm hover:shadow-md hover:border-slate-300 active:scale-[0.99] transition-all cursor-pointer">
-                        <div class="absolute right-3 -bottom-2 text-8xl font-black text-slate-700/[0.06] select-none font-serif group-hover:scale-105 transition-transform">
-                            漢
+                    <!-- Tarjeta Kanjis: Icono auténtico '漢' (Kanji / Carácter) -->
+                    <div id="btn-start-kanji" class="group relative overflow-hidden bg-white p-6 rounded-[2rem] border border-gray-200/80 shadow-sm hover:shadow-md hover:border-slate-300 active:scale-[0.99] transition-all cursor-pointer">
+                        <div class="absolute right-4 -bottom-3 text-8xl font-black text-slate-800/[0.05] select-none font-serif group-hover:scale-105 transition-transform">
+                            字
                         </div>
                         <div class="relative z-10 flex flex-col h-full justify-between gap-6">
                             <div class="flex items-start justify-between">
-                                <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
-                                    <i data-lucide="binary" class="w-6 h-6"></i>
+                                <!-- Badge auténtico de Kanji -->
+                                <div class="w-14 h-14 rounded-2xl bg-slate-900 text-amber-300 border border-slate-800 flex items-center justify-center font-serif font-black text-2xl shadow-sm">
+                                    漢
                                 </div>
-                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-slate-100 group-hover:text-slate-900 transition-colors">
+                                <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-slate-100 group-hover:text-slate-900 transition-colors">
                                     100 Kanjis
                                 </span>
                             </div>
                             <div>
                                 <h4 class="text-xl font-bold text-gray-900 group-hover:text-slate-900 transition-colors">Kanjis</h4>
-                                <p class="text-sm text-gray-500 mt-0.5">Radicales, forja semántica y lectura de Jukugos.</p>
+                                <p class="text-sm text-gray-500 mt-1">Despiece de radicales, forja visual y lectura en contexto (Jukugos).</p>
                             </div>
                         </div>
                     </div>
@@ -144,7 +149,7 @@ const renderDashboard = () => {
     document.getElementById('btn-srs-stats').addEventListener('click', renderSRSStats);
     document.getElementById('btn-start-vocab').addEventListener('click', async () => renderBlockList(await getVocabData(manifestData.levels[0].vocab_file), 'vocab'));
     document.getElementById('btn-start-kanji').addEventListener('click', async () => renderBlockList(await getKanjiData(manifestData.levels[0].kanji_file), 'kanji'));
-    document.getElementById('btn-export-quick').addEventListener('click', () => {
+    document.getElementById('btn-export-quick')?.addEventListener('click', () => {
         document.getElementById('btn-export')?.click();
     });
 };
@@ -210,7 +215,6 @@ const renderSRSStats = async () => {
 const renderBlockList = (blocksData, type) => {
     const flatThemes = blocksData.flatMap(b => b.themes);
     const isVocab = type === 'vocab';
-    const accentColor = isVocab ? 'rose' : 'indigo';
     
     const html = blocksData.map((block, index) => {
         const themesInBlock = block.themes.length;
@@ -220,10 +224,10 @@ const renderBlockList = (blocksData, type) => {
         const isMastered = completedInBlock === themesInBlock && themesInBlock > 0;
 
         return `
-            <div class="relative overflow-hidden bg-white border ${isUnlocked ? 'border-gray-200 hover:border-gray-300 active:scale-[0.99] cursor-pointer' : 'border-gray-100 bg-gray-50/50 opacity-60'} p-6 rounded-[1.75rem] transition-all block-card shadow-sm" data-index="${index}" data-unlocked="${isUnlocked}">
+            <div class="relative overflow-hidden bg-white border ${isUnlocked ? 'border-gray-200/80 hover:border-gray-300 active:scale-[0.99] cursor-pointer' : 'border-gray-100 bg-gray-50/50 opacity-60'} p-6 rounded-[1.75rem] transition-all block-card shadow-sm" data-index="${index}" data-unlocked="${isUnlocked}">
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base ${isMastered ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : (isUnlocked ? 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-400')}">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base ${isMastered ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : (isUnlocked ? (isVocab ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-indigo-50 text-indigo-600 border border-indigo-100') : 'bg-gray-100 text-gray-400')}">
                             ${index + 1}
                         </div>
                         <div>
@@ -232,7 +236,7 @@ const renderBlockList = (blocksData, type) => {
                         </div>
                     </div>
                     <div>
-                        ${isMastered ? '<div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></div>' : (isUnlocked ? '<div class="w-8 h-8 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>' : '<i data-lucide="lock" class="w-5 h-5 text-gray-400 mr-2"></i>')}
+                        ${isMastered ? '<div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><i data-lucide="check" class="w-5 h-5"></i></div>' : (isUnlocked ? '<div class="w-9 h-9 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center"><i data-lucide="chevron-right" class="w-5 h-5"></i></div>' : '<i data-lucide="lock" class="w-5 h-5 text-gray-400 mr-2"></i>')}
                     </div>
                 </div>
 
@@ -240,7 +244,7 @@ const renderBlockList = (blocksData, type) => {
                     <div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
                         <div class="h-2 rounded-full ${isMastered ? 'bg-emerald-500' : (isVocab ? 'bg-rose-500' : 'bg-indigo-600')} transition-all" style="width: ${(completedInBlock / themesInBlock) * 100}%"></div>
                     </div>
-                    <span class="text-xs font-semibold text-gray-400">${completedInBlock}/${themesInBlock} completados</span>
+                    <span class="text-xs font-semibold text-gray-400">${completedInBlock}/${themesInBlock} temas</span>
                 </div>
             </div>
         `;
@@ -249,7 +253,7 @@ const renderBlockList = (blocksData, type) => {
     document.getElementById('app-view').innerHTML = `
         <div class="w-full pt-4 pb-[calc(3rem+env(safe-area-inset-bottom))] animate-fade-in space-y-6">
             <header class="flex items-center justify-between px-1">
-                <button id="btn-back" class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors">
+                <button id="btn-back" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors py-2">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> Inicio
                 </button>
                 <span class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-600 uppercase tracking-widest">${type}</span>
@@ -257,7 +261,7 @@ const renderBlockList = (blocksData, type) => {
 
             <div class="px-1">
                 <h2 class="text-2xl font-bold text-gray-900 tracking-tight">${isVocab ? 'Unidades de Vocabulario' : 'Unidades de Kanji'}</h2>
-                <p class="text-sm text-gray-500 mt-1">Completa cada unidad con un 100% de aciertos para desbloquear la siguiente.</p>
+                <p class="text-sm text-gray-500 mt-1">Completa cada tema con un 100% de aciertos para avanzar.</p>
             </div>
 
             <div class="space-y-3">
