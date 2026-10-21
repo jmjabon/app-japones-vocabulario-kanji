@@ -29,48 +29,124 @@ const renderDashboard = () => {
     appState = loadProgress(); 
     const dueItems = getDueItems();
     const dueCount = dueItems.length;
-    
+
+    // Cálculo rápido de maestría global N5
+    const totalVocabThemes = manifestData.levels[0]?.vocab_file ? 3 : 1; 
+    const completedVocab = appState.progress.completed_vocab_themes.length;
+    const completedKanji = appState.progress.completed_kanji_themes.length;
+    const totalMastery = Math.min(100, Math.round(((completedVocab + completedKanji) / 6) * 100));
+
     document.getElementById('app-view').innerHTML = `
-        <div class="flex flex-col gap-6 w-full pt-6 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
-            <header class="text-center mb-2">
-                <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">Kanji<span class="text-indigo-600">Master</span></h1>
-                <p class="text-gray-500 font-bold tracking-widest uppercase text-xs mt-1">Nivel N5</p>
+        <div class="w-full pt-4 pb-[calc(3rem+env(safe-area-inset-bottom))] animate-fade-in space-y-6">
+            
+            <!-- TOP BAR NATIVA: Selector de nivel y status -->
+            <header class="flex justify-between items-center px-1">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm tracking-wider shadow-sm">
+                        N5
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900 tracking-tight">Kanjis & Vocabulario</h1>
+                        <p class="text-xs text-gray-400 font-semibold tracking-wide uppercase">Progreso General: ${totalMastery}%</p>
+                    </div>
+                </div>
+                <button id="btn-export-quick" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition-colors">
+                    <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                </button>
             </header>
 
-            <section class="bg-indigo-600 p-8 rounded-3xl apple-shadow border border-indigo-500 text-white relative overflow-hidden">
-                <div class="absolute -right-8 -top-8 opacity-10 transform rotate-12"><i data-lucide="brain-circuit" class="w-48 h-48"></i></div>
-                <h2 class="text-3xl font-bold mb-1 relative z-10">Repaso Diario</h2>
-                <p class="text-indigo-200 mb-6 relative z-10">Sistema de Memoria a Largo Plazo</p>
-                <div class="flex flex-col md:flex-row gap-4 relative z-10">
-                    <button id="btn-start-srs" class="w-full md:w-2/3 bg-white text-indigo-600 py-4 px-6 rounded-2xl font-bold shadow-md hover:bg-gray-50 transition-all flex items-center justify-between gap-2 ${dueCount === 0 ? 'opacity-90 cursor-not-allowed' : ''}" ${dueCount === 0 ? 'disabled' : ''}>
-                        <span class="flex items-center gap-2 text-lg">${dueCount > 0 ? '<i data-lucide="play-circle" class="w-6 h-6"></i> Iniciar Sesión' : '<i data-lucide="check-circle" class="w-6 h-6"></i> Todo al día'}</span>
-                        <span class="${dueCount > 0 ? 'bg-red-500 text-white' : 'bg-green-100 text-green-700'} px-4 py-1.5 rounded-full text-sm font-bold shadow-inner">${dueCount} pendientes</span>
-                    </button>
-                    <button id="btn-srs-stats" class="w-full md:w-1/3 bg-indigo-700 text-indigo-100 py-4 rounded-2xl font-bold shadow-sm hover:bg-indigo-800 transition-colors flex justify-center items-center gap-2 border border-indigo-500">
-                        <i data-lucide="bar-chart-2" class="w-5 h-5"></i> Mi Memoria
-                    </button>
+            <!-- HERO WIDGET: Repaso Diario (Formato Tarjeta Apple Health/Fitness) -->
+            <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 text-white p-7 rounded-[2rem] shadow-xl shadow-indigo-500/10 border border-indigo-400/20">
+                <div class="absolute -right-6 -bottom-8 opacity-10 select-none text-9xl font-black font-serif pointer-events-none">
+                    復
+                </div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="space-y-1">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/15 text-indigo-100 backdrop-blur-md uppercase tracking-wider">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Repaso Espaciado
+                        </span>
+                        <h2 class="text-2xl font-bold tracking-tight text-white pt-1">Memoria a Largo Plazo</h2>
+                        <p class="text-sm text-indigo-200 max-w-sm">Consolida los caracteres que tu cerebro está a punto de olvidar.</p>
+                    </div>
+
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <button id="btn-start-srs" class="flex-1 md:flex-initial bg-white text-indigo-900 hover:bg-indigo-50 active:scale-95 transition-all px-6 py-3.5 rounded-2xl font-bold text-base shadow-sm flex items-center justify-center gap-3 ${dueCount === 0 ? 'opacity-80' : ''}">
+                            <span class="w-2.5 h-2.5 rounded-full ${dueCount > 0 ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'}"></span>
+                            <span>${dueCount > 0 ? `Repasar (${dueCount})` : 'Al día'}</span>
+                        </button>
+                        <button id="btn-srs-stats" class="w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white flex items-center justify-center transition-all backdrop-blur-md">
+                            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                        </button>
+                    </div>
                 </div>
             </section>
 
-            <section class="bg-white p-8 rounded-3xl apple-shadow border border-gray-100">
-                <h3 class="text-xl font-bold mb-6 text-gray-800">Aprender Nuevos Temas</h3>
+            <!-- TRACKS DE ESTUDIO: Vocabulario y Kanjis estilo App Store Cards -->
+            <section class="space-y-3">
+                <div class="flex justify-between items-baseline px-1">
+                    <h3 class="text-lg font-bold text-gray-900">Rutas de Aprendizaje</h3>
+                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Temario Oficial</span>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button id="btn-start-vocab" class="bg-red-500 text-white py-6 rounded-2xl font-bold shadow-md hover:bg-red-600 transition-transform hover:scale-[1.02] flex flex-col items-center justify-center gap-2 text-lg">
-                        <i data-lucide="book-type" class="w-8 h-8 mb-1"></i> Vocabulario
-                    </button>
-                    <button id="btn-start-kanji" class="bg-gray-800 text-white py-6 rounded-2xl font-bold shadow-md hover:bg-gray-900 transition-transform hover:scale-[1.02] flex flex-col items-center justify-center gap-2 text-lg">
-                        <i data-lucide="pen-tool" class="w-8 h-8 mb-1"></i> Kanjis
-                    </button>
+                    
+                    <!-- Tarjeta Vocabulario -->
+                    <div id="btn-start-vocab" class="group relative overflow-hidden bg-white p-6 rounded-[1.75rem] border border-gray-200/70 shadow-sm hover:shadow-md hover:border-rose-200 active:scale-[0.99] transition-all cursor-pointer">
+                        <div class="absolute right-3 -bottom-2 text-8xl font-black text-rose-500/[0.06] select-none font-serif group-hover:scale-105 transition-transform">
+                            語
+                        </div>
+                        <div class="relative z-10 flex flex-col h-full justify-between gap-6">
+                            <div class="flex items-start justify-between">
+                                <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 shadow-sm">
+                                    <i data-lucide="languages" class="w-6 h-6"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-rose-50 group-hover:text-rose-600 transition-colors">
+                                    800 Palabras
+                                </span>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-900 group-hover:text-rose-600 transition-colors">Vocabulario</h4>
+                                <p class="text-sm text-gray-500 mt-0.5">Léxico nativo, partículas y expresiones habituales.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Kanjis -->
+                    <div id="btn-start-kanji" class="group relative overflow-hidden bg-white p-6 rounded-[1.75rem] border border-gray-200/70 shadow-sm hover:shadow-md hover:border-slate-300 active:scale-[0.99] transition-all cursor-pointer">
+                        <div class="absolute right-3 -bottom-2 text-8xl font-black text-slate-700/[0.06] select-none font-serif group-hover:scale-105 transition-transform">
+                            漢
+                        </div>
+                        <div class="relative z-10 flex flex-col h-full justify-between gap-6">
+                            <div class="flex items-start justify-between">
+                                <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
+                                    <i data-lucide="binary" class="w-6 h-6"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-slate-100 group-hover:text-slate-900 transition-colors">
+                                    100 Kanjis
+                                </span>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-900 group-hover:text-slate-900 transition-colors">Kanjis</h4>
+                                <p class="text-sm text-gray-500 mt-0.5">Radicales, forja semántica y lectura de Jukugos.</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </section>
+
         </div>
     `;
     lucide.createIcons();
 
     if (dueCount > 0) document.getElementById('btn-start-srs').addEventListener('click', () => startSRSSession(dueItems));
+    document.getElementById('btn-srs-stats').addEventListener('click', renderSRSStats);
     document.getElementById('btn-start-vocab').addEventListener('click', async () => renderBlockList(await getVocabData(manifestData.levels[0].vocab_file), 'vocab'));
     document.getElementById('btn-start-kanji').addEventListener('click', async () => renderBlockList(await getKanjiData(manifestData.levels[0].kanji_file), 'kanji'));
-    document.getElementById('btn-srs-stats').addEventListener('click', renderSRSStats);
+    document.getElementById('btn-export-quick').addEventListener('click', () => {
+        document.getElementById('btn-export')?.click();
+    });
 };
 
 const renderSRSStats = async () => {
@@ -133,33 +209,60 @@ const renderSRSStats = async () => {
 
 const renderBlockList = (blocksData, type) => {
     const flatThemes = blocksData.flatMap(b => b.themes);
+    const isVocab = type === 'vocab';
+    const accentColor = isVocab ? 'rose' : 'indigo';
     
     const html = blocksData.map((block, index) => {
         const themesInBlock = block.themes.length;
         const completedInBlock = block.themes.filter(t => appState.progress[`completed_${type}_themes`].includes(t.theme_id)).length;
         const firstThemeId = block.themes[0].theme_id;
         const isUnlocked = appState.progress[`unlocked_${type}_themes`].includes(firstThemeId);
+        const isMastered = completedInBlock === themesInBlock && themesInBlock > 0;
 
         return `
-            <div class="border-2 ${isUnlocked ? 'border-indigo-500 bg-white cursor-pointer hover:-translate-y-1' : 'border-gray-200 bg-gray-50 opacity-60'} p-6 rounded-3xl apple-shadow transition-transform block-card" data-index="${index}" data-unlocked="${isUnlocked}">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-xl text-gray-800">${block.block_title}</h3>
-                    ${isUnlocked ? (completedInBlock === themesInBlock ? '<i data-lucide="check-circle" class="text-green-500 w-8 h-8"></i>' : '<i data-lucide="folder-open" class="text-indigo-500 w-8 h-8"></i>') : '<i data-lucide="lock" class="text-gray-400 w-8 h-8"></i>'}
+            <div class="relative overflow-hidden bg-white border ${isUnlocked ? 'border-gray-200 hover:border-gray-300 active:scale-[0.99] cursor-pointer' : 'border-gray-100 bg-gray-50/50 opacity-60'} p-6 rounded-[1.75rem] transition-all block-card shadow-sm" data-index="${index}" data-unlocked="${isUnlocked}">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base ${isMastered ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : (isUnlocked ? 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-400')}">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Unidad ${index + 1}</span>
+                            <h3 class="font-bold text-lg text-gray-900 leading-snug">${block.block_title.replace(/^Bloque \d+:\s*/, '')}</h3>
+                        </div>
+                    </div>
+                    <div>
+                        ${isMastered ? '<div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></div>' : (isUnlocked ? '<div class="w-8 h-8 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>' : '<i data-lucide="lock" class="w-5 h-5 text-gray-400 mr-2"></i>')}
+                    </div>
                 </div>
-                <div class="w-full bg-gray-100 rounded-full h-3 mb-3 overflow-hidden shadow-inner">
-                    <div class="bg-indigo-500 h-3 rounded-full transition-all" style="width: ${(completedInBlock/themesInBlock)*100}%"></div>
+
+                <div class="mt-5 flex items-center justify-between gap-4">
+                    <div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+                        <div class="h-2 rounded-full ${isMastered ? 'bg-emerald-500' : (isVocab ? 'bg-rose-500' : 'bg-indigo-600')} transition-all" style="width: ${(completedInBlock / themesInBlock) * 100}%"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-400">${completedInBlock}/${themesInBlock} completados</span>
                 </div>
-                <p class="text-sm text-gray-500 font-bold text-right">${completedInBlock} / ${themesInBlock} temas</p>
             </div>
         `;
     }).join('');
 
     document.getElementById('app-view').innerHTML = `
-        <div class="flex flex-col gap-5 w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
-            <button id="btn-back" class="text-gray-500 flex items-center gap-1 self-start py-2 hover:text-indigo-600 transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i> Menú Principal</button>
-            <h2 class="text-3xl font-extrabold text-gray-800 mb-1">${type === 'vocab' ? 'Vocabulario (N5)' : 'Kanjis (N5)'}</h2>
-            <p class="text-base text-gray-500 mb-4">Selecciona un bloque de estudio.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">${html}</div>
+        <div class="w-full pt-4 pb-[calc(3rem+env(safe-area-inset-bottom))] animate-fade-in space-y-6">
+            <header class="flex items-center justify-between px-1">
+                <button id="btn-back" class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Inicio
+                </button>
+                <span class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-600 uppercase tracking-widest">${type}</span>
+            </header>
+
+            <div class="px-1">
+                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">${isVocab ? 'Unidades de Vocabulario' : 'Unidades de Kanji'}</h2>
+                <p class="text-sm text-gray-500 mt-1">Completa cada unidad con un 100% de aciertos para desbloquear la siguiente.</p>
+            </div>
+
+            <div class="space-y-3">
+                ${html}
+            </div>
         </div>
     `;
     lucide.createIcons();
@@ -167,7 +270,7 @@ const renderBlockList = (blocksData, type) => {
 
     document.querySelectorAll('.block-card').forEach(card => {
         card.addEventListener('click', (e) => {
-            if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Bloque bloqueado. Supera los temas del bloque anterior.');
+            if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Unidad bloqueada. Completa las anteriores primero.');
             const ctx = { type, blocks: blocksData, bIdx: parseInt(e.currentTarget.getAttribute('data-index')), flat: flatThemes };
             if(type === 'vocab') renderVocabThemeList(ctx);
             else renderKanjiThemeList(ctx);
