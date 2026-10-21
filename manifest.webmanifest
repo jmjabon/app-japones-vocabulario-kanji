@@ -8,10 +8,10 @@
   "theme_color": "#4f46e5",
   "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "https://cdn.iconscout.com/icon/free/png-256/free-japan-flag-icon-download-in-svg-png-gif-file-formats--tokyo-country-national-pack-flags-icons-2860824.png",
-      "sizes": "256x256",
-      "type": "image/png"
-    }
-  ]
+  {
+    "src": "./media/icon-Kanji.jpg",
+    "sizes": "256x256",
+    "type": "image/jpg"
+  }
+ ]
 }
