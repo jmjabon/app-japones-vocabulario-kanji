@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport ajustado para iOS: Evita zoom accidental y respeta las Safe Areas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Etiquetas PWA y Apple nativas -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="./media/icon-Kanji.jpg">
+    <link rel="icon" type="image/jpg" href="./media/icon-Kanji.jpg">
+    
+    <title>KanjiMaster N5</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración para usar colores en las Safe Areas de Apple -->
+    <style>
+        body { 
+            background-color: #f9fafb; 
+            padding-bottom: env(safe-area-inset-bottom); /* Área segura inferior iOS */
+        }
+        /* Sombras premium tipo Apple */
+        .apple-shadow { box-shadow: 0 8px 30px rgba(0,0,0,0.04); }
+    </style>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="text-gray-900 antialiased font-sans select-none overscroll-y-none">
+    
+    <!-- Contenedor general. Aquí usamos md:max-w-2xl para que en iPad sea más ancho -->
+    <main id="app-view" class="w-full h-full min-h-screen px-4 pb-8 md:max-w-3xl mx-auto"></main>
+
+    <!-- Archivos JS Modules -->
+    <script type="module" src="js/storage.js"></script>
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/dataService.js"></script>
+    <script type="module" src="js/audio.js"></script>
+    <script type="module" src="js/srs.js"></script>
+    <script type="module" src="js/app.js"></script>
+
+    <!-- Registro del Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
+        }
+    </script>
+</body>
+</html>

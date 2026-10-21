@@ -1,0 +1,12 @@
+{
+  "current_version": 1.0,
+  "levels": [
+    {
+      "id": "n5",
+      "name": "JLPT N5",
+      "vocab_file": "n5_vocab.json",
+      "kanji_file": "n5_kanji.json",
+      "checkpoint_interval": 5
+    }
+  ]
+}

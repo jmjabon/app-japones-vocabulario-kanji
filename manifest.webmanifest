@@ -1,0 +1,17 @@
+{
+  "name": "KanjiMaster N5",
+  "short_name": "KanjiMaster",
+  "description": "Aprende Japonés Estructural",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "icons": [
+  {
+    "src": "./media/icon-Kanji.jpg",
+    "sizes": "256x256",
+    "type": "image/jpg"
+  }
+ ]
+}
