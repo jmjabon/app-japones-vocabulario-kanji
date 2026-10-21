@@ -213,15 +213,26 @@ const renderSRSStats = async () => {
 };
 
 const renderBlockList = (blocksData, type) => {
-    const flatThemes = blocksData.flatMap(b => b.themes);
+    // 1. Filtro de seguridad: ignora cualquier elemento suelto que no sea un bloque con 'themes'
+    const validBlocks = blocksData.filter(b => b && Array.isArray(b.themes));
+    const flatThemes = validBlocks.flatMap(b => b.themes);
     const isVocab = type === 'vocab';
+    const unlockedKey = `unlocked_${type}_themes`;
     
-    const html = blocksData.map((block, index) => {
+    const html = validBlocks.map((block, index) => {
         const themesInBlock = block.themes.length;
-        const completedInBlock = block.themes.filter(t => appState.progress[`completed_${type}_themes`].includes(t.theme_id)).length;
-        const firstThemeId = block.themes[0].theme_id;
-        const isUnlocked = appState.progress[`unlocked_${type}_themes`].includes(firstThemeId);
+        const completedInBlock = block.themes.filter(t => appState.progress[`completed_${type}_themes`]?.includes(t.theme_id)).length;
+        const firstThemeId = block.themes[0]?.theme_id;
+        
+        // 2. REGLA DE DESBLOQUEO: La Unidad 1 (index === 0) SIEMPRE está desbloqueada por defecto
+        const isUnlocked = index === 0 || (firstThemeId && appState.progress[unlockedKey]?.includes(firstThemeId));
         const isMastered = completedInBlock === themesInBlock && themesInBlock > 0;
+
+        // Auto-reparación de progreso: asegura que el ID inicial esté registrado en localStorage
+        if (index === 0 && firstThemeId && !appState.progress[unlockedKey]?.includes(firstThemeId)) {
+            appState.progress[unlockedKey].push(firstThemeId);
+            localStorage.setItem('kanjimaster_progress', JSON.stringify(appState.progress));
+        }
 
         return `
             <div class="relative overflow-hidden bg-white border ${isUnlocked ? 'border-gray-200/80 hover:border-gray-300 active:scale-[0.99] cursor-pointer' : 'border-gray-100 bg-gray-50/50 opacity-60'} p-6 rounded-[1.75rem] transition-all block-card shadow-sm" data-index="${index}" data-unlocked="${isUnlocked}">
@@ -275,7 +286,7 @@ const renderBlockList = (blocksData, type) => {
     document.querySelectorAll('.block-card').forEach(card => {
         card.addEventListener('click', (e) => {
             if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Unidad bloqueada. Completa las anteriores primero.');
-            const ctx = { type, blocks: blocksData, bIdx: parseInt(e.currentTarget.getAttribute('data-index')), flat: flatThemes };
+            const ctx = { type, blocks: validBlocks, bIdx: parseInt(e.currentTarget.getAttribute('data-index')), flat: flatThemes };
             if(type === 'vocab') renderVocabThemeList(ctx);
             else renderKanjiThemeList(ctx);
         });
