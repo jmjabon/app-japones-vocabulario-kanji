@@ -486,6 +486,36 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
     showExamQuestion();
 };
 
+// --- GENERADOR DE TARJETAS DE TEMA (Faltaba esta función) ---
+const generateThemeListHtml = (ctx) => {
+    return ctx.blocks[ctx.bIdx].themes.map((theme, index) => {
+        const unlockedKey = `unlocked_${ctx.type}_themes`;
+        const completedKey = `completed_${ctx.type}_themes`;
+        const isUnlocked = appState.progress[unlockedKey].includes(theme.theme_id);
+        const isCompleted = appState.progress[completedKey].includes(theme.theme_id);
+        const isCheckpoint = theme.type === 'checkpoint';
+        const flatIndex = ctx.flat.findIndex(t => t.theme_id === theme.theme_id);
+        const nextThemeId = ctx.flat[flatIndex + 1] ? ctx.flat[flatIndex + 1].theme_id : null;
+        
+        let statusIcon = isCompleted ? (isCheckpoint ? '<i data-lucide="award" class="text-amber-500 w-7 h-7"></i>' : '<i data-lucide="check-circle-2" class="text-emerald-500 w-7 h-7"></i>') 
+                     : (isUnlocked ? (isCheckpoint ? '<i data-lucide="swords" class="text-rose-500 animate-pulse w-7 h-7"></i>' : '<i data-lucide="unlock" class="text-blue-500 w-7 h-7"></i>') 
+                     : '<i data-lucide="lock" class="text-gray-400 w-7 h-7"></i>');
+
+        let borderClass = isCompleted ? (isCheckpoint ? 'border-amber-500 bg-amber-50' : 'border-emerald-500 bg-emerald-50') 
+                        : (isUnlocked ? (isCheckpoint ? 'border-rose-500 bg-rose-50' : (ctx.type === 'vocab' ? 'border-rose-200 bg-white hover:-translate-y-1 hover:shadow-md' : 'border-indigo-200 bg-white hover:-translate-y-1 hover:shadow-md')) : 'border-gray-200 bg-gray-50 opacity-60');
+
+        return `
+            <div class="${borderClass} border-2 p-6 rounded-[1.5rem] transition-all cursor-pointer theme-card flex flex-col justify-center shadow-sm" data-flat-index="${flatIndex}" data-unlocked="${isUnlocked}" data-next="${nextThemeId}" data-checkpoint="${isCheckpoint}">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-bold text-lg leading-tight ${isCheckpoint && !isCompleted && isUnlocked ? 'text-rose-700' : 'text-gray-900'}">${theme.theme_title}</h3>
+                    <div class="ml-4">${statusIcon}</div>
+                </div>
+                <p class="text-sm text-gray-500 font-medium">${isCheckpoint ? 'Examen de control' : `${theme.items?.length || 0} elementos`}</p>
+            </div>
+        `;
+    }).join('');
+};
+
 // --- MÓDULO VOCABULARIO ---
 
 const renderVocabThemeList = (ctx) => {
