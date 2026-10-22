@@ -125,6 +125,86 @@ const renderDashboard = () => {
     document.getElementById('btn-export-quick')?.addEventListener('click', () => document.getElementById('btn-export')?.click());
 };
 
+// --- ESTADÍSTICAS DE MEMORIA SRS ---
+const renderSRSStats = async () => {
+    appState = loadProgress(); 
+    const dict = await buildMasterDictionary();
+    const boxes = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const box1Items = [];
+
+    // Contar cuántos elementos hay en cada caja de memoria
+    Object.keys(appState.leitner).forEach(itemId => {
+        const itemData = appState.leitner[itemId];
+        if (boxes[itemData.box] !== undefined) boxes[itemData.box]++;
+        if (itemData.box === 1 && dict[itemId]) box1Items.push(dict[itemId]);
+    });
+
+    const box1Html = box1Items.length > 0 
+        ? `<div class="mt-4 bg-white/60 p-4 rounded-2xl shadow-inner border border-rose-100 max-h-48 overflow-y-auto">
+            <p class="text-[11px] font-bold text-rose-400 uppercase tracking-widest mb-3">Palabras atascadas:</p>
+            <div class="flex flex-wrap gap-2">
+                ${box1Items.map(item => `<span class="bg-white text-gray-700 px-3 py-1.5 rounded-xl text-sm font-bold border border-gray-200 shadow-sm">${item.kanji || item.kana}</span>`).join('')}
+            </div>
+           </div>
+           <button id="btn-train-mistakes" class="w-full bg-rose-500 text-white py-4 rounded-2xl font-bold shadow-sm hover:bg-rose-600 mt-4 text-base transition-transform active:scale-95 flex items-center justify-center gap-2"><i data-lucide="dumbbell" class="w-5 h-5"></i> Entrenar Fallos</button>`
+        : `<div class="mt-3 bg-emerald-50/80 border border-emerald-100 p-4 rounded-2xl flex items-center gap-3"><i data-lucide="check-circle-2" class="w-6 h-6 text-emerald-500"></i><p class="text-sm text-emerald-700 font-bold">¡Caja 1 limpia! No hay fallos recientes.</p></div>`;
+
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col gap-5 w-full pt-4 pb-[calc(3rem+env(safe-area-inset-bottom))] animate-fade-in">
+            <header class="flex items-center px-1">
+                <button id="btn-back-dash" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors py-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Volver al Inicio</button>
+            </header>
+            
+            <div class="px-1">
+                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Memoria a Largo Plazo</h2>
+                <p class="text-sm text-gray-500 mt-1">Distribución del Sistema de Repaso Espaciado (SRS).</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-rose-50/50 border border-rose-100 p-6 rounded-[2rem] shadow-sm md:col-span-2">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center"><i data-lucide="alert-circle" class="w-5 h-5"></i></div>
+                            <span class="font-bold text-rose-900 text-lg">Caja 1 (Fallos)</span>
+                        </div>
+                        <span class="bg-rose-500 text-white px-4 py-1.5 rounded-full font-bold text-lg shadow-sm">${boxes[1]}</span>
+                    </div>
+                    ${box1Html}
+                </div>
+                
+                <div class="bg-orange-50/50 border border-orange-100 p-5 rounded-[1.5rem] flex justify-between items-center shadow-sm">
+                    <span class="font-bold text-orange-900 text-sm">Caja 2 (Corto plazo)</span>
+                    <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold">${boxes[2]}</span>
+                </div>
+                
+                <div class="bg-amber-50/50 border border-amber-100 p-5 rounded-[1.5rem] flex justify-between items-center shadow-sm">
+                    <span class="font-bold text-amber-900 text-sm">Caja 3 (Consolidando)</span>
+                    <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-bold">${boxes[3]}</span>
+                </div>
+                
+                <div class="bg-blue-50/50 border border-blue-100 p-5 rounded-[1.5rem] flex justify-between items-center shadow-sm">
+                    <span class="font-bold text-blue-900 text-sm">Caja 4 (Medio plazo)</span>
+                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">${boxes[4]}</span>
+                </div>
+                
+                <div class="bg-emerald-50 border border-emerald-200 p-6 rounded-[1.5rem] flex justify-between items-center shadow-sm md:col-span-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center"><i data-lucide="award" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-emerald-900 text-lg">Caja 5 (Memoria Maestra)</span>
+                    </div>
+                    <span class="bg-emerald-500 text-white px-5 py-2 rounded-full font-bold text-lg shadow-sm">${boxes[5]}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    lucide.createIcons();
+    
+    document.getElementById('btn-back-dash').addEventListener('click', renderDashboard);
+    if(document.getElementById('btn-train-mistakes')) {
+        document.getElementById('btn-train-mistakes').addEventListener('click', () => startMistakesReview(box1Items));
+    }
+};
+
 const renderBlockList = (blocksData, type) => {
     appState = loadProgress(); // REFRESH OBLIGATORIO
     const validBlocks = blocksData.filter(b => b && Array.isArray(b.themes));
