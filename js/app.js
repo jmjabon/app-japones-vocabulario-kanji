@@ -23,22 +23,19 @@ const buildMasterDictionary = async () => {
     return dict;
 };
 
-// --- RENDERIZADORES GLOBALES (Optimizados para iPad) ---
+// --- HOME HUB / PANTALLA DE INICIO ---
 
 const renderDashboard = () => {
     appState = loadProgress(); 
     const dueItems = getDueItems();
     const dueCount = dueItems.length;
 
-    // Cálculo del progreso global
     const completedVocab = appState.progress.completed_vocab_themes.length;
     const completedKanji = appState.progress.completed_kanji_themes.length;
     const totalMastery = Math.min(100, Math.round(((completedVocab + completedKanji) / 6) * 100));
 
     document.getElementById('app-view').innerHTML = `
         <div class="w-full pt-4 pb-[calc(3rem+env(safe-area-inset-bottom))] animate-fade-in space-y-6">
-            
-            <!-- HEADER ESTILO APPS DE APPLE: Nivel activo + Barra de Maestría -->
             <header class="flex justify-between items-center px-1">
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm tracking-wider shadow-sm shadow-indigo-600/30">
@@ -58,12 +55,8 @@ const renderDashboard = () => {
                 </button>
             </header>
 
-            <!-- WIDGET SUPERIOR: Repaso Diario Leitner -->
             <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 text-white p-7 rounded-[2rem] shadow-xl shadow-indigo-500/10 border border-indigo-400/20">
-                <div class="absolute -right-6 -bottom-8 opacity-10 select-none text-9xl font-black font-serif pointer-events-none">
-                    復
-                </div>
-                
+                <div class="absolute -right-6 -bottom-8 opacity-10 select-none text-9xl font-black font-serif pointer-events-none">復</div>
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div class="space-y-1.5">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/15 text-indigo-100 backdrop-blur-md uppercase tracking-wider">
@@ -85,7 +78,6 @@ const renderDashboard = () => {
                 </div>
             </section>
 
-            <!-- RUTAS DE APRENDIZAJE: Vocabulario y Kanjis -->
             <section class="space-y-3">
                 <div class="flex justify-between items-baseline px-1">
                     <h3 class="text-lg font-bold text-gray-900">Rutas de Estudio</h3>
@@ -93,21 +85,12 @@ const renderDashboard = () => {
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
-                    <!-- Tarjeta Vocabulario: Icono auténtico 'あ' (Hiragana) -->
                     <div id="btn-start-vocab" class="group relative overflow-hidden bg-white p-6 rounded-[2rem] border border-gray-200/80 shadow-sm hover:shadow-md hover:border-rose-200 active:scale-[0.99] transition-all cursor-pointer">
-                        <div class="absolute right-4 -bottom-3 text-8xl font-black text-rose-500/[0.05] select-none font-serif group-hover:scale-105 transition-transform">
-                            語
-                        </div>
+                        <div class="absolute right-4 -bottom-3 text-8xl font-black text-rose-500/[0.05] select-none font-serif group-hover:scale-105 transition-transform">語</div>
                         <div class="relative z-10 flex flex-col h-full justify-between gap-6">
                             <div class="flex items-start justify-between">
-                                <!-- Badge auténtico de Hiragana / Vocabulario -->
-                                <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-serif font-black text-2xl shadow-sm">
-                                    あ
-                                </div>
-                                <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-rose-50 group-hover:text-rose-600 transition-colors">
-                                    800 Palabras
-                                </span>
+                                <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-serif font-black text-2xl shadow-sm">あ</div>
+                                <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-rose-50 group-hover:text-rose-600 transition-colors">800 Palabras</span>
                             </div>
                             <div>
                                 <h4 class="text-xl font-bold text-gray-900 group-hover:text-rose-600 transition-colors">Vocabulario</h4>
@@ -116,20 +99,12 @@ const renderDashboard = () => {
                         </div>
                     </div>
 
-                    <!-- Tarjeta Kanjis: Icono auténtico '漢' (Kanji / Carácter) -->
                     <div id="btn-start-kanji" class="group relative overflow-hidden bg-white p-6 rounded-[2rem] border border-gray-200/80 shadow-sm hover:shadow-md hover:border-slate-300 active:scale-[0.99] transition-all cursor-pointer">
-                        <div class="absolute right-4 -bottom-3 text-8xl font-black text-slate-800/[0.05] select-none font-serif group-hover:scale-105 transition-transform">
-                            字
-                        </div>
+                        <div class="absolute right-4 -bottom-3 text-8xl font-black text-slate-800/[0.05] select-none font-serif group-hover:scale-105 transition-transform">字</div>
                         <div class="relative z-10 flex flex-col h-full justify-between gap-6">
                             <div class="flex items-start justify-between">
-                                <!-- Badge auténtico de Kanji -->
-                                <div class="w-14 h-14 rounded-2xl bg-slate-900 text-amber-300 border border-slate-800 flex items-center justify-center font-serif font-black text-2xl shadow-sm">
-                                    漢
-                                </div>
-                                <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-slate-100 group-hover:text-slate-900 transition-colors">
-                                    100 Kanjis
-                                </span>
+                                <div class="w-14 h-14 rounded-2xl bg-slate-900 text-amber-300 border border-slate-800 flex items-center justify-center font-serif font-black text-2xl shadow-sm">漢</div>
+                                <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-slate-100 group-hover:text-slate-900 transition-colors">100 Kanjis</span>
                             </div>
                             <div>
                                 <h4 class="text-xl font-bold text-gray-900 group-hover:text-slate-900 transition-colors">Kanjis</h4>
@@ -137,10 +112,8 @@ const renderDashboard = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </section>
-
         </div>
     `;
     lucide.createIcons();
@@ -149,71 +122,11 @@ const renderDashboard = () => {
     document.getElementById('btn-srs-stats').addEventListener('click', renderSRSStats);
     document.getElementById('btn-start-vocab').addEventListener('click', async () => renderBlockList(await getVocabData(manifestData.levels[0].vocab_file), 'vocab'));
     document.getElementById('btn-start-kanji').addEventListener('click', async () => renderBlockList(await getKanjiData(manifestData.levels[0].kanji_file), 'kanji'));
-    document.getElementById('btn-export-quick')?.addEventListener('click', () => {
-        document.getElementById('btn-export')?.click();
-    });
-};
-
-const renderSRSStats = async () => {
-    const state = loadProgress();
-    const dict = await buildMasterDictionary();
-    const boxes = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    const box1Items = [];
-
-    Object.keys(state.leitner).forEach(itemId => {
-        const itemData = state.leitner[itemId];
-        if(boxes[itemData.box] !== undefined) boxes[itemData.box]++;
-        if(itemData.box === 1 && dict[itemId]) box1Items.push(dict[itemId]);
-    });
-
-    const box1Html = box1Items.length > 0 
-        ? `<div class="mt-4 bg-white p-4 rounded-xl shadow-inner border border-red-100 max-h-48 overflow-y-auto">
-            <p class="text-xs font-bold text-gray-500 uppercase mb-3">Palabras atascadas:</p>
-            <div class="flex flex-wrap gap-2">
-                ${box1Items.map(item => `<span class="bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200">${item.kanji || item.kana}</span>`).join('')}
-            </div>
-           </div>
-           <button id="btn-train-mistakes" class="w-full bg-red-600 text-white py-4 rounded-xl font-bold shadow-md hover:bg-red-700 mt-4 text-lg transition-transform hover:scale-[1.02]"><i data-lucide="dumbbell" class="inline w-5 h-5 mr-2"></i> Entrenar Fallos</button>`
-        : `<p class="text-sm text-green-600 mt-3 font-bold bg-green-50 p-3 rounded-lg"><i data-lucide="check-circle" class="inline w-5 h-5 mr-1"></i> ¡No tienes fallos pendientes en Caja 1!</p>`;
-
-    document.getElementById('app-view').innerHTML = `
-        <div class="flex flex-col gap-4 w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
-            <button id="btn-back-dash" class="text-gray-500 flex items-center gap-1 self-start hover:text-indigo-600 transition-colors py-2"><i data-lucide="arrow-left" class="w-6 h-6"></i> Volver</button>
-            <h2 class="text-3xl font-bold text-gray-800">Estado de Memoria</h2>
-            <p class="text-base text-gray-500 mb-4">Así retiene la información tu cerebro a largo plazo.</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-red-50 border border-red-200 p-6 rounded-2xl apple-shadow md:col-span-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-red-800 text-lg">Caja 1 (Fallos)</span>
-                        <span class="bg-red-200 text-red-900 px-4 py-1.5 rounded-full font-bold text-lg">${boxes[1]}</span>
-                    </div>
-                    ${box1Html}
-                </div>
-                <div class="bg-orange-50 border border-orange-200 p-5 rounded-2xl flex justify-between items-center apple-shadow">
-                    <span class="font-bold text-orange-800">Caja 2 (Corto plazo)</span><span class="bg-orange-200 text-orange-900 px-4 py-1.5 rounded-full font-bold">${boxes[2]}</span>
-                </div>
-                <div class="bg-yellow-50 border border-yellow-200 p-5 rounded-2xl flex justify-between items-center apple-shadow">
-                    <span class="font-bold text-yellow-800">Caja 3 (Consolidando)</span><span class="bg-yellow-200 text-yellow-900 px-4 py-1.5 rounded-full font-bold">${boxes[3]}</span>
-                </div>
-                <div class="bg-blue-50 border border-blue-200 p-5 rounded-2xl flex justify-between items-center apple-shadow">
-                    <span class="font-bold text-blue-800">Caja 4 (Medio plazo)</span><span class="bg-blue-200 text-blue-900 px-4 py-1.5 rounded-full font-bold">${boxes[4]}</span>
-                </div>
-                <div class="bg-green-50 border-2 border-green-300 p-5 rounded-2xl flex justify-between items-center apple-shadow md:col-span-2">
-                    <span class="font-bold text-green-800 text-lg"><i data-lucide="award" class="inline w-6 h-6 mb-1 mr-1"></i> Caja 5 (Memoria a Largo Plazo)</span><span class="bg-green-500 text-white px-5 py-2 rounded-full font-bold text-lg">${boxes[5]}</span>
-                </div>
-            </div>
-        </div>
-    `;
-    lucide.createIcons();
-    document.getElementById('btn-back-dash').addEventListener('click', renderDashboard);
-    if(document.getElementById('btn-train-mistakes')) {
-        document.getElementById('btn-train-mistakes').addEventListener('click', () => startMistakesReview(box1Items));
-    }
+    document.getElementById('btn-export-quick')?.addEventListener('click', () => document.getElementById('btn-export')?.click());
 };
 
 const renderBlockList = (blocksData, type) => {
-    // 1. Filtro de seguridad: ignora cualquier elemento suelto que no sea un bloque con 'themes'
+    appState = loadProgress(); // REFRESH OBLIGATORIO
     const validBlocks = blocksData.filter(b => b && Array.isArray(b.themes));
     const flatThemes = validBlocks.flatMap(b => b.themes);
     const isVocab = type === 'vocab';
@@ -224,14 +137,13 @@ const renderBlockList = (blocksData, type) => {
         const completedInBlock = block.themes.filter(t => appState.progress[`completed_${type}_themes`]?.includes(t.theme_id)).length;
         const firstThemeId = block.themes[0]?.theme_id;
         
-        // 2. REGLA DE DESBLOQUEO: La Unidad 1 (index === 0) SIEMPRE está desbloqueada por defecto
         const isUnlocked = index === 0 || (firstThemeId && appState.progress[unlockedKey]?.includes(firstThemeId));
         const isMastered = completedInBlock === themesInBlock && themesInBlock > 0;
 
-        // Auto-reparación de progreso: asegura que el ID inicial esté registrado en localStorage
+        // Auto-reparación visual si es la primera unidad
         if (index === 0 && firstThemeId && !appState.progress[unlockedKey]?.includes(firstThemeId)) {
             appState.progress[unlockedKey].push(firstThemeId);
-            localStorage.setItem('kanjimaster_progress', JSON.stringify(appState.progress));
+            localStorage.setItem('kanjimaster_state', JSON.stringify(appState));
         }
 
         return `
@@ -293,52 +205,6 @@ const renderBlockList = (blocksData, type) => {
     });
 };
 
-const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
-    document.getElementById('app-view').innerHTML = `
-        <div class="flex flex-col items-center justify-center h-full w-full text-center px-4 animate-fade-in py-12">
-            <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center mb-8 border-4 border-green-400 apple-shadow scale-110"><i data-lucide="award" class="w-16 h-16 text-green-600"></i></div>
-            <h2 class="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">¡Maestría Alcanzada!</h2>
-            <p class="text-gray-600 mb-10 text-lg">Has superado el examen de "${currentTheme.theme_title}" con un 100%.</p>
-            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-6 w-full md:max-w-md mb-10 text-left flex items-start gap-5 apple-shadow">
-                <i data-lucide="layers" class="w-8 h-8 text-blue-500 mt-1"></i>
-                <div><p class="font-bold text-gray-900 text-lg">Tema Desbloqueado y Guardado</p><p class="text-sm text-gray-600 mt-1">${itemsCount} elementos inyectados en tu memoria SRS.</p></div>
-            </div>
-            <button id="btn-success-back" class="w-full md:max-w-md bg-gray-900 text-white py-5 rounded-2xl font-bold apple-shadow hover:bg-gray-800 transition-transform hover:-translate-y-1 text-xl">Continuar</button>
-        </div>
-    `;
-    lucide.createIcons();
-    document.getElementById('btn-success-back').addEventListener('click', backCallback);
-};
-
-const generateThemeListHtml = (ctx) => {
-    return ctx.blocks[ctx.bIdx].themes.map((theme, index) => {
-        const unlockedKey = `unlocked_${ctx.type}_themes`;
-        const completedKey = `completed_${ctx.type}_themes`;
-        const isUnlocked = appState.progress[unlockedKey].includes(theme.theme_id);
-        const isCompleted = appState.progress[completedKey].includes(theme.theme_id);
-        const isCheckpoint = theme.type === 'checkpoint';
-        const flatIndex = ctx.flat.findIndex(t => t.theme_id === theme.theme_id);
-        const nextThemeId = ctx.flat[flatIndex + 1] ? ctx.flat[flatIndex + 1].theme_id : null;
-        
-        let statusIcon = isCompleted ? (isCheckpoint ? '<i data-lucide="award" class="text-yellow-500 w-7 h-7"></i>' : '<i data-lucide="check-circle" class="text-green-500 w-7 h-7"></i>') 
-                     : (isUnlocked ? (isCheckpoint ? '<i data-lucide="swords" class="text-red-500 animate-pulse w-7 h-7"></i>' : '<i data-lucide="unlock" class="text-blue-500 w-7 h-7"></i>') 
-                     : '<i data-lucide="lock" class="text-gray-400 w-7 h-7"></i>');
-
-        let borderClass = isCompleted ? (isCheckpoint ? 'border-yellow-500 bg-yellow-50' : 'border-green-500 bg-green-50') 
-                        : (isUnlocked ? (isCheckpoint ? 'border-red-500 bg-red-50' : (ctx.type === 'vocab' ? 'border-primary bg-white hover:-translate-y-1 hover:shadow-md' : 'border-secondary bg-white hover:-translate-y-1 hover:shadow-md')) : 'border-gray-200 bg-gray-100 opacity-60');
-
-        return `
-            <div class="${borderClass} border-2 p-6 rounded-2xl transition-all cursor-pointer theme-card flex flex-col justify-center" data-flat-index="${flatIndex}" data-unlocked="${isUnlocked}" data-next="${nextThemeId}" data-checkpoint="${isCheckpoint}">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-bold text-xl leading-tight ${isCheckpoint && !isCompleted && isUnlocked ? 'text-red-700' : 'text-gray-800'}">${theme.theme_title}</h3>
-                    <div class="ml-4">${statusIcon}</div>
-                </div>
-                <p class="text-sm text-gray-500 font-medium">${isCheckpoint ? 'Examen de control' : `${theme.items?.length || 0} elementos`}</p>
-            </div>
-        `;
-    }).join('');
-};
-
 // --- MOTOR SRS Y CHECKPOINTS ---
 
 const startSRSSession = async (dueItemsIds) => {
@@ -353,8 +219,7 @@ const startSRSSession = async (dueItemsIds) => {
         }
         const item = sessionQueue[currentIndex];
         const targetDisplay = item.kanji || item.kana;
-        const correctAnswer = item.meaning;
-        const options = shuffleArray([correctAnswer, ...getDistractors(item, item.allItems, 'meaning', 3)]);
+        const options = shuffleArray([item.meaning, ...getDistractors(item, item.allItems, 'meaning', 3)]);
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))]">
@@ -382,12 +247,12 @@ const startSRSSession = async (dueItemsIds) => {
         const optionButtons = document.querySelectorAll('.option-btn');
         optionButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const isCorrect = e.currentTarget.getAttribute('data-answer') === correctAnswer;
+                const isCorrect = e.currentTarget.getAttribute('data-answer') === item.meaning;
                 optionButtons.forEach(b => b.disabled = true);
                 if (isCorrect) e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
                 else {
                     e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
-                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correctAnswer).classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === item.meaning).classList.add('bg-green-100', 'border-green-500', 'text-green-800');
                 }
                 processReview(item.id, isCorrect);
                 setTimeout(() => { currentIndex++; showReviewCard(); }, 1200);
@@ -403,7 +268,7 @@ const startMistakesReview = (box1Items) => {
 
     const showCard = () => {
         if(currentIndex >= queue.length) {
-            if(confirm("Vuelta completada. ¿Quieres hacer otra ronda con estos mismos fallos?")) {
+            if(confirm("Vuelta completada. ¿Otra ronda con estos fallos?")) {
                 currentIndex = 0; queue = shuffleArray([...box1Items]); return showCard();
             } else return renderSRSStats();
         }
@@ -482,7 +347,10 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', () => ctx.type === 'vocab' ? renderVocabThemeList(ctx) : renderKanjiThemeList(ctx));
+        document.getElementById('btn-quit').addEventListener('click', () => {
+            appState = loadProgress(); // REFRESH
+            ctx.type === 'vocab' ? renderVocabThemeList(ctx) : renderKanjiThemeList(ctx);
+        });
 
         const optionButtons = document.querySelectorAll('.option-btn');
         optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
@@ -511,7 +379,10 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
         const finalScore = Math.round((totalCorrect / totalQuestions) * 100);
         const passed = finalScore >= 80;
 
-        if (passed) appState = markThemeCompleted(ctx.type, checkpointData.theme_id, ctx.flat[flatIndex + 1] ? ctx.flat[flatIndex + 1].theme_id : null, []);
+        if (passed) {
+            const nextThemeId = ctx.flat[flatIndex + 1] ? ctx.flat[flatIndex + 1].theme_id : null;
+            appState = markThemeCompleted(ctx.type, checkpointData.theme_id, nextThemeId, []);
+        }
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col items-center justify-center h-full w-full text-center px-4 pt-10 pb-[calc(2rem+env(safe-area-inset-bottom))]">
@@ -521,13 +392,15 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
                 <div class="bg-white border border-gray-200 rounded-3xl p-8 w-full md:max-w-xl mb-10 text-left apple-shadow">
                     <h4 class="font-bold text-gray-800 mb-6 uppercase text-sm tracking-widest border-b pb-2">Diagnóstico por Temas</h4>
                     ${diagnosticsHtml}
-                    ${!passed ? '<p class="text-sm text-red-700 mt-6 font-bold bg-red-50 p-4 rounded-xl flex items-center gap-2"><i data-lucide="info" class="w-5 h-5"></i> Necesitas un 80% mínimo para avanzar.</p>' : ''}
                 </div>
                 <button id="btn-success-back" class="w-full md:max-w-xl bg-gray-900 text-white py-5 rounded-2xl font-bold apple-shadow hover:bg-gray-800 transition-transform hover:-translate-y-1 text-xl">Volver al Menú</button>
             </div>
         `;
         lucide.createIcons();
-        document.getElementById('btn-success-back').addEventListener('click', () => ctx.type === 'vocab' ? renderVocabThemeList(ctx) : renderKanjiThemeList(ctx));
+        document.getElementById('btn-success-back').addEventListener('click', () => {
+            appState = loadProgress(); // REFRESH OBLIGATORIO
+            ctx.type === 'vocab' ? renderVocabThemeList(ctx) : renderKanjiThemeList(ctx);
+        });
     };
 
     showExamQuestion();
@@ -536,6 +409,8 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
 // --- MÓDULO VOCABULARIO ---
 
 const renderVocabThemeList = (ctx) => {
+    appState = loadProgress(); // REFRESH OBLIGATORIO
+    
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col gap-5 w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
             <button id="btn-back-blocks" class="text-gray-500 flex items-center gap-1 self-start mb-2 py-2 hover:text-indigo-600 transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i> Volver a Bloques</button>
@@ -553,6 +428,7 @@ const renderVocabThemeList = (ctx) => {
             if (e.currentTarget.getAttribute('data-unlocked') !== 'true') return alert('Desbloquea primero el tema anterior.');
             const flatIndex = parseInt(e.currentTarget.getAttribute('data-flat-index'));
             const isCp = e.currentTarget.getAttribute('data-checkpoint') === 'true';
+            
             if (isCp) startCheckpoint(ctx.flat[flatIndex], flatIndex, ctx); 
             else renderVocabSubmenu(ctx.flat[flatIndex], e.currentTarget.getAttribute('data-next'), ctx);
         });
@@ -594,7 +470,7 @@ const renderVocabSubmenu = (vocabTheme, nextThemeId, ctx) => {
         </div>
     `;
     lucide.createIcons();
-    document.getElementById('btn-back-submenu').addEventListener('click', () => renderVocabThemeList(ctx));
+    document.getElementById('btn-back-submenu').addEventListener('click', () => { appState = loadProgress(); renderVocabThemeList(ctx); });
     document.getElementById('btn-v-study').addEventListener('click', () => startVocabStudy(vocabTheme, ctx));
     document.getElementById('btn-v-listen').addEventListener('click', () => startVocabPractice('listening', vocabTheme, ctx));
     document.getElementById('btn-v-inverse').addEventListener('click', () => startVocabPractice('inverse', vocabTheme, ctx));
@@ -605,10 +481,8 @@ const renderVocabSubmenu = (vocabTheme, nextThemeId, ctx) => {
 const startVocabStudy = (vocabTheme, ctx) => {
     let currentIndex = 0;
     const showCard = () => {
-        if(currentIndex >= vocabTheme.items.length) {
-            alert("¡Repaso terminado! Listo para el gimnasio.");
-            return renderVocabSubmenu(vocabTheme, null, ctx);
-        }
+        if(currentIndex >= vocabTheme.items.length) return renderVocabSubmenu(vocabTheme, null, ctx);
+        
         const item = vocabTheme.items[currentIndex];
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
@@ -621,11 +495,9 @@ const startVocabStudy = (vocabTheme, ctx) => {
                     <h2 class="text-8xl md:text-9xl font-bold text-gray-900 tracking-wider">${item.kanji || item.kana}</h2>
                     <div class="bg-blue-50 text-blue-700 font-bold text-2xl py-3 px-8 rounded-2xl border border-blue-200 mt-4">${item.meaning}</div>
                     
-                    <!-- Botón de audio explícito para Safari iOS -->
                     <button id="btn-audio" class="mt-8 p-6 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 apple-shadow transition-transform hover:scale-110 active:scale-95 flex flex-col items-center gap-2">
                         <i data-lucide="volume-2" class="w-10 h-10 text-blue-600"></i>
                     </button>
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-2">Toca para escuchar</p>
                 </div>
                 <button id="btn-next" class="w-full md:max-w-md mx-auto bg-gray-900 text-white py-6 rounded-2xl font-bold apple-shadow hover:bg-gray-800 flex justify-center items-center gap-3 text-xl transition-transform hover:-translate-y-1">Siguiente <i data-lucide="arrow-right" class="w-6 h-6"></i></button>
             </div>
@@ -643,29 +515,20 @@ const startVocabPractice = (mode, vocabTheme, ctx) => {
     let currentIndex = 0;
 
     const showQuestion = () => {
-        if(currentIndex >= exerciseItems.length) {
-            alert("¡Entrenamiento completado!"); return renderVocabSubmenu(vocabTheme, null, ctx);
-        }
+        if(currentIndex >= exerciseItems.length) return renderVocabSubmenu(vocabTheme, null, ctx);
 
         const item = exerciseItems[currentIndex];
         let correct = '', options = [], topHtml = '';
 
         if(mode === 'listening') {
             correct = item.meaning; options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
-            topHtml = `
-                <button id="btn-audio-q" class="p-8 bg-purple-100 text-purple-600 rounded-full apple-shadow animate-pulse mb-6 hover:scale-105 active:scale-95 transition-transform"><i data-lucide="volume-2" class="w-12 h-12"></i></button>
-                <p class="text-gray-500 font-bold uppercase tracking-widest text-sm flex items-center gap-2"><i data-lucide="hand" class="w-4 h-4"></i> Toca para escuchar</p>
-            `;
+            topHtml = `<button id="btn-audio-q" class="p-8 bg-purple-100 text-purple-600 rounded-full apple-shadow animate-pulse mb-6 hover:scale-105 active:scale-95 transition-transform"><i data-lucide="volume-2" class="w-12 h-12"></i></button><p class="text-gray-500 font-bold uppercase tracking-widest text-sm flex items-center gap-2"><i data-lucide="hand" class="w-4 h-4"></i> Toca para escuchar</p>`;
         } else if (mode === 'inverse') {
             correct = item.kanji || item.kana; options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, item.kanji ? 'kanji' : 'kana', 3)]);
             topHtml = `<p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Traduce al Japonés</p><h2 class="text-5xl md:text-6xl font-bold text-gray-900 text-center leading-tight px-4">${item.meaning}</h2>`;
         } else if (mode === 'reading') {
             correct = item.meaning; options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
-            topHtml = `
-                <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Traduce al Español</p>
-                <h2 class="text-7xl md:text-8xl font-bold text-gray-900 text-center tracking-widest mb-4">${item.kanji || item.kana}</h2>
-                <button id="btn-audio-q" class="p-4 bg-gray-100 text-gray-600 rounded-full apple-shadow active:scale-95"><i data-lucide="volume-2" class="w-6 h-6 text-blue-600"></i></button>
-            `;
+            topHtml = `<p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Traduce al Español</p><h2 class="text-7xl md:text-8xl font-bold text-gray-900 text-center tracking-widest mb-4">${item.kanji || item.kana}</h2><button id="btn-audio-q" class="p-4 bg-gray-100 text-gray-600 rounded-full apple-shadow active:scale-95"><i data-lucide="volume-2" class="w-6 h-6 text-blue-600"></i></button>`;
         }
 
         document.getElementById('app-view').innerHTML = `
@@ -708,10 +571,13 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
     const showQuestion = () => {
         if(currentIndex >= exerciseItems.length) {
             if(mistakes === 0) {
-                appState = markThemeCompleted('vocab', vocabTheme.theme_id, nextThemeId !== "null" && nextThemeId !== null ? nextThemeId : null, vocabTheme.items);
-                return renderSuccessScreen('vocab', vocabTheme, vocabTheme.items.length, () => renderVocabThemeList(ctx));
+                appState = markThemeCompleted('vocab', vocabTheme.theme_id, nextThemeId, vocabTheme.items);
+                return renderSuccessScreen('vocab', vocabTheme, vocabTheme.items.length, () => {
+                    appState = loadProgress(); // REFRESH TRAS APROBAR
+                    renderVocabThemeList(ctx);
+                });
             } else {
-                alert(`Has fallado ${mistakes} pregunta(s). Necesitas un 100% de aciertos para superar el tema. ¡Sigue entrenando!`);
+                alert(`Has fallado ${mistakes} pregunta(s). Necesitas un 100% de aciertos para superar el tema.`);
                 return renderVocabSubmenu(vocabTheme, nextThemeId, ctx);
             }
         }
@@ -759,6 +625,7 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
 // --- MÓDULO KANJI ---
 
 const renderKanjiThemeList = (ctx) => {
+    appState = loadProgress(); // REFRESH OBLIGATORIO
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col gap-5 w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
             <button id="btn-back-blocks" class="text-gray-500 flex items-center gap-1 self-start mb-2 py-2 hover:text-indigo-600 transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i> Volver a Bloques</button>
@@ -817,7 +684,7 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, ctx) => {
         </div>
     `;
     lucide.createIcons();
-    document.getElementById('btn-back-submenu').addEventListener('click', () => renderKanjiThemeList(ctx));
+    document.getElementById('btn-back-submenu').addEventListener('click', () => { appState = loadProgress(); renderKanjiThemeList(ctx); });
     document.getElementById('btn-k-gallery').addEventListener('click', () => startKanjiGallery(kanjiTheme, ctx));
     document.getElementById('btn-k-despiece').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, ctx, 1));
     document.getElementById('btn-k-forja').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, ctx, 2));
@@ -828,7 +695,7 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, ctx) => {
 const startKanjiGallery = (kanjiTheme, ctx) => {
     let currentIndex = 0;
     const showCard = () => {
-        if(currentIndex >= kanjiTheme.items.length) { alert("Galería terminada."); return renderKanjiSubmenu(kanjiTheme, null, ctx); }
+        if(currentIndex >= kanjiTheme.items.length) return renderKanjiSubmenu(kanjiTheme, null, ctx);
         const item = kanjiTheme.items[currentIndex];
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
@@ -863,10 +730,7 @@ const startKanjiPuzzle = (kanjiTheme, ctx, phase) => {
     let currentIndex = 0;
 
     const showQuestion = () => {
-        if (currentIndex >= exerciseQueue.length) {
-            alert(phase === 1 ? "¡Despiece dominado!" : "¡Forja completada!");
-            return renderKanjiSubmenu(kanjiTheme, null, ctx);
-        }
+        if (currentIndex >= exerciseQueue.length) return renderKanjiSubmenu(kanjiTheme, null, ctx);
 
         const item = exerciseQueue[currentIndex];
         const isPhase1 = phase === 1;
@@ -886,7 +750,6 @@ const startKanjiPuzzle = (kanjiTheme, ctx, phase) => {
                 selectedPieces.push({ char: e.target.getAttribute('data-char'), originalIndex: parseInt(e.target.getAttribute('data-original-index')) });
                 updateBoard(); checkVictory();
             }));
-
             document.querySelectorAll('#slots-container > div').forEach(slot => slot.addEventListener('click', (e) => {
                 const idx = e.currentTarget.getAttribute('data-slot-index');
                 if (selectedPieces[idx]) { selectedPieces.splice(idx, 1); updateBoard(); }
@@ -936,7 +799,7 @@ const startKanjiJukugo = (kanjiTheme, ctx) => {
     let currentIndex = 0, subState = 'PUZZLE'; 
 
     const showStep = () => {
-        if (currentIndex >= exerciseQueue.length) { alert("¡Jukugos dominados!"); return renderKanjiSubmenu(kanjiTheme, null, ctx); }
+        if (currentIndex >= exerciseQueue.length) return renderKanjiSubmenu(kanjiTheme, null, ctx);
         const item = exerciseQueue[currentIndex];
 
         if (subState === 'PUZZLE') {
@@ -978,7 +841,7 @@ const startKanjiJukugo = (kanjiTheme, ctx) => {
             document.getElementById('app-view').innerHTML = `
                 <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
                     <div class="flex justify-between items-center text-gray-500 font-bold mb-8 px-2">
-                        <span class="bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">Paso 1: Construye</span>
+                        <span class="bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Paso 1: Construye</span>
                         <span class="text-sm bg-gray-100 px-3 py-1 rounded-full">${currentIndex + 1} / ${exerciseQueue.length}</span>
                         <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
                     </div>
@@ -999,7 +862,7 @@ const startKanjiJukugo = (kanjiTheme, ctx) => {
             document.getElementById('app-view').innerHTML = `
                 <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
                     <div class="flex justify-between items-center text-gray-500 font-bold mb-4 px-2">
-                        <span class="bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">Paso 2: Aprende</span>
+                        <span class="bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-indigo-200">Paso 2: Aprende</span>
                         <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
                     </div>
                     <div class="bg-white border-2 border-gray-100 rounded-3xl p-5 w-full text-center flex flex-col gap-3 apple-shadow md:max-w-md mx-auto">
@@ -1018,7 +881,6 @@ const startKanjiJukugo = (kanjiTheme, ctx) => {
                             <p class="text-sm text-yellow-900 font-medium leading-relaxed">${item.etymology || 'Lectura compuesta.'}</p>
                         </div>
                         <button id="btn-audio" class="mt-6 p-6 bg-gray-100 text-gray-700 rounded-full apple-shadow transition-transform hover:scale-110 active:scale-95"><i data-lucide="volume-2" class="w-8 h-8 text-blue-600"></i></button>
-                        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-2">Toca para escuchar</p>
                     </div>
                     <button id="btn-continue" class="w-full md:max-w-md mx-auto bg-indigo-600 text-white py-6 rounded-2xl font-bold apple-shadow hover:bg-indigo-700 flex justify-center items-center gap-3 mt-8 text-xl transition-transform hover:-translate-y-1">Practicar <i data-lucide="arrow-right" class="w-6 h-6"></i></button>
                 </div>
@@ -1077,10 +939,13 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
     const showQuestion = () => {
         if (currentIndex >= exerciseQueue.length) {
             if(mistakes === 0) {
-                appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId !== "null" && nextThemeId !== null ? nextThemeId : null, kanjiTheme.items);
-                return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => renderKanjiThemeList(ctx));
+                appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId, kanjiTheme.items);
+                return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => {
+                    appState = loadProgress(); // REFRESH TRAS APROBAR
+                    renderKanjiThemeList(ctx);
+                });
             } else {
-                alert(`Has fallado ${mistakes} pregunta(s). Necesitas un 100% de aciertos para superar el tema. ¡Sigue entrenando!`);
+                alert(`Has fallado ${mistakes} pregunta(s). Necesitas un 100% de aciertos para superar el tema.`);
                 return renderKanjiSubmenu(kanjiTheme, nextThemeId, ctx);
             }
         }
@@ -1114,9 +979,8 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
         optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
             const isCorrect = e.currentTarget.getAttribute('data-answer') === correct;
             optionButtons.forEach(b => b.disabled = true);
-            if (isCorrect) {
-                e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
-            } else {
+            if (isCorrect) e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+            else {
                 mistakes++;
                 e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
                 Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct).classList.add('bg-green-100', 'border-green-500');

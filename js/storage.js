@@ -1,104 +1,79 @@
-const STORAGE_KEY = 'nihongo_app_state';
-
-const defaultState = {
-    version: 1,
-    last_backup: Date.now(),
-    progress: {
-        unlocked_vocab_themes: ["v5_t01"],
-        completed_vocab_themes: [],
-        unlocked_kanji_themes: ["k5_t01"],
-        completed_kanji_themes: [],
-        completed_checkpoints: []
-    },
-    leitner: {}
-};
-
 export const loadProgress = () => {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            // Fusionamos por si el usuario tiene una versión antigua sin las nuevas claves
-            return { 
-                ...defaultState, 
-                ...parsed, 
-                progress: { ...defaultState.progress, ...parsed.progress } 
-            };
-        }
-        return { ...defaultState };
-    } catch (error) {
-        console.error('Error loading state:', error);
-        return { ...defaultState };
+    const defaultState = {
+        progress: {
+            completed_vocab_themes: [],
+            unlocked_vocab_themes: [],
+            completed_kanji_themes: [],
+            unlocked_kanji_themes: []
+        },
+        leitner: {}
+    };
+    const saved = localStorage.getItem('kanjimaster_state');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        // Seguro antiquiebres: Asegura que los arrays existan siempre
+        if (!parsed.progress.unlocked_vocab_themes) parsed.progress.unlocked_vocab_themes = [];
+        if (!parsed.progress.unlocked_kanji_themes) parsed.progress.unlocked_kanji_themes = [];
+        if (!parsed.progress.completed_vocab_themes) parsed.progress.completed_vocab_themes = [];
+        if (!parsed.progress.completed_kanji_themes) parsed.progress.completed_kanji_themes = [];
+        return parsed;
     }
+    return defaultState;
 };
 
 export const saveProgress = (state) => {
-    try {
-        state.last_backup = Date.now();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (error) {
-        console.error('Error saving state. Storage might be full.', error);
-    }
+    localStorage.setItem('kanjimaster_state', JSON.stringify(state));
 };
 
-export const markThemeCompleted = (type, currentThemeId, nextThemeId, items) => {
+export const markThemeCompleted = (type, themeId, nextThemeId, items = []) => {
     const state = loadProgress();
-    
-    // 1. Marcar tema actual como completado
-    const completedKey = `completed_${type}_themes`;
-    if (!state.progress[completedKey].includes(currentThemeId)) {
-        state.progress[completedKey].push(currentThemeId);
+    const compKey = `completed_${type}_themes`;
+    const unlKey = `unlocked_${type}_themes`;
+
+    // 1. Marca el tema actual como completado
+    if (!state.progress[compKey].includes(themeId)) {
+        state.progress[compKey].push(themeId);
     }
 
-    // 2. Desbloquear el siguiente tema
-    if (nextThemeId) {
-        const unlockedKey = `unlocked_${type}_themes`;
-        if (!state.progress[unlockedKey].includes(nextThemeId)) {
-            state.progress[unlockedKey].push(nextThemeId);
-        }
+    // 2. Desbloquea el siguiente tema de forma segura
+    const safeNextId = (nextThemeId !== "null" && nextThemeId !== null && nextThemeId !== undefined) ? nextThemeId : null;
+    if (safeNextId && !state.progress[unlKey].includes(safeNextId)) {
+        state.progress[unlKey].push(safeNextId);
     }
 
-    // 3. Inyectar ítems nuevos en la Caja 1 del SRS (Leitner)
+    // 3. Inyecta los ítems aprobados en la Caja 1 del SRS
     items.forEach(item => {
         if (!state.leitner[item.id]) {
-            state.leitner[item.id] = {
-                box: 1,
-                nextReview: Date.now() // Listo para el primer repaso
-            };
+            state.leitner[item.id] = { box: 1, nextReview: Date.now() };
         }
     });
 
     saveProgress(state);
-    return state; // Devolvemos el estado actualizado
+    return state;
 };
 
 export const exportProgress = () => {
-    const state = loadProgress();
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const state = localStorage.getItem('kanjimaster_state');
+    const blob = new Blob([state], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    
     const a = document.createElement('a');
     a.href = url;
-    a.download = `nihongo_backup_${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
+    a.download = `kanjimaster_backup_${new Date().toISOString().slice(0,10)}.json`;
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
 };
 
-export const importProgress = (file, onSuccess) => {
+export const importProgress = (file, callback) => {
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
-            const importedState = JSON.parse(e.target.result);
-            if (importedState.version && importedState.progress) {
-                saveProgress(importedState);
-                onSuccess();
-            } else {
-                alert('Archivo JSON no válido para esta aplicación.');
-            }
-        } catch (error) {
-            alert('Error al leer el archivo. Asegúrate de que es un JSON válido.');
+            const state = JSON.parse(e.target.result);
+            if (state.progress) {
+                localStorage.setItem('kanjimaster_state', JSON.stringify(state));
+                alert('Progreso restaurado con éxito.');
+                callback();
+            } else alert('Archivo no válido.');
+        } catch (err) {
+            alert('Error al leer el archivo.');
         }
     };
     reader.readAsText(file);
