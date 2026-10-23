@@ -205,6 +205,31 @@ const renderSRSStats = async () => {
     }
 };
 
+// --- PANTALLA DE ÉXITO (Trofeo) ---
+const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col items-center justify-center h-full w-full text-center px-4 animate-fade-in py-12 pb-[calc(3rem+env(safe-area-inset-bottom))]">
+            <div class="w-32 h-32 bg-emerald-50 rounded-[2rem] flex items-center justify-center mb-8 border border-emerald-100 shadow-sm scale-110">
+                <i data-lucide="award" class="w-16 h-16 text-emerald-500"></i>
+            </div>
+            <h2 class="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">¡Maestría Alcanzada!</h2>
+            <p class="text-gray-500 mb-10 text-lg">Has superado el examen de "${currentTheme.theme_title}" con un 100%.</p>
+            <div class="bg-indigo-50/50 border border-indigo-100 rounded-[1.5rem] p-6 w-full md:max-w-md mb-10 text-left flex items-start gap-5 shadow-sm">
+                <i data-lucide="brain-circuit" class="w-8 h-8 text-indigo-500 mt-1 flex-shrink-0"></i>
+                <div>
+                    <p class="font-bold text-gray-900 text-lg">Progreso Guardado</p>
+                    <p class="text-sm text-gray-600 mt-1">${itemsCount} elementos inyectados en tu memoria a largo plazo (SRS).</p>
+                </div>
+            </div>
+            <button id="btn-success-back" class="w-full md:max-w-md bg-gray-900 text-white py-5 rounded-2xl font-bold shadow-sm active:scale-[0.98] transition-transform text-xl flex justify-center items-center gap-2">
+                Continuar <i data-lucide="arrow-right" class="w-6 h-6"></i>
+            </button>
+        </div>
+    `;
+    lucide.createIcons();
+    document.getElementById('btn-success-back').addEventListener('click', backCallback);
+};
+
 const renderBlockList = (blocksData, type) => {
     appState = loadProgress(); // REFRESH OBLIGATORIO
     const validBlocks = blocksData.filter(b => b && Array.isArray(b.themes));
@@ -413,22 +438,22 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))]">
-                <div class="flex justify-between items-center text-red-600 font-bold mb-8 px-2">
-                    <span class="bg-red-100 text-red-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-red-200"><i data-lucide="swords" class="w-4 h-4 inline mr-1"></i> Examen de Control</span>
+                <div class="flex justify-between items-center text-rose-600 font-bold mb-8 px-2">
+                    <span class="bg-rose-100 text-rose-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-rose-200"><i data-lucide="swords" class="w-4 h-4 inline mr-1"></i> Examen de Control</span>
                     <span class="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-600">${questionIndex + 1} / ${examQuestions.length}</span>
-                    <button id="btn-quit" class="hover:text-red-800 p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    <button id="btn-quit" class="active:opacity-50 p-2 transition-opacity"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
                 <div class="flex-grow flex flex-col items-center justify-center text-center mb-10 gap-6">
                     <div class="text-8xl md:text-9xl font-bold text-gray-900 drop-shadow-sm tracking-wider">${targetDisplay}</div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="options-container">
-                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-xl text-gray-700 hover:border-red-500 hover:text-red-600 transition-colors apple-shadow active:bg-gray-50 text-center md:text-left" data-answer="${opt}">${opt}</button>`).join('')}
+                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-xl text-gray-700 text-center md:text-left shadow-sm active:bg-gray-100 active:scale-[0.98] transition-all" data-answer="${opt}">${opt}</button>`).join('')}
                 </div>
             </div>
         `;
         lucide.createIcons();
         document.getElementById('btn-quit').addEventListener('click', () => {
-            appState = loadProgress(); // REFRESH
+            appState = loadProgress();
             ctx.type === 'vocab' ? renderVocabThemeList(ctx) : renderKanjiThemeList(ctx);
         });
 
@@ -437,12 +462,18 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
             const isCorrect = e.currentTarget.getAttribute('data-answer') === item.meaning;
             optionButtons.forEach(b => b.disabled = true);
             stats[item.sourceThemeId].total += 1;
+            
+            // Reset de estilos base
+            e.target.classList.remove('border-gray-200', 'bg-white', 'text-gray-700');
+            
             if (isCorrect) {
                 stats[item.sourceThemeId].correct += 1;
-                e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                e.target.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
             } else {
-                e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
-                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === item.meaning).classList.add('bg-green-100', 'border-green-500');
+                e.target.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+                const correctBtn = Array.from(optionButtons).find(b => b.getAttribute('data-answer') === item.meaning);
+                correctBtn.classList.remove('border-gray-200', 'bg-white', 'text-gray-700');
+                correctBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
             }
             setTimeout(() => { questionIndex++; showExamQuestion(); }, 1200);
         }));
@@ -454,7 +485,7 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
             if (themeStat.total === 0) return;
             totalQuestions += themeStat.total; totalCorrect += themeStat.correct;
             const pct = Math.round((themeStat.correct / themeStat.total) * 100);
-            diagnosticsHtml += `<div class="flex justify-between items-center mb-3 border-b border-gray-100 pb-3"><span class="text-base font-bold text-gray-700">${themeStat.title}</span><span class="text-base px-3 py-1 rounded-full ${pct < 80 ? 'bg-red-100 text-red-700 font-bold' : 'bg-green-100 text-green-700 font-bold'}">${pct}%</span></div>`;
+            diagnosticsHtml += `<div class="flex justify-between items-center mb-3 border-b border-gray-100 pb-3"><span class="text-base font-bold text-gray-700">${themeStat.title}</span><span class="text-base px-3 py-1 rounded-full ${pct < 80 ? 'bg-rose-100 text-rose-700 font-bold' : 'bg-emerald-100 text-emerald-700 font-bold'}">${pct}%</span></div>`;
         });
         const finalScore = Math.round((totalCorrect / totalQuestions) * 100);
         const passed = finalScore >= 80;
@@ -466,14 +497,16 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col items-center justify-center h-full w-full text-center px-4 pt-10 pb-[calc(2rem+env(safe-area-inset-bottom))]">
-                <div class="w-32 h-32 ${passed ? 'bg-green-100 border-green-400 text-green-600' : 'bg-red-100 border-red-400 text-red-600'} rounded-full flex items-center justify-center mb-6 border-4 apple-shadow scale-110"><i data-lucide="${passed ? 'trophy' : 'alert-triangle'}" class="w-16 h-16"></i></div>
+                <div class="w-32 h-32 ${passed ? 'bg-emerald-50 border-emerald-100 text-emerald-500' : 'bg-rose-50 border-rose-100 text-rose-500'} rounded-[2rem] flex items-center justify-center mb-6 border shadow-sm scale-110">
+                    <i data-lucide="${passed ? 'trophy' : 'alert-triangle'}" class="w-16 h-16"></i>
+                </div>
                 <h2 class="text-4xl font-extrabold text-gray-900 mb-2">${passed ? '¡Prueba Superada!' : 'Prueba Fallida'}</h2>
                 <p class="text-gray-500 font-bold mb-8 text-xl">Nota Final: ${finalScore}%</p>
-                <div class="bg-white border border-gray-200 rounded-3xl p-8 w-full md:max-w-xl mb-10 text-left apple-shadow">
-                    <h4 class="font-bold text-gray-800 mb-6 uppercase text-sm tracking-widest border-b pb-2">Diagnóstico por Temas</h4>
+                <div class="bg-white border border-gray-200 rounded-[1.5rem] p-8 w-full md:max-w-xl mb-10 text-left shadow-sm">
+                    <h4 class="font-bold text-gray-800 mb-6 uppercase text-sm tracking-widest border-b border-gray-100 pb-3">Diagnóstico por Temas</h4>
                     ${diagnosticsHtml}
                 </div>
-                <button id="btn-success-back" class="w-full md:max-w-xl bg-gray-900 text-white py-5 rounded-2xl font-bold apple-shadow hover:bg-gray-800 transition-transform hover:-translate-y-1 text-xl">Volver al Menú</button>
+                <button id="btn-success-back" class="w-full md:max-w-xl bg-gray-900 text-white py-5 rounded-2xl font-bold shadow-sm hover:bg-gray-800 active:scale-[0.98] transition-all text-xl">Volver al Menú</button>
             </div>
         `;
         lucide.createIcons();
@@ -683,7 +716,7 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
             if(mistakes === 0) {
                 appState = markThemeCompleted('vocab', vocabTheme.theme_id, nextThemeId, vocabTheme.items);
                 return renderSuccessScreen('vocab', vocabTheme, vocabTheme.items.length, () => {
-                    appState = loadProgress(); // REFRESH TRAS APROBAR
+                    appState = loadProgress(); 
                     renderVocabThemeList(ctx);
                 });
             } else {
@@ -699,17 +732,17 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
-                <div class="flex justify-between items-center text-red-500 font-bold mb-8 px-2">
-                    <span class="bg-red-100 text-red-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide"><i data-lucide="swords" class="inline w-4 h-4 mr-1"></i> Examen Oficial</span>
+                <div class="flex justify-between items-center text-rose-500 font-bold mb-8 px-2">
+                    <span class="bg-rose-100 text-rose-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-rose-200"><i data-lucide="swords" class="w-4 h-4 inline mr-1"></i> Examen Oficial</span>
                     <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">${currentIndex + 1} / ${exerciseItems.length}</span>
-                    <button id="btn-quit" class="hover:text-red-700 p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    <button id="btn-quit" class="active:opacity-50 p-2 transition-opacity"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
                 <div class="flex-grow flex flex-col items-center justify-center mb-10 text-center">
                     <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">${isInverse ? 'Traduce al Japonés' : 'Traduce al Español'}</p>
                     <h2 class="${isInverse ? 'text-5xl md:text-6xl px-4' : 'text-7xl md:text-8xl tracking-widest'} font-bold text-gray-900 leading-tight">${isInverse ? item.meaning : (item.kanji || item.kana)}</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="options-container">
-                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-gray-800 hover:border-red-500 hover:text-red-600 text-center md:text-left text-xl apple-shadow active:bg-gray-50" data-answer="${opt}">${opt}</button>`).join('')}
+                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-gray-800 text-center md:text-left text-xl shadow-sm active:bg-gray-100 active:scale-[0.98] transition-all" data-answer="${opt}">${opt}</button>`).join('')}
                 </div>
             </div>
         `;
@@ -720,11 +753,18 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
         optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
             const ans = e.target.getAttribute('data-answer');
             optionButtons.forEach(b => b.disabled = true);
-            if (ans === correct) e.target.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
-            else {
+            
+            // Eliminar clases neutras y aplicar color de resultado
+            e.target.classList.remove('border-gray-200', 'bg-white', 'text-gray-800');
+            
+            if (ans === correct) {
+                e.target.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+            } else {
                 mistakes++;
-                e.target.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
-                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct).classList.add('bg-green-100', 'border-green-500');
+                e.target.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+                const correctBtn = Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct);
+                correctBtn.classList.remove('border-gray-200', 'bg-white', 'text-gray-800');
+                correctBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
             }
             setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
         }));
@@ -1051,7 +1091,7 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
             if(mistakes === 0) {
                 appState = markThemeCompleted('kanji', kanjiTheme.theme_id, nextThemeId, kanjiTheme.items);
                 return renderSuccessScreen('kanji', kanjiTheme, kanjiTheme.items.length, () => {
-                    appState = loadProgress(); // REFRESH TRAS APROBAR
+                    appState = loadProgress(); // REFRESH OBLIGATORIO
                     renderKanjiThemeList(ctx);
                 });
             } else {
@@ -1068,17 +1108,17 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
-                <div class="flex justify-between items-center text-red-500 font-bold mb-8 px-2">
-                    <span class="bg-red-100 text-red-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-red-200"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i> Examen Final</span>
+                <div class="flex justify-between items-center text-rose-500 font-bold mb-8 px-2">
+                    <span class="bg-rose-100 text-rose-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-rose-200"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i> Examen Final</span>
                     <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">${currentIndex + 1} / ${exerciseQueue.length}</span>
-                    <button id="btn-quit" class="hover:text-red-700 p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    <button id="btn-quit" class="active:opacity-50 p-2 transition-opacity"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
                 <div class="flex-grow flex flex-col items-center justify-center text-center mb-10">
                     <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">${q.type === 'meaning' ? 'Traduce al Español' : '¿Cómo se lee?'}</p>
                     <div class="text-8xl md:text-9xl font-bold text-gray-900 mb-6 tracking-widest">${display}</div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="options-container">
-                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-xl text-gray-800 hover:border-red-500 hover:text-red-600 apple-shadow active:bg-gray-50 text-center md:text-left" data-answer="${opt}">${opt}</button>`).join('')}
+                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-xl text-gray-800 text-center md:text-left shadow-sm active:bg-gray-100 active:scale-[0.98] transition-all" data-answer="${opt}">${opt}</button>`).join('')}
                 </div>
             </div>
         `;
@@ -1089,11 +1129,18 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
         optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
             const isCorrect = e.currentTarget.getAttribute('data-answer') === correct;
             optionButtons.forEach(b => b.disabled = true);
-            if (isCorrect) e.currentTarget.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
-            else {
+            
+            // Eliminar clases neutras
+            e.target.classList.remove('border-gray-200', 'bg-white', 'text-gray-800');
+            
+            if (isCorrect) {
+                e.target.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+            } else {
                 mistakes++;
-                e.currentTarget.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
-                Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct).classList.add('bg-green-100', 'border-green-500');
+                e.target.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+                const correctBtn = Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct);
+                correctBtn.classList.remove('border-gray-200', 'bg-white', 'text-gray-800');
+                correctBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
             }
             setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
         }));

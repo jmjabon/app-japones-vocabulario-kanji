@@ -52,17 +52,6 @@
     "themes": [
       {
         "theme_id": "v5_t04",
-        "theme_title": "Títulos y Pronombres",
-        "items": []
-      }
-    ]
-  },
-  {
-    "block_id": "v5_block_02",
-    "block_title": "Bloque 2: Personas y Familia",
-    "themes": [
-      {
-        "theme_id": "v5_t04",
         "theme_title": "Pronombres y Personas",
         "items": [
           { "id": "v5_017", "kana": "わたし", "meaning": "Yo" },
