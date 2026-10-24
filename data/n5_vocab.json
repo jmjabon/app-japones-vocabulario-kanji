@@ -295,5 +295,354 @@
         "items": []
       }
     ]
+  },
+  {
+    "block_id": "v5_block_02",
+    "block_title": "Bloque 2: El Individuo",
+    "themes": [
+      {
+        "theme_id": "v5_t07",
+        "theme_title": "Personas y Roles",
+        "items": [
+          {
+            "id": "v5_043",
+            "kana": "わたし",
+            "meaning": "Yo",
+            "kanji": "私"
+          },
+          {
+            "id": "v5_044",
+            "kana": "あなた",
+            "meaning": "Tú"
+          },
+          {
+            "id": "v5_045",
+            "kana": "ひと",
+            "meaning": "Persona",
+            "kanji": "人"
+          },
+          {
+            "id": "v5_046",
+            "kana": "みんな",
+            "meaning": "Todos",
+            "kanji": "皆"
+          },
+          {
+            "id": "v5_047",
+            "kana": "ともだち",
+            "meaning": "Amigo",
+            "kanji": "友達"
+          },
+          {
+            "id": "v5_048",
+            "kana": "せんせい",
+            "meaning": "Profesor",
+            "kanji": "先生"
+          },
+          {
+            "id": "v5_049",
+            "kana": "がくせい",
+            "meaning": "Estudiante",
+            "kanji": "学生"
+          },
+          {
+            "id": "v5_050",
+            "kana": "いしゃ",
+            "meaning": "Médico",
+            "kanji": "医者"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t08",
+        "theme_title": "Familia (Propia)",
+        "items": [
+          {
+            "id": "v5_051",
+            "kana": "かぞく",
+            "meaning": "Familia",
+            "kanji": "家族"
+          },
+          {
+            "id": "v5_052",
+            "kana": "ちち",
+            "meaning": "Mi padre",
+            "kanji": "父"
+          },
+          {
+            "id": "v5_053",
+            "kana": "はは",
+            "meaning": "Mi madre",
+            "kanji": "母"
+          },
+          {
+            "id": "v5_054",
+            "kana": "あに",
+            "meaning": "Mi hermano mayor",
+            "kanji": "兄"
+          },
+          {
+            "id": "v5_055",
+            "kana": "あね",
+            "meaning": "Mi hermana mayor",
+            "kanji": "姉"
+          },
+          {
+            "id": "v5_056",
+            "kana": "おとうと",
+            "meaning": "Mi hermano menor",
+            "kanji": "弟"
+          },
+          {
+            "id": "v5_057",
+            "kana": "いもうと",
+            "meaning": "Mi hermana menor",
+            "kanji": "妹"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t09",
+        "theme_title": "Familia (De otros)",
+        "items": [
+          {
+            "id": "v5_058",
+            "kana": "おとうさん",
+            "meaning": "Padre (de otro)",
+            "kanji": "お父さん"
+          },
+          {
+            "id": "v5_059",
+            "kana": "おかあさん",
+            "meaning": "Madre (de otra)",
+            "kanji": "お母さん"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t10",
+        "theme_title": "El Cuerpo",
+        "items": [
+          {
+            "id": "v5_060",
+            "kana": "からだ",
+            "meaning": "Cuerpo",
+            "kanji": "体"
+          },
+          {
+            "id": "v5_061",
+            "kana": "あたま",
+            "meaning": "Cabeza",
+            "kanji": "頭"
+          },
+          {
+            "id": "v5_062",
+            "kana": "かお",
+            "meaning": "Cara",
+            "kanji": "顔"
+          },
+          {
+            "id": "v5_063",
+            "kana": "め",
+            "meaning": "Ojo",
+            "kanji": "目"
+          },
+          {
+            "id": "v5_064",
+            "kana": "みみ",
+            "meaning": "Oreja",
+            "kanji": "耳"
+          },
+          {
+            "id": "v5_065",
+            "kana": "くち",
+            "meaning": "Boca",
+            "kanji": "口"
+          },
+          {
+            "id": "v5_066",
+            "kana": "は",
+            "meaning": "Diente",
+            "kanji": "歯"
+          },
+          {
+            "id": "v5_067",
+            "kana": "て",
+            "meaning": "Mano",
+            "kanji": "手"
+          },
+          {
+            "id": "v5_068",
+            "kana": "あし",
+            "meaning": "Pie / Pierna",
+            "kanji": "足"
+          }
+        ]
+      },
+      {
+        "theme_id": "cp_v5_block_02",
+        "type": "checkpoint",
+        "theme_title": "Examen: El Individuo",
+        "requires_count": 3,
+        "items": []
+      }
+    ]
+  },
+  {
+    "block_id": "v5_block_03",
+    "block_title": "Bloque 3: Lugares y Entorno",
+    "themes": [
+      {
+        "theme_id": "v5_t11",
+        "theme_title": "La Ciudad",
+        "items": [
+          {
+            "id": "v5_069",
+            "kana": "がっこう",
+            "meaning": "Escuela",
+            "kanji": "学校"
+          },
+          {
+            "id": "v5_070",
+            "kana": "だいがく",
+            "meaning": "Universidad",
+            "kanji": "大学"
+          },
+          {
+            "id": "v5_071",
+            "kana": "びょういん",
+            "meaning": "Hospital",
+            "kanji": "病院"
+          },
+          {
+            "id": "v5_072",
+            "kana": "ぎんこう",
+            "meaning": "Banco",
+            "kanji": "銀行"
+          },
+          {
+            "id": "v5_073",
+            "kana": "えき",
+            "meaning": "Estación de tren",
+            "kanji": "駅"
+          },
+          {
+            "id": "v5_074",
+            "kana": "みせ",
+            "meaning": "Tienda",
+            "kanji": "店"
+          },
+          {
+            "id": "v5_075",
+            "kana": "ほんや",
+            "meaning": "Librería",
+            "kanji": "本屋"
+          },
+          {
+            "id": "v5_076",
+            "kana": "こうえん",
+            "meaning": "Parque",
+            "kanji": "公園"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t12",
+        "theme_title": "Naturaleza",
+        "items": [
+          {
+            "id": "v5_077",
+            "kana": "うみ",
+            "meaning": "Mar / Playa",
+            "kanji": "海"
+          },
+          {
+            "id": "v5_078",
+            "kana": "やま",
+            "meaning": "Montaña",
+            "kanji": "山"
+          },
+          {
+            "id": "v5_079",
+            "kana": "かわ",
+            "meaning": "Río",
+            "kanji": "川"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t13",
+        "theme_title": "Objetos Comunes",
+        "items": [
+          {
+            "id": "v5_080",
+            "kana": "いえ",
+            "meaning": "Casa",
+            "kanji": "家"
+          },
+          {
+            "id": "v5_081",
+            "kana": "へや",
+            "meaning": "Habitación",
+            "kanji": "部屋"
+          },
+          {
+            "id": "v5_082",
+            "kana": "まど",
+            "meaning": "Ventana",
+            "kanji": "窓"
+          },
+          {
+            "id": "v5_083",
+            "kana": "つくえ",
+            "meaning": "Escritorio",
+            "kanji": "机"
+          },
+          {
+            "id": "v5_084",
+            "kana": "いす",
+            "meaning": "Silla",
+            "kanji": "椅子"
+          },
+          {
+            "id": "v5_085",
+            "kana": "ほん",
+            "meaning": "Libro",
+            "kanji": "本"
+          },
+          {
+            "id": "v5_086",
+            "kana": "かばん",
+            "meaning": "Bolso / Mochila",
+            "kanji": "鞄"
+          },
+          {
+            "id": "v5_087",
+            "kana": "かさ",
+            "meaning": "Paraguas",
+            "kanji": "傘"
+          },
+          {
+            "id": "v5_088",
+            "kana": "くるま",
+            "meaning": "Coche",
+            "kanji": "車"
+          },
+          {
+            "id": "v5_089",
+            "kana": "じてんしゃ",
+            "meaning": "Bicicleta",
+            "kanji": "自転車"
+          }
+        ]
+      },
+      {
+        "theme_id": "cp_v5_block_03",
+        "type": "checkpoint",
+        "theme_title": "Examen: Lugares y Entorno",
+        "requires_count": 3,
+        "items": []
+      }
+    ]
   }
 ]
