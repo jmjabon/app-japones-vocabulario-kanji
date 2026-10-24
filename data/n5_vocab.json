@@ -1,324 +1,296 @@
 [
   {
     "block_id": "v5_block_01",
-    "block_title": "Bloque 1: Fundamentos",
+    "block_title": "Bloque 1: Números y Tiempo",
     "themes": [
       {
         "theme_id": "v5_t01",
-        "theme_title": "Saludos y Cortesía",
+        "theme_title": "Números 1-10",
         "items": [
-          { "id": "v5_001", "kana": "こんにちは", "meaning": "Hola / Buenas tardes" },
-          { "id": "v5_002", "kana": "おはよう", "meaning": "Buenos días" },
-          { "id": "v5_003", "kana": "こんばんは", "meaning": "Buenas noches" },
-          { "id": "v5_004", "kana": "ありがとう", "meaning": "Gracias" },
-          { "id": "v5_005", "kana": "すみません", "meaning": "Disculpe / Lo siento" },
-          { "id": "v5_006", "kana": "さようなら", "meaning": "Adiós" }
+          {
+            "id": "v5_001",
+            "kana": "いち",
+            "meaning": "Uno",
+            "kanji": "一"
+          },
+          {
+            "id": "v5_002",
+            "kana": "に",
+            "meaning": "Dos",
+            "kanji": "二"
+          },
+          {
+            "id": "v5_003",
+            "kana": "さん",
+            "meaning": "Tres",
+            "kanji": "三"
+          },
+          {
+            "id": "v5_004",
+            "kana": "よん / し",
+            "meaning": "Cuatro",
+            "kanji": "四"
+          },
+          {
+            "id": "v5_005",
+            "kana": "ご",
+            "meaning": "Cinco",
+            "kanji": "五"
+          },
+          {
+            "id": "v5_006",
+            "kana": "ろく",
+            "meaning": "Seis",
+            "kanji": "六"
+          },
+          {
+            "id": "v5_007",
+            "kana": "なな / しち",
+            "meaning": "Siete",
+            "kanji": "七"
+          },
+          {
+            "id": "v5_008",
+            "kana": "はち",
+            "meaning": "Ocho",
+            "kanji": "八"
+          },
+          {
+            "id": "v5_009",
+            "kana": "きゅう / く",
+            "meaning": "Nueve",
+            "kanji": "九"
+          },
+          {
+            "id": "v5_010",
+            "kana": "じゅう",
+            "meaning": "Diez",
+            "kanji": "十"
+          }
         ]
       },
       {
         "theme_id": "v5_t02",
-        "theme_title": "Números Básicos",
+        "theme_title": "Grandes Cifras",
         "items": [
-          { "id": "v5_007", "kanji": "一", "kana": "いち", "meaning": "Uno" },
-          { "id": "v5_008", "kanji": "二", "kana": "に", "meaning": "Dos" },
-          { "id": "v5_009", "kanji": "三", "kana": "さん", "meaning": "Tres" },
-          { "id": "v5_010", "kanji": "四", "kana": "よん", "meaning": "Cuatro" },
-          { "id": "v5_011", "kanji": "五", "kana": "ご", "meaning": "Cinco" },
-          { "id": "v5_012", "kanji": "六", "kana": "ろく", "meaning": "Seis" }
+          {
+            "id": "v5_011",
+            "kana": "ひゃく",
+            "meaning": "Cien",
+            "kanji": "百"
+          },
+          {
+            "id": "v5_012",
+            "kana": "せん",
+            "meaning": "Mil",
+            "kanji": "千"
+          },
+          {
+            "id": "v5_013",
+            "kana": "まん",
+            "meaning": "Diez mil",
+            "kanji": "万"
+          },
+          {
+            "id": "v5_014",
+            "kana": "いくら",
+            "meaning": "Cuánto (precio)"
+          },
+          {
+            "id": "v5_015",
+            "kana": "いくつ",
+            "meaning": "Cuántos (cantidad)"
+          }
         ]
       },
       {
         "theme_id": "v5_t03",
-        "theme_title": "Conceptos de Tiempo",
+        "theme_title": "Días de la Semana",
         "items": [
-          { "id": "v5_013", "kana": "きょう", "meaning": "Hoy" },
-          { "id": "v5_014", "kana": "あした", "meaning": "Mañana" },
-          { "id": "v5_015", "kana": "きのう", "meaning": "Ayer" },
-          { "id": "v5_016", "kana": "いま", "meaning": "Ahora" }
+          {
+            "id": "v5_016",
+            "kana": "げつようび",
+            "meaning": "Lunes",
+            "kanji": "月曜日"
+          },
+          {
+            "id": "v5_017",
+            "kana": "かようび",
+            "meaning": "Martes",
+            "kanji": "火曜日"
+          },
+          {
+            "id": "v5_018",
+            "kana": "すいようび",
+            "meaning": "Miércoles",
+            "kanji": "水曜日"
+          },
+          {
+            "id": "v5_019",
+            "kana": "もくようび",
+            "meaning": "Jueves",
+            "kanji": "木曜日"
+          },
+          {
+            "id": "v5_020",
+            "kana": "きんようび",
+            "meaning": "Viernes",
+            "kanji": "金曜日"
+          },
+          {
+            "id": "v5_021",
+            "kana": "どようび",
+            "meaning": "Sábado",
+            "kanji": "土曜日"
+          },
+          {
+            "id": "v5_022",
+            "kana": "にちようび",
+            "meaning": "Domingo",
+            "kanji": "日曜日"
+          }
         ]
       },
       {
-        "theme_id": "cp_v5_01",
-        "type": "checkpoint",
-        "theme_title": "Examen: Bloque 1",
-        "requires_count": 3,
-        "items": []
-      }
-    ]
-  },
-  {
-    "block_id": "v5_block_02",
-    "block_title": "Bloque 2: Personas y Familia",
-    "themes": [
-      {
         "theme_id": "v5_t04",
-        "theme_title": "Pronombres y Personas",
+        "theme_title": "Días del Mes (1-10)",
         "items": [
-          { "id": "v5_017", "kana": "わたし", "meaning": "Yo" },
-          { "id": "v5_018", "kana": "あなた", "meaning": "Tú" },
-          { "id": "v5_019", "kana": "だれ", "meaning": "Quién" },
-          { "id": "v5_020", "kanji": "人", "kana": "ひと", "meaning": "Persona" },
-          { "id": "v5_021", "kana": "みんな", "meaning": "Todos" }
+          {
+            "id": "v5_023",
+            "kana": "ついたち",
+            "meaning": "Día 1",
+            "kanji": "一日"
+          },
+          {
+            "id": "v5_024",
+            "kana": "ふつか",
+            "meaning": "Día 2",
+            "kanji": "二日"
+          },
+          {
+            "id": "v5_025",
+            "kana": "みっか",
+            "meaning": "Día 3",
+            "kanji": "三日"
+          },
+          {
+            "id": "v5_026",
+            "kana": "よっか",
+            "meaning": "Día 4",
+            "kanji": "四日"
+          },
+          {
+            "id": "v5_027",
+            "kana": "いつか",
+            "meaning": "Día 5",
+            "kanji": "五日"
+          },
+          {
+            "id": "v5_028",
+            "kana": "むいか",
+            "meaning": "Día 6",
+            "kanji": "六日"
+          },
+          {
+            "id": "v5_029",
+            "kana": "なのか",
+            "meaning": "Día 7",
+            "kanji": "七日"
+          },
+          {
+            "id": "v5_030",
+            "kana": "ようか",
+            "meaning": "Día 8",
+            "kanji": "八日"
+          },
+          {
+            "id": "v5_031",
+            "kana": "ここのか",
+            "meaning": "Día 9",
+            "kanji": "九日"
+          },
+          {
+            "id": "v5_032",
+            "kana": "とおか",
+            "meaning": "Día 10",
+            "kanji": "十日"
+          }
         ]
       },
       {
         "theme_id": "v5_t05",
-        "theme_title": "Mi Familia",
+        "theme_title": "Días Especiales",
         "items": [
-          { "id": "v5_022", "kana": "かぞく", "meaning": "Familia" },
-          { "id": "v5_023", "kana": "ちち", "meaning": "Mi padre" },
-          { "id": "v5_024", "kana": "はは", "meaning": "Mi madre" },
-          { "id": "v5_025", "kana": "あに", "meaning": "Mi hermano mayor" },
-          { "id": "v5_026", "kana": "あね", "meaning": "Mi hermana mayor" }
+          {
+            "id": "v5_033",
+            "kana": "じゅうよっか",
+            "meaning": "Día 14",
+            "kanji": "十四日"
+          },
+          {
+            "id": "v5_034",
+            "kana": "はつか",
+            "meaning": "Día 20",
+            "kanji": "二十日"
+          },
+          {
+            "id": "v5_035",
+            "kana": "にじゅうよっか",
+            "meaning": "Día 24",
+            "kanji": "二十四日"
+          },
+          {
+            "id": "v5_036",
+            "kana": "いつ",
+            "meaning": "Cuándo"
+          },
+          {
+            "id": "v5_037",
+            "kana": "だれ",
+            "meaning": "Quién"
+          }
         ]
       },
       {
         "theme_id": "v5_t06",
-        "theme_title": "Profesiones y Roles",
+        "theme_title": "Medición del Tiempo",
         "items": [
-          { "id": "v5_027", "kanji": "先生", "kana": "せんせい", "meaning": "Profesor / Maestro" },
-          { "id": "v5_028", "kanji": "学生", "kana": "がくせい", "meaning": "Estudiante" },
-          { "id": "v5_029", "kana": "いしゃ", "meaning": "Médico" },
-          { "id": "v5_030", "kana": "かいしゃいん", "meaning": "Empleado de empresa" }
+          {
+            "id": "v5_038",
+            "kana": "いま",
+            "meaning": "Ahora",
+            "kanji": "今"
+          },
+          {
+            "id": "v5_039",
+            "kana": "きょう",
+            "meaning": "Hoy",
+            "kanji": "今日"
+          },
+          {
+            "id": "v5_040",
+            "kana": "あした",
+            "meaning": "Mañana",
+            "kanji": "明日"
+          },
+          {
+            "id": "v5_041",
+            "kana": "きのう",
+            "meaning": "Ayer",
+            "kanji": "昨日"
+          },
+          {
+            "id": "v5_042",
+            "kana": "まいにち",
+            "meaning": "Todos los días",
+            "kanji": "毎日"
+          }
         ]
       },
       {
-        "theme_id": "cp_v5_02",
+        "theme_id": "cp_v5_block_01",
         "type": "checkpoint",
-        "theme_title": "Examen: Bloque 2",
-        "requires_count": 3,
-        "items": []
-      }
-    ]
-  },
-  {
-    "block_id": "v5_block_03",
-    "block_title": "Bloque 3: Lugares y Objetos",
-    "themes": [
-      {
-        "theme_id": "v5_t07",
-        "theme_title": "La Ciudad y los Edificios",
-        "items": [
-          { "id": "v5_031", "kana": "がっこう", "meaning": "Escuela" },
-          { "id": "v5_032", "kana": "えき", "meaning": "Estación de tren" },
-          { "id": "v5_033", "kana": "ぎんこう", "meaning": "Banco" },
-          { "id": "v5_034", "kana": "びょういん", "meaning": "Hospital" },
-          { "id": "v5_035", "kana": "みせ", "meaning": "Tienda" }
-        ]
-      },
-      {
-        "theme_id": "v5_t08",
-        "theme_title": "Cosas de Casa",
-        "items": [
-          { "id": "v5_036", "kana": "いえ", "meaning": "Casa" },
-          { "id": "v5_037", "kana": "つくえ", "meaning": "Escritorio / Mesa" },
-          { "id": "v5_038", "kana": "いす", "meaning": "Silla" },
-          { "id": "v5_039", "kana": "ベッド", "meaning": "Cama" },
-          { "id": "v5_040", "kana": "テレビ", "meaning": "Televisión" }
-        ]
-      },
-      {
-        "theme_id": "v5_t09",
-        "theme_title": "Ropa y Accesorios",
-        "items": [
-          { "id": "v5_041", "kana": "シャツ", "meaning": "Camisa" },
-          { "id": "v5_042", "kana": "くつ", "meaning": "Zapatos" },
-          { "id": "v5_043", "kana": "ぼうし", "meaning": "Sombrero / Gorra" },
-          { "id": "v5_044", "kana": "かさ", "meaning": "Paraguas" }
-        ]
-      },
-      {
-        "theme_id": "cp_v5_03",
-        "type": "checkpoint",
-        "theme_title": "Examen: Bloque 3",
-        "requires_count": 3,
-        "items": []
-      }
-    ]
-  },
-  {
-    "block_id": "v5_block_04",
-    "block_title": "Bloque 4: Adjetivos y Estados",
-    "themes": [
-      {
-        "theme_id": "v5_t10",
-        "theme_title": "Colores Básicos",
-        "items": [
-          { "id": "v5_045", "kana": "あか", "meaning": "Rojo" },
-          { "id": "v5_046", "kana": "あお", "meaning": "Azul" },
-          { "id": "v5_047", "kana": "しろ", "meaning": "Blanco" },
-          { "id": "v5_048", "kana": "くろ", "meaning": "Negro" },
-          { "id": "v5_049", "kana": "きいろ", "meaning": "Amarillo" },
-          { "id": "v5_050", "kana": "ちゃいろ", "meaning": "Marrón" }
-        ]
-      },
-      {
-        "theme_id": "v5_t11",
-        "theme_title": "Tamaño y Novedad",
-        "items": [
-          { "id": "v5_051", "kana": "おおきい", "meaning": "Grande" },
-          { "id": "v5_052", "kana": "ちいさい", "meaning": "Pequeño" },
-          { "id": "v5_053", "kana": "あたらしい", "meaning": "Nuevo" },
-          { "id": "v5_054", "kana": "ふるい", "meaning": "Viejo / Antiguo" }
-        ]
-      },
-      {
-        "theme_id": "v5_t12",
-        "theme_title": "Clima y Sensaciones",
-        "items": [
-          { "id": "v5_055", "kana": "あつい", "meaning": "Caliente / Caluroso" },
-          { "id": "v5_056", "kana": "さむい", "meaning": "Frío (clima)" },
-          { "id": "v5_057", "kana": "つめたい", "meaning": "Frío (al tacto)" },
-          { "id": "v5_058", "kana": "おいしい", "meaning": "Delicioso / Rico" },
-          { "id": "v5_059", "kana": "いい", "meaning": "Bueno / Bien" },
-          { "id": "v5_060", "kana": "わるい", "meaning": "Malo" }
-        ]
-      },
-      {
-        "theme_id": "cp_v5_04",
-        "type": "checkpoint",
-        "theme_title": "Examen: Bloque 4",
-        "requires_count": 3,
-        "items": []
-      }
-    ]
-  },
-  {
-    "block_id": "v5_block_05",
-    "block_title": "Bloque 5: Verbos Básicos",
-    "themes": [
-      {
-        "theme_id": "v5_t13",
-        "theme_title": "Acciones y Movimiento",
-        "items": [
-          { "id": "v5_061", "kana": "いく", "meaning": "Ir" },
-          { "id": "v5_062", "kana": "くる", "meaning": "Venir" },
-          { "id": "v5_063", "kana": "かえる", "meaning": "Volver / Regresar" },
-          { "id": "v5_064", "kana": "あるく", "meaning": "Caminar" },
-          { "id": "v5_065", "kana": "はしる", "meaning": "Correr" }
-        ]
-      },
-      {
-        "theme_id": "v5_t14",
-        "theme_title": "Rutina Diaria",
-        "items": [
-          { "id": "v5_066", "kana": "たべる", "meaning": "Comer" },
-          { "id": "v5_067", "kana": "のむ", "meaning": "Beber" },
-          { "id": "v5_068", "kana": "おきる", "meaning": "Despertarse / Levantarse" },
-          { "id": "v5_069", "kana": "ねる", "meaning": "Dormir" },
-          { "id": "v5_070", "kana": "する", "meaning": "Hacer" }
-        ]
-      },
-      {
-        "theme_id": "v5_t15",
-        "theme_title": "Comunicación y Sentidos",
-        "items": [
-          { "id": "v5_071", "kana": "みる", "meaning": "Ver / Mirar" },
-          { "id": "v5_072", "kana": "きく", "meaning": "Escuchar / Preguntar" },
-          { "id": "v5_073", "kana": "よむ", "meaning": "Leer" },
-          { "id": "v5_074", "kana": "かく", "meaning": "Escribir" },
-          { "id": "v5_075", "kana": "はなす", "meaning": "Hablar" }
-        ]
-      },
-      {
-        "theme_id": "cp_v5_05",
-        "type": "checkpoint",
-        "theme_title": "Examen: Bloque 5",
-        "requires_count": 3,
-        "items": []
-      }
-    ]
-  },
-  {
-    "block_id": "v5_block_07",
-    "block_title": "Bloque 7: Katakana Esencial",
-    "themes": [
-      {
-        "theme_id": "v5_t19",
-        "theme_title": "Comida y Mesa",
-        "items": [
-          { "id": "v5_100", "kana": "コーヒー", "meaning": "Café" },
-          { "id": "v5_101", "kana": "パン", "meaning": "Pan" },
-          { "id": "v5_102", "kana": "ケーキ", "meaning": "Pastel / Tarta" },
-          { "id": "v5_103", "kana": "ナイフ", "meaning": "Cuchillo" },
-          { "id": "v5_104", "kana": "フォーク", "meaning": "Tenedor" },
-          { "id": "v5_105", "kana": "スプーン", "meaning": "Cuchara" }
-        ]
-      },
-      {
-        "theme_id": "v5_t20",
-        "theme_title": "Objetos y Tecnología",
-        "items": [
-          { "id": "v5_106", "kana": "テーブル", "meaning": "Mesa" },
-          { "id": "v5_107", "kana": "ドア", "meaning": "Puerta" },
-          { "id": "v5_108", "kana": "シャワー", "meaning": "Ducha" },
-          { "id": "v5_109", "kana": "カメラ", "meaning": "Cámara fotográfica" },
-          { "id": "v5_110", "kana": "ラジオ", "meaning": "Radio" },
-          { "id": "v5_111", "kana": "パソコン", "meaning": "Ordenador / PC" }
-        ]
-      },
-      {
-        "theme_id": "v5_t21",
-        "theme_title": "Transporte y Sociedad",
-        "items": [
-          { "id": "v5_112", "kana": "バス", "meaning": "Autobús" },
-          { "id": "v5_113", "kana": "タクシー", "meaning": "Taxi" },
-          { "id": "v5_114", "kana": "トイレ", "meaning": "Baño / Aseo" },
-          { "id": "v5_115", "kana": "エレベーター", "meaning": "Ascensor" },
-          { "id": "v5_116", "kana": "ニュース", "meaning": "Noticias" },
-          { "id": "v5_117", "kana": "スポーツ", "meaning": "Deportes" }
-        ]
-      },
-      {
-        "theme_id": "cp_v5_07",
-        "type": "checkpoint",
-        "theme_title": "Examen: Katakana",
-        "requires_count": 3,
-        "items": []
-      }
-    ]
-  },
-  {
-    "block_id": "v5_block_06",
-    "block_title": "Bloque 6: Adverbios y Conexiones",
-    "themes": [
-      {
-        "theme_id": "v5_t16",
-        "theme_title": "Grado y Cantidad",
-        "items": [
-          { "id": "v5_076", "kana": "とても", "meaning": "Muy / Mucho" },
-          { "id": "v5_077", "kana": "すこし", "meaning": "Un poco" },
-          { "id": "v5_078", "kana": "たくさん", "meaning": "Mucho / Muchos (cantidad)" },
-          { "id": "v5_079", "kana": "ぜんぜん", "meaning": "Nada en absoluto (se usa con negativo)" },
-          { "id": "v5_080", "kana": "だいたい", "meaning": "Más o menos / Aproximadamente" }
-        ]
-      },
-      {
-        "theme_id": "v5_t17",
-        "theme_title": "Frecuencia y Tiempo",
-        "items": [
-          { "id": "v5_081", "kana": "いつも", "meaning": "Siempre" },
-          { "id": "v5_082", "kana": "よく", "meaning": "A menudo / Frecuentemente" },
-          { "id": "v5_083", "kana": "ときどき", "meaning": "A veces / De vez en cuando" },
-          { "id": "v5_084", "kana": "もう", "meaning": "Ya (ej: Ya he comido)" },
-          { "id": "v5_085", "kana": "まだ", "meaning": "Todavía / Aún no" }
-        ]
-      },
-      {
-        "theme_id": "v5_t18",
-        "theme_title": "Conectores Lógicos",
-        "items": [
-          { "id": "v5_086", "kana": "そして", "meaning": "Y / Y entonces" },
-          { "id": "v5_087", "kana": "それから", "meaning": "Después de eso / Además" },
-          { "id": "v5_088", "kana": "でも", "meaning": "Pero" },
-          { "id": "v5_089", "kana": "だから", "meaning": "Por lo tanto / Así que" },
-          { "id": "v5_090", "kana": "どうして", "meaning": "Por qué" }
-        ]
-      },
-      {
-        "theme_id": "cp_v5_06",
-        "type": "checkpoint",
-        "theme_title": "Examen: Bloque 6",
+        "theme_title": "Examen: Números y Tiempo",
         "requires_count": 3,
         "items": []
       }
