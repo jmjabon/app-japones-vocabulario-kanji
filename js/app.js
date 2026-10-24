@@ -723,7 +723,7 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
     const showQuestion = () => {
         if(currentIndex >= exerciseItems.length) {
             if(mistakes === 0) {
-                // SOLUCIÓN DEFINITIVA: Calculamos el siguiente ID directamente desde el array real, ignorando el HTML
+                // Cálculo matemático del siguiente ID 
                 const flatIdx = ctx.flat.findIndex(t => t.theme_id === vocabTheme.theme_id);
                 const realNextId = ctx.flat[flatIdx + 1] ? ctx.flat[flatIdx + 1].theme_id : null;
                 
@@ -737,8 +737,51 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
                 return renderVocabSubmenu(vocabTheme, nextThemeId, ctx);
             }
         }
-        // ... (resto de la función igual, dibujando el HTML de las opciones) ...
 
+        const item = exerciseItems[currentIndex];
+        const isInverse = currentIndex % 2 !== 0; 
+        const correct = isInverse ? (item.kanji || item.kana) : item.meaning;
+        const options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, isInverse ? (item.kanji ? 'kanji' : 'kana') : 'meaning', 3)]);
+
+        document.getElementById('app-view').innerHTML = `
+            <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
+                <div class="flex justify-between items-center text-rose-500 font-bold mb-8 px-2">
+                    <span class="bg-rose-100 text-rose-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-rose-200"><i data-lucide="swords" class="w-4 h-4 inline mr-1"></i> Examen Oficial</span>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">${currentIndex + 1} / ${exerciseItems.length}</span>
+                    <button id="btn-quit" class="active:opacity-50 p-2 transition-opacity"><i data-lucide="x" class="w-6 h-6"></i></button>
+                </div>
+                <div class="flex-grow flex flex-col items-center justify-center mb-10 text-center">
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">${isInverse ? 'Traduce al Japonés' : 'Traduce al Español'}</p>
+                    <h2 class="${isInverse ? 'text-5xl md:text-6xl px-4' : 'text-7xl md:text-8xl tracking-widest'} font-bold text-gray-900 leading-tight">${isInverse ? item.meaning : (item.kanji || item.kana)}</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="options-container">
+                    ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-gray-800 text-center md:text-left text-xl shadow-sm active:bg-gray-100 active:scale-[0.98] transition-all" data-answer="${opt}">${opt}</button>`).join('')}
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+        document.getElementById('btn-quit').addEventListener('click', () => renderVocabSubmenu(vocabTheme, nextThemeId, ctx));
+        
+        const optionButtons = document.querySelectorAll('.option-btn');
+        optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
+            const ans = e.target.getAttribute('data-answer');
+            optionButtons.forEach(b => b.disabled = true);
+            e.target.classList.remove('border-gray-200', 'bg-white', 'text-gray-800');
+            
+            if (ans === correct) {
+                e.target.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+            } else {
+                mistakes++;
+                e.target.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+                const correctBtn = Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correct);
+                correctBtn.classList.remove('border-gray-200', 'bg-white', 'text-gray-800');
+                correctBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+            }
+            setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
+        }));
+    };
+    showQuestion();
+};
 // --- MÓDULO KANJI ---
 
 const renderKanjiThemeList = (ctx) => {
