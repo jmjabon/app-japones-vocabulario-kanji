@@ -644,5 +644,590 @@
         "items": []
       }
     ]
+  },
+  {
+    "block_id": "v5_block_04",
+    "block_title": "Bloque 4: Adjetivos y Estados",
+    "themes": [
+      {
+        "theme_id": "v5_t14",
+        "theme_title": "Colores Básicos",
+        "items": [
+          {
+            "id": "v5_090",
+            "kana": "あか",
+            "meaning": "Rojo",
+            "kanji": "赤"
+          },
+          {
+            "id": "v5_091",
+            "kana": "あお",
+            "meaning": "Azul",
+            "kanji": "青"
+          },
+          {
+            "id": "v5_092",
+            "kana": "しろ",
+            "meaning": "Blanco",
+            "kanji": "白"
+          },
+          {
+            "id": "v5_093",
+            "kana": "くろ",
+            "meaning": "Negro",
+            "kanji": "黒"
+          },
+          {
+            "id": "v5_094",
+            "kana": "きいろ",
+            "meaning": "Amarillo",
+            "kanji": "黄色"
+          },
+          {
+            "id": "v5_095",
+            "kana": "ちゃいろ",
+            "meaning": "Marrón",
+            "kanji": "茶色"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t15",
+        "theme_title": "Tamaño y Novedad",
+        "items": [
+          {
+            "id": "v5_096",
+            "kana": "おおきい",
+            "meaning": "Grande",
+            "kanji": "大きい"
+          },
+          {
+            "id": "v5_097",
+            "kana": "ちいさい",
+            "meaning": "Pequeño",
+            "kanji": "小さい"
+          },
+          {
+            "id": "v5_098",
+            "kana": "あたらしい",
+            "meaning": "Nuevo",
+            "kanji": "新しい"
+          },
+          {
+            "id": "v5_099",
+            "kana": "ふるい",
+            "meaning": "Viejo / Antiguo",
+            "kanji": "古い"
+          },
+          {
+            "id": "v5_100",
+            "kana": "ながい",
+            "meaning": "Largo",
+            "kanji": "長い"
+          },
+          {
+            "id": "v5_101",
+            "kana": "みじかい",
+            "meaning": "Corto",
+            "kanji": "短い"
+          },
+          {
+            "id": "v5_102",
+            "kana": "たかい",
+            "meaning": "Alto / Caro",
+            "kanji": "高い"
+          },
+          {
+            "id": "v5_103",
+            "kana": "やすい",
+            "meaning": "Barato",
+            "kanji": "安い"
+          },
+          {
+            "id": "v5_104",
+            "kana": "ひくい",
+            "meaning": "Bajo (estatura)",
+            "kanji": "低い"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t16",
+        "theme_title": "Clima y Sensaciones",
+        "items": [
+          {
+            "id": "v5_105",
+            "kana": "あつい",
+            "meaning": "Caluroso (clima)",
+            "kanji": "暑い"
+          },
+          {
+            "id": "v5_106",
+            "kana": "さむい",
+            "meaning": "Frío (clima)",
+            "kanji": "寒い"
+          },
+          {
+            "id": "v5_107",
+            "kana": "あつい",
+            "meaning": "Caliente (objetos)",
+            "kanji": "熱い"
+          },
+          {
+            "id": "v5_108",
+            "kana": "つめたい",
+            "meaning": "Frío (al tacto)",
+            "kanji": "冷たい"
+          },
+          {
+            "id": "v5_109",
+            "kana": "おいしい",
+            "meaning": "Delicioso / Rico",
+            "kanji": "美味しい"
+          },
+          {
+            "id": "v5_110",
+            "kana": "いい / よい",
+            "meaning": "Bueno / Bien",
+            "kanji": "良い"
+          },
+          {
+            "id": "v5_111",
+            "kana": "わるい",
+            "meaning": "Malo",
+            "kanji": "悪い"
+          }
+        ]
+      },
+      {
+        "theme_id": "cp_v5_block_04",
+        "type": "checkpoint",
+        "theme_title": "Examen: Adjetivos y Estados",
+        "requires_count": 3,
+        "items": []
+      }
+    ]
+  },
+  {
+    "block_id": "v5_block_05",
+    "block_title": "Bloque 5: Verbos Básicos",
+    "themes": [
+      {
+        "theme_id": "v5_t17",
+        "theme_title": "Acciones y Movimiento",
+        "items": [
+          {
+            "id": "v5_112",
+            "kana": "いく",
+            "meaning": "Ir",
+            "kanji": "行く"
+          },
+          {
+            "id": "v5_113",
+            "kana": "くる",
+            "meaning": "Venir",
+            "kanji": "来る"
+          },
+          {
+            "id": "v5_114",
+            "kana": "かえる",
+            "meaning": "Volver / Regresar",
+            "kanji": "帰る"
+          },
+          {
+            "id": "v5_115",
+            "kana": "あるく",
+            "meaning": "Caminar",
+            "kanji": "歩く"
+          },
+          {
+            "id": "v5_116",
+            "kana": "はしる",
+            "meaning": "Correr",
+            "kanji": "走る"
+          },
+          {
+            "id": "v5_117",
+            "kana": "でる",
+            "meaning": "Salir",
+            "kanji": "出る"
+          },
+          {
+            "id": "v5_118",
+            "kana": "はいる",
+            "meaning": "Entrar",
+            "kanji": "入る"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t18",
+        "theme_title": "Rutina Diaria",
+        "items": [
+          {
+            "id": "v5_119",
+            "kana": "たべる",
+            "meaning": "Comer",
+            "kanji": "食べる"
+          },
+          {
+            "id": "v5_120",
+            "kana": "のむ",
+            "meaning": "Beber",
+            "kanji": "飲む"
+          },
+          {
+            "id": "v5_121",
+            "kana": "おきる",
+            "meaning": "Despertarse / Levantarse",
+            "kanji": "起きる"
+          },
+          {
+            "id": "v5_122",
+            "kana": "ねる",
+            "meaning": "Dormir",
+            "kanji": "寝る"
+          },
+          {
+            "id": "v5_123",
+            "kana": "する",
+            "meaning": "Hacer"
+          },
+          {
+            "id": "v5_124",
+            "kana": "かう",
+            "meaning": "Comprar",
+            "kanji": "買う"
+          },
+          {
+            "id": "v5_125",
+            "kana": "やすむ",
+            "meaning": "Descansar",
+            "kanji": "休む"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t19",
+        "theme_title": "Comunicación y Sentidos",
+        "items": [
+          {
+            "id": "v5_126",
+            "kana": "みる",
+            "meaning": "Ver / Mirar",
+            "kanji": "見る"
+          },
+          {
+            "id": "v5_127",
+            "kana": "きく",
+            "meaning": "Escuchar / Preguntar",
+            "kanji": "聞く"
+          },
+          {
+            "id": "v5_128",
+            "kana": "よむ",
+            "meaning": "Leer",
+            "kanji": "読む"
+          },
+          {
+            "id": "v5_129",
+            "kana": "かく",
+            "meaning": "Escribir",
+            "kanji": "書く"
+          },
+          {
+            "id": "v5_130",
+            "kana": "はなす",
+            "meaning": "Hablar",
+            "kanji": "話す"
+          },
+          {
+            "id": "v5_131",
+            "kana": "いう",
+            "meaning": "Decir",
+            "kanji": "言う"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t20",
+        "theme_title": "Aprendizaje y Trabajo",
+        "items": [
+          {
+            "id": "v5_132",
+            "kana": "おしえる",
+            "meaning": "Enseñar",
+            "kanji": "教える"
+          },
+          {
+            "id": "v5_133",
+            "kana": "ならう",
+            "meaning": "Aprender",
+            "kanji": "習う"
+          },
+          {
+            "id": "v5_134",
+            "kana": "わかる",
+            "meaning": "Entender / Comprender",
+            "kanji": "分かる"
+          },
+          {
+            "id": "v5_135",
+            "kana": "はたらく",
+            "meaning": "Trabajar",
+            "kanji": "働く"
+          },
+          {
+            "id": "v5_136",
+            "kana": "つかう",
+            "meaning": "Usar",
+            "kanji": "使う"
+          },
+          {
+            "id": "v5_137",
+            "kana": "まつ",
+            "meaning": "Esperar",
+            "kanji": "待つ"
+          }
+        ]
+      },
+      {
+        "theme_id": "cp_v5_block_05",
+        "type": "checkpoint",
+        "theme_title": "Examen: Verbos Básicos",
+        "requires_count": 3,
+        "items": []
+      }
+    ]
+  },
+  {
+    "block_id": "v5_block_06",
+    "block_title": "Bloque 6: Adverbios y Conexiones",
+    "themes": [
+      {
+        "theme_id": "v5_t21",
+        "theme_title": "Grado y Cantidad",
+        "items": [
+          {
+            "id": "v5_138",
+            "kana": "とても",
+            "meaning": "Muy / Mucho"
+          },
+          {
+            "id": "v5_139",
+            "kana": "すこし",
+            "meaning": "Un poco",
+            "kanji": "少し"
+          },
+          {
+            "id": "v5_140",
+            "kana": "たくさん",
+            "meaning": "Mucho (cantidad)"
+          },
+          {
+            "id": "v5_141",
+            "kana": "ぜんぜん",
+            "meaning": "Nada en absoluto",
+            "kanji": "全然"
+          },
+          {
+            "id": "v5_142",
+            "kana": "だいたい",
+            "meaning": "Más o menos"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t22",
+        "theme_title": "Frecuencia y Tiempo",
+        "items": [
+          {
+            "id": "v5_143",
+            "kana": "いつも",
+            "meaning": "Siempre"
+          },
+          {
+            "id": "v5_144",
+            "kana": "よく",
+            "meaning": "A menudo"
+          },
+          {
+            "id": "v5_145",
+            "kana": "ときどき",
+            "meaning": "A veces",
+            "kanji": "時々"
+          },
+          {
+            "id": "v5_146",
+            "kana": "もう",
+            "meaning": "Ya"
+          },
+          {
+            "id": "v5_147",
+            "kana": "まだ",
+            "meaning": "Todavía / Aún no"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t23",
+        "theme_title": "Conectores Lógicos",
+        "items": [
+          {
+            "id": "v5_148",
+            "kana": "そして",
+            "meaning": "Y / Y entonces"
+          },
+          {
+            "id": "v5_149",
+            "kana": "それから",
+            "meaning": "Después de eso"
+          },
+          {
+            "id": "v5_150",
+            "kana": "でも",
+            "meaning": "Pero"
+          },
+          {
+            "id": "v5_151",
+            "kana": "だから",
+            "meaning": "Por lo tanto"
+          },
+          {
+            "id": "v5_152",
+            "kana": "どうして",
+            "meaning": "Por qué"
+          }
+        ]
+      },
+      {
+        "theme_id": "cp_v5_block_06",
+        "type": "checkpoint",
+        "theme_title": "Examen: Adverbios y Conexiones",
+        "requires_count": 3,
+        "items": []
+      }
+    ]
+  },
+  {
+    "block_id": "v5_block_07",
+    "block_title": "Bloque 7: Katakana Esencial",
+    "themes": [
+      {
+        "theme_id": "v5_t24",
+        "theme_title": "Comida y Mesa",
+        "items": [
+          {
+            "id": "v5_153",
+            "kana": "コーヒー",
+            "meaning": "Café"
+          },
+          {
+            "id": "v5_154",
+            "kana": "パン",
+            "meaning": "Pan"
+          },
+          {
+            "id": "v5_155",
+            "kana": "ケーキ",
+            "meaning": "Pastel / Tarta"
+          },
+          {
+            "id": "v5_156",
+            "kana": "ナイフ",
+            "meaning": "Cuchillo"
+          },
+          {
+            "id": "v5_157",
+            "kana": "フォーク",
+            "meaning": "Tenedor"
+          },
+          {
+            "id": "v5_158",
+            "kana": "スプーン",
+            "meaning": "Cuchara"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t25",
+        "theme_title": "Objetos y Tecnología",
+        "items": [
+          {
+            "id": "v5_159",
+            "kana": "テーブル",
+            "meaning": "Mesa"
+          },
+          {
+            "id": "v5_160",
+            "kana": "ドア",
+            "meaning": "Puerta"
+          },
+          {
+            "id": "v5_161",
+            "kana": "シャワー",
+            "meaning": "Ducha"
+          },
+          {
+            "id": "v5_162",
+            "kana": "カメラ",
+            "meaning": "Cámara"
+          },
+          {
+            "id": "v5_163",
+            "kana": "ラジオ",
+            "meaning": "Radio"
+          },
+          {
+            "id": "v5_164",
+            "kana": "パソコン",
+            "meaning": "Ordenador / PC"
+          }
+        ]
+      },
+      {
+        "theme_id": "v5_t26",
+        "theme_title": "Transporte y Sociedad",
+        "items": [
+          {
+            "id": "v5_165",
+            "kana": "バス",
+            "meaning": "Autobús"
+          },
+          {
+            "id": "v5_166",
+            "kana": "タクシー",
+            "meaning": "Taxi"
+          },
+          {
+            "id": "v5_167",
+            "kana": "トイレ",
+            "meaning": "Baño / Aseo"
+          },
+          {
+            "id": "v5_168",
+            "kana": "エレベーター",
+            "meaning": "Ascensor"
+          },
+          {
+            "id": "v5_169",
+            "kana": "ニュース",
+            "meaning": "Noticias"
+          },
+          {
+            "id": "v5_170",
+            "kana": "スポーツ",
+            "meaning": "Deportes"
+          }
+        ]
+      },
+      {
+        "theme_id": "cp_v5_block_07",
+        "type": "checkpoint",
+        "theme_title": "Examen: Katakana Esencial",
+        "requires_count": 3,
+        "items": []
+      }
+    ]
   }
 ]

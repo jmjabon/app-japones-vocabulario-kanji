@@ -122,7 +122,7 @@ const renderDashboard = () => {
     document.getElementById('btn-srs-stats').addEventListener('click', renderSRSStats);
     document.getElementById('btn-start-vocab').addEventListener('click', async () => renderBlockList(await getVocabData(manifestData.levels[0].vocab_file), 'vocab'));
     document.getElementById('btn-start-kanji').addEventListener('click', async () => renderBlockList(await getKanjiData(manifestData.levels[0].kanji_file), 'kanji'));
-    document.getElementById('btn-export-quick')?.addEventListener('click', () => document.getElementById('btn-export')?.click());
+    document.getElementById('btn-export-quick')?.addEventListener('click', renderSettingsModal);
 };
 
 // --- ESTADÍSTICAS DE MEMORIA SRS ---
@@ -1158,6 +1158,118 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
         }));
     };
     showQuestion();
+};
+
+// --- MODAL DE AJUSTES Y BACKUP (Nativo iOS) ---
+const renderSettingsModal = () => {
+    let modal = document.getElementById('settings-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'settings-modal';
+        modal.className = 'fixed inset-0 z-50 flex items-end md:items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300';
+        modal.innerHTML = `
+            <div id="settings-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-auto transition-opacity"></div>
+            <div id="settings-sheet" class="relative w-full md:max-w-md bg-white rounded-t-[2rem] md:rounded-[2rem] p-6 pb-[calc(2rem+env(safe-area-inset-bottom))] transform translate-y-full md:translate-y-4 md:scale-95 transition-all duration-300 pointer-events-auto shadow-2xl">
+                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 md:hidden"></div>
+                
+                <div class="flex justify-between items-center mb-6 px-2">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Ajustes</h2>
+                        <p class="text-sm text-gray-500 font-medium">Gestión de datos locales</p>
+                    </div>
+                    <button id="btn-close-settings" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200 active:scale-95 transition-all">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-[1.25rem] p-4 mb-2">
+                        <p class="text-sm text-indigo-800 font-medium leading-relaxed">Protege tu progreso. Exporta tus datos antes de limpiar la caché del navegador de tu iPad.</p>
+                    </div>
+
+                    <button id="btn-modal-export" class="w-full flex items-center justify-between p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm hover:border-indigo-200 active:bg-gray-50 active:scale-[0.98] transition-all group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-bold text-gray-900">Exportar Progreso</p>
+                                <p class="text-xs text-gray-500">Guardar archivo JSON local</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                    </button>
+
+                    <button id="btn-modal-import" class="w-full flex items-center justify-between p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm hover:border-emerald-200 active:bg-gray-50 active:scale-[0.98] transition-all group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="upload" class="w-5 h-5"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-bold text-gray-900">Restaurar Datos</p>
+                                <p class="text-xs text-gray-500">Cargar un JSON de respaldo</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                    </button>
+                    
+                    <input type="file" id="file-import-hidden" accept=".json" class="hidden" />
+
+                    <div class="pt-2 mt-2">
+                        <button id="btn-modal-reset" class="w-full py-4 text-rose-500 font-bold text-sm hover:bg-rose-50 rounded-2xl active:scale-95 transition-all">
+                            Borrar todo el progreso (Reset)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        lucide.createIcons();
+    }
+
+    const overlay = document.getElementById('settings-overlay');
+    const sheet = document.getElementById('settings-sheet');
+    const fileInput = document.getElementById('file-import-hidden');
+
+    // Animación de entrada
+    requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        sheet.classList.remove('translate-y-full', 'md:translate-y-4', 'md:scale-95');
+    });
+
+    const closeModal = () => {
+        sheet.classList.add('translate-y-full', 'md:translate-y-4', 'md:scale-95');
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => modal.remove(), 300);
+    };
+
+    document.getElementById('btn-close-settings').addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+
+    document.getElementById('btn-modal-export').addEventListener('click', () => {
+        exportProgress();
+        closeModal();
+    });
+
+    document.getElementById('btn-modal-import').addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            importProgress(e.target.files[0], () => {
+                closeModal();
+                renderDashboard(); 
+            });
+        }
+    });
+
+    document.getElementById('btn-modal-reset').addEventListener('click', () => {
+        if (confirm('¿Peligro: Estás seguro de que quieres borrar todos los datos de estudio?')) {
+            localStorage.removeItem('kanjimaster_state');
+            appState = loadProgress();
+            closeModal();
+            renderDashboard();
+        }
+    });
 };
 
 const bootApp = async () => {
