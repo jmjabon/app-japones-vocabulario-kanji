@@ -3780,5 +3780,2587 @@
         "items": []
       }
     ]
+  },
+  {
+    "block_id": "k5_block_08",
+    "block_title": "Bloque 8: Naturaleza y Familia",
+    "themes": [
+      {
+        "theme_id": "k5_t17",
+        "theme_title": "Naturaleza y Cielo",
+        "items": [
+          {
+            "id": "k5_k061",
+            "kanji": "山",
+            "meaning": "Montaña",
+            "onyomi": [
+              "サン"
+            ],
+            "kunyomi": [
+              "やま"
+            ],
+            "mnemonic": "Tres picos de una montaña, el del centro es el más alto.",
+            "radicals": [
+              "山",
+              "丨"
+            ],
+            "dummy_radicals": [
+              "川",
+              "木",
+              "水"
+            ],
+            "context_words": [
+              {
+                "word": "山",
+                "target": "山",
+                "full_reading": "やま",
+                "meaning": "Montaña",
+                "rule": "KUN",
+                "etymology": "Palabra nativa para accidentes geográficos.",
+                "dummy_pieces": [
+                  "川",
+                  "木",
+                  "海"
+                ],
+                "distractors": [
+                  "さん",
+                  "や",
+                  "だま"
+                ]
+              },
+              {
+                "word": "富士山",
+                "target": "山",
+                "full_reading": "ふじさん",
+                "meaning": "Monte Fuji",
+                "rule": "ON",
+                "etymology": "Excepción: se usa la lectura china 'san'.",
+                "dummy_pieces": [
+                  "富",
+                  "士",
+                  "川"
+                ],
+                "distractors": [
+                  "ふじやま",
+                  "ふしやま",
+                  "ふじさんん"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k062",
+            "kanji": "川",
+            "meaning": "Río",
+            "onyomi": [
+              "セン"
+            ],
+            "kunyomi": [
+              "かわ",
+              "-がわ"
+            ],
+            "mnemonic": "Tres corrientes de agua fluyendo hacia abajo.",
+            "radicals": [
+              "川",
+              "丿",
+              "丨"
+            ],
+            "dummy_radicals": [
+              "水",
+              "山",
+              "木"
+            ],
+            "context_words": [
+              {
+                "word": "川",
+                "target": "川",
+                "full_reading": "かわ",
+                "meaning": "Río",
+                "rule": "KUN",
+                "etymology": "Palabra nativa para corrientes de agua.",
+                "dummy_pieces": [
+                  "水",
+                  "海",
+                  "山"
+                ],
+                "distractors": [
+                  "せん",
+                  "がわ",
+                  "か"
+                ]
+              },
+              {
+                "word": "山川さん",
+                "target": "川",
+                "full_reading": "やまかわさん",
+                "meaning": "Sr. Yamakawa",
+                "rule": "KUN",
+                "etymology": "Montaña (Yama) + Río (Kawa). Apellido común.",
+                "dummy_pieces": [
+                  "山",
+                  "人",
+                  "田"
+                ],
+                "distractors": [
+                  "やまがわさん",
+                  "やまがわ",
+                  "さんかわ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k063",
+            "kanji": "天",
+            "meaning": "Cielo",
+            "onyomi": [
+              "テン"
+            ],
+            "kunyomi": [
+              "あま-つ"
+            ],
+            "mnemonic": "Una persona (大) con una línea encima (一) que representa el cielo infinito.",
+            "radicals": [
+              "一",
+              "大"
+            ],
+            "dummy_radicals": [
+              "夫",
+              "矢",
+              "人"
+            ],
+            "context_words": [
+              {
+                "word": "天気",
+                "target": "天",
+                "full_reading": "てんき",
+                "meaning": "Tiempo (Clima)",
+                "rule": "ON",
+                "etymology": "Cielo (Ten) + Energía (Ki).",
+                "dummy_pieces": [
+                  "気",
+                  "雨",
+                  "空"
+                ],
+                "distractors": [
+                  "てんけ",
+                  "でんき",
+                  "てんぎ"
+                ]
+              },
+              {
+                "word": "天国",
+                "target": "天",
+                "full_reading": "てんごく",
+                "meaning": "Paraíso",
+                "rule": "ON",
+                "etymology": "Cielo (Ten) + País (Koku->Goku).",
+                "dummy_pieces": [
+                  "国",
+                  "神",
+                  "星"
+                ],
+                "distractors": [
+                  "てんこく",
+                  "あまくに",
+                  "てんくに"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k064",
+            "kanji": "空",
+            "meaning": "Cielo / Vacío",
+            "onyomi": [
+              "クウ"
+            ],
+            "kunyomi": [
+              "そら",
+              "あ-く",
+              "カラ"
+            ],
+            "mnemonic": "Un agujero (穴) por donde entra el cielo, hecho por un trabajador (工).",
+            "radicals": [
+              "穴",
+              "工"
+            ],
+            "dummy_radicals": [
+              "宀",
+              "八",
+              "天"
+            ],
+            "context_words": [
+              {
+                "word": "空",
+                "target": "空",
+                "full_reading": "そら",
+                "meaning": "Cielo",
+                "rule": "KUN",
+                "etymology": "Palabra nativa para el firmamento.",
+                "dummy_pieces": [
+                  "天",
+                  "青",
+                  "雲"
+                ],
+                "distractors": [
+                  "くう",
+                  "あ",
+                  "から"
+                ]
+              },
+              {
+                "word": "空気",
+                "target": "空",
+                "full_reading": "くうき",
+                "meaning": "Aire",
+                "rule": "ON",
+                "etymology": "Vacío (Kuu) + Energía/Gas (Ki).",
+                "dummy_pieces": [
+                  "気",
+                  "風",
+                  "水"
+                ],
+                "distractors": [
+                  "そらき",
+                  "くうけ",
+                  "からき"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k065",
+            "kanji": "雨",
+            "meaning": "Lluvia",
+            "onyomi": [
+              "ウ"
+            ],
+            "kunyomi": [
+              "あめ"
+            ],
+            "mnemonic": "Gotas de agua cayendo desde una nube en el cielo (冂, 一).",
+            "radicals": [
+              "雨",
+              "一",
+              "冂"
+            ],
+            "dummy_radicals": [
+              "水",
+              "雲",
+              "雪"
+            ],
+            "context_words": [
+              {
+                "word": "雨",
+                "target": "雨",
+                "full_reading": "あめ",
+                "meaning": "Lluvia",
+                "rule": "KUN",
+                "etymology": "Palabra nativa para la precipitación.",
+                "dummy_pieces": [
+                  "雪",
+                  "水",
+                  "雲"
+                ],
+                "distractors": [
+                  "う",
+                  "あま",
+                  "あ"
+                ]
+              },
+              {
+                "word": "大雨",
+                "target": "雨",
+                "full_reading": "おおあめ",
+                "meaning": "Lluvia fuerte",
+                "rule": "KUN",
+                "etymology": "Grande (Oo) + Lluvia (Ame).",
+                "dummy_pieces": [
+                  "大",
+                  "風",
+                  "水"
+                ],
+                "distractors": [
+                  "だいう",
+                  "だまあめ",
+                  "おおあま"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "k5_t18",
+        "theme_title": "Entrar y Salir",
+        "items": [
+          {
+            "id": "k5_k066",
+            "kanji": "入",
+            "meaning": "Entrar",
+            "onyomi": [
+              "ニュウ"
+            ],
+            "kunyomi": [
+              "はい-る",
+              "い-れる"
+            ],
+            "mnemonic": "Dos trazos que convergen en una punta para penetrar y entrar.",
+            "radicals": [
+              "入",
+              "丿"
+            ],
+            "dummy_radicals": [
+              "人",
+              "八",
+              "木"
+            ],
+            "context_words": [
+              {
+                "word": "入る",
+                "target": "入",
+                "full_reading": "はいる",
+                "meaning": "Entrar",
+                "rule": "KUN",
+                "etymology": "Verbo nativo para ingresar.",
+                "dummy_pieces": [
+                  "る",
+                  "出",
+                  "行"
+                ],
+                "distractors": [
+                  "にゅうる",
+                  "いる",
+                  "いれる"
+                ]
+              },
+              {
+                "word": "入口",
+                "target": "入",
+                "full_reading": "いりぐち",
+                "meaning": "Entrada",
+                "rule": "KUN",
+                "etymology": "Entrar (Iri) + Boca (Guchi).",
+                "dummy_pieces": [
+                  "口",
+                  "出",
+                  "中"
+                ],
+                "distractors": [
+                  "はいぐち",
+                  "にゅうこう",
+                  "いりくち"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k067",
+            "kanji": "出",
+            "meaning": "Salir",
+            "onyomi": [
+              "シュツ",
+              "スイ"
+            ],
+            "kunyomi": [
+              "で-る",
+              "だ-す"
+            ],
+            "mnemonic": "Dos montañas (山) superpuestas, mostrando algo que sobresale.",
+            "radicals": [
+              "山",
+              "凵"
+            ],
+            "dummy_radicals": [
+              "入",
+              "土",
+              "止"
+            ],
+            "context_words": [
+              {
+                "word": "出る",
+                "target": "出",
+                "full_reading": "でる",
+                "meaning": "Salir",
+                "rule": "KUN",
+                "etymology": "Verbo nativo para ir hacia fuera.",
+                "dummy_pieces": [
+                  "る",
+                  "入",
+                  "行"
+                ],
+                "distractors": [
+                  "しゅつる",
+                  "だる",
+                  "だす"
+                ]
+              },
+              {
+                "word": "出口",
+                "target": "出",
+                "full_reading": "でぐち",
+                "meaning": "Salida",
+                "rule": "KUN",
+                "etymology": "Salir (De) + Boca (Guchi).",
+                "dummy_pieces": [
+                  "口",
+                  "入",
+                  "外"
+                ],
+                "distractors": [
+                  "だぐち",
+                  "しゅつこう",
+                  "でくち"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k068",
+            "kanji": "立",
+            "meaning": "Estar de pie",
+            "onyomi": [
+              "リツ"
+            ],
+            "kunyomi": [
+              "た-つ"
+            ],
+            "mnemonic": "Una persona (大) de pie firmemente sobre el suelo (一).",
+            "radicals": [
+              "立",
+              "亠"
+            ],
+            "dummy_radicals": [
+              "木",
+              "人",
+              "土"
+            ],
+            "context_words": [
+              {
+                "word": "立つ",
+                "target": "立",
+                "full_reading": "たつ",
+                "meaning": "Ponerse de pie",
+                "rule": "KUN",
+                "etymology": "Verbo nativo.",
+                "dummy_pieces": [
+                  "つ",
+                  "座",
+                  "歩"
+                ],
+                "distractors": [
+                  "りつつ",
+                  "だつ",
+                  "だち"
+                ]
+              },
+              {
+                "word": "国立",
+                "target": "立",
+                "full_reading": "こくりつ",
+                "meaning": "Nacional (Institución)",
+                "rule": "ON",
+                "etymology": "País (Koku) + Establecido (Ritsu).",
+                "dummy_pieces": [
+                  "国",
+                  "公",
+                  "大"
+                ],
+                "distractors": [
+                  "くにたつ",
+                  "こくだつ",
+                  "こくたち"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k069",
+            "kanji": "買",
+            "meaning": "Comprar",
+            "onyomi": [
+              "バイ"
+            ],
+            "kunyomi": [
+              "か-う"
+            ],
+            "mnemonic": "Un ojo (罒) observando una concha/moneda (貝) para comprarla.",
+            "radicals": [
+              "罒",
+              "貝"
+            ],
+            "dummy_radicals": [
+              "見",
+              "頁",
+              "売"
+            ],
+            "context_words": [
+              {
+                "word": "買う",
+                "target": "買",
+                "full_reading": "かう",
+                "meaning": "Comprar",
+                "rule": "KUN",
+                "etymology": "Verbo nativo para adquirir algo.",
+                "dummy_pieces": [
+                  "う",
+                  "売",
+                  "見"
+                ],
+                "distractors": [
+                  "ばいう",
+                  "かむ",
+                  "か"
+                ]
+              },
+              {
+                "word": "買い物",
+                "target": "買",
+                "full_reading": "かいもの",
+                "meaning": "Compras",
+                "rule": "KUN",
+                "etymology": "Comprar (Kai) + Cosa (Mono).",
+                "dummy_pieces": [
+                  "物",
+                  "食",
+                  "店"
+                ],
+                "distractors": [
+                  "ばいぶつ",
+                  "かうもの",
+                  "かいぶつ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k070",
+            "kanji": "会",
+            "meaning": "Reunirse",
+            "onyomi": [
+              "カイ"
+            ],
+            "kunyomi": [
+              "あ-う"
+            ],
+            "mnemonic": "Personas reuniéndose bajo un techo (人) para hablar (云).",
+            "radicals": [
+              "人",
+              "云"
+            ],
+            "dummy_radicals": [
+              "今",
+              "合",
+              "会社"
+            ],
+            "context_words": [
+              {
+                "word": "会う",
+                "target": "会",
+                "full_reading": "あう",
+                "meaning": "Encontrarse / Reunirse",
+                "rule": "KUN",
+                "etymology": "Verbo nativo para ver a alguien.",
+                "dummy_pieces": [
+                  "う",
+                  "見",
+                  "話"
+                ],
+                "distractors": [
+                  "かいう",
+                  "あむ",
+                  "あ"
+                ]
+              },
+              {
+                "word": "会社",
+                "target": "会",
+                "full_reading": "かいしゃ",
+                "meaning": "Empresa",
+                "rule": "ON",
+                "etymology": "Reunión (Kai) + Sociedad (Sha).",
+                "dummy_pieces": [
+                  "社",
+                  "店",
+                  "仕事"
+                ],
+                "distractors": [
+                  "あうしゃ",
+                  "かいじゃ",
+                  "あいや"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "k5_t19",
+        "theme_title": "El Cuerpo Humano",
+        "items": [
+          {
+            "id": "k5_k071",
+            "kanji": "目",
+            "meaning": "Ojo",
+            "onyomi": [
+              "モク"
+            ],
+            "kunyomi": [
+              "め"
+            ],
+            "mnemonic": "Un ojo humano dibujado en vertical con sus dos pupilas y el iris.",
+            "radicals": [
+              "目"
+            ],
+            "dummy_radicals": [
+              "日",
+              "月",
+              "耳"
+            ],
+            "context_words": [
+              {
+                "word": "目",
+                "target": "目",
+                "full_reading": "め",
+                "meaning": "Ojo",
+                "rule": "KUN",
+                "etymology": "Palabra nativa para ojo.",
+                "dummy_pieces": [
+                  "耳",
+                  "口",
+                  "鼻"
+                ],
+                "distractors": [
+                  "もく",
+                  "ま",
+                  "み"
+                ]
+              },
+              {
+                "word": "一つ目",
+                "target": "目",
+                "full_reading": "ひとつめ",
+                "meaning": "El primero",
+                "rule": "KUN",
+                "etymology": "Uno (Hitotsu) + Ojo (Me - contador ordinal).",
+                "dummy_pieces": [
+                  "一",
+                  "二",
+                  "番"
+                ],
+                "distractors": [
+                  "いちつもく",
+                  "ひとつもく",
+                  "いちつめ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k072",
+            "kanji": "耳",
+            "meaning": "Oreja",
+            "onyomi": [
+              "ジ"
+            ],
+            "kunyomi": [
+              "みみ"
+            ],
+            "mnemonic": "El dibujo de una oreja humana con sus cartílagos.",
+            "radicals": [
+              "耳"
+            ],
+            "dummy_radicals": [
+              "目",
+              "身",
+              "聞"
+            ],
+            "context_words": [
+              {
+                "word": "耳",
+                "target": "耳",
+                "full_reading": "みみ",
+                "meaning": "Oreja",
+                "rule": "KUN",
+                "etymology": "Palabra nativa.",
+                "dummy_pieces": [
+                  "目",
+                  "口",
+                  "手"
+                ],
+                "distractors": [
+                  "じ",
+                  "み",
+                  "に"
+                ]
+              },
+              {
+                "word": "耳鼻科",
+                "target": "耳",
+                "full_reading": "じびか",
+                "meaning": "Otorrinolaringología",
+                "rule": "ON",
+                "etymology": "Oreja (Ji) + Nariz (Bi) + Departamento (Ka).",
+                "dummy_pieces": [
+                  "鼻",
+                  "科",
+                  "目"
+                ],
+                "distractors": [
+                  "みみはなか",
+                  "みみびか",
+                  "じはなか"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k073",
+            "kanji": "手",
+            "meaning": "Mano",
+            "onyomi": [
+              "シュ"
+            ],
+            "kunyomi": [
+              "て"
+            ],
+            "mnemonic": "Las líneas de la palma de la mano con los dedos extendidos.",
+            "radicals": [
+              "手"
+            ],
+            "dummy_radicals": [
+              "才",
+              "毛",
+              "足"
+            ],
+            "context_words": [
+              {
+                "word": "手",
+                "target": "手",
+                "full_reading": "て",
+                "meaning": "Mano",
+                "rule": "KUN",
+                "etymology": "Palabra nativa.",
+                "dummy_pieces": [
+                  "足",
+                  "目",
+                  "指"
+                ],
+                "distractors": [
+                  "しゅ",
+                  "で",
+                  "た"
+                ]
+              },
+              {
+                "word": "手紙",
+                "target": "手",
+                "full_reading": "てがみ",
+                "meaning": "Carta (Correo)",
+                "rule": "KUN",
+                "etymology": "Mano (Te) + Papel (Kami -> Gami).",
+                "dummy_pieces": [
+                  "紙",
+                  "本",
+                  "書"
+                ],
+                "distractors": [
+                  "しゅし",
+                  "てかみ",
+                  "しゅがみ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k074",
+            "kanji": "足",
+            "meaning": "Pie / Pierna",
+            "onyomi": [
+              "ソク"
+            ],
+            "kunyomi": [
+              "あし",
+              "た-りる"
+            ],
+            "mnemonic": "Una persona (口) caminando con su pierna (止) hacia adelante.",
+            "radicals": [
+              "足",
+              "口",
+              "止"
+            ],
+            "dummy_radicals": [
+              "手",
+              "走",
+              "走"
+            ],
+            "context_words": [
+              {
+                "word": "足",
+                "target": "足",
+                "full_reading": "あし",
+                "meaning": "Pie / Pierna",
+                "rule": "KUN",
+                "etymology": "Parte del cuerpo.",
+                "dummy_pieces": [
+                  "手",
+                  "体",
+                  "靴"
+                ],
+                "distractors": [
+                  "そく",
+                  "あ",
+                  "たり"
+                ]
+              },
+              {
+                "word": "足りる",
+                "target": "足",
+                "full_reading": "たりる",
+                "meaning": "Ser suficiente",
+                "rule": "KUN",
+                "etymology": "Verbo nativo.",
+                "dummy_pieces": [
+                  "り",
+                  "る",
+                  "多"
+                ],
+                "distractors": [
+                  "そくりる",
+                  "たしる",
+                  "あしる"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "k5_t20",
+        "theme_title": "Familia y Cualidades",
+        "items": [
+          {
+            "id": "k5_k075",
+            "kanji": "父",
+            "meaning": "Padre",
+            "onyomi": [
+              "フ"
+            ],
+            "kunyomi": [
+              "ちち"
+            ],
+            "mnemonic": "Dos manos cruzadas sosteniendo dos varas (autoridad o trabajo).",
+            "radicals": [
+              "父",
+              "ハ"
+            ],
+            "dummy_radicals": [
+              "交",
+              "乂",
+              "母"
+            ],
+            "context_words": [
+              {
+                "word": "父",
+                "target": "父",
+                "full_reading": "ちち",
+                "meaning": "Mi padre",
+                "rule": "KUN",
+                "etymology": "Se usa para tu propio padre.",
+                "dummy_pieces": [
+                  "母",
+                  "兄",
+                  "男"
+                ],
+                "distractors": [
+                  "ふ",
+                  "とう",
+                  "ち"
+                ]
+              },
+              {
+                "word": "お父さん",
+                "target": "父",
+                "full_reading": "おとうさん",
+                "meaning": "Padre (de otro)",
+                "rule": "KUN",
+                "etymology": "Padre con respeto.",
+                "dummy_pieces": [
+                  "お",
+                  "さん",
+                  "母"
+                ],
+                "distractors": [
+                  "おちちさん",
+                  "おふさん",
+                  "おとう"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k076",
+            "kanji": "母",
+            "meaning": "Madre",
+            "onyomi": [
+              "ボ"
+            ],
+            "kunyomi": [
+              "はは"
+            ],
+            "mnemonic": "Una mujer (女) con dos puntos que representan los pechos maternos.",
+            "radicals": [
+              "母",
+              "女"
+            ],
+            "dummy_radicals": [
+              "父",
+              "毎",
+              "姉"
+            ],
+            "context_words": [
+              {
+                "word": "母",
+                "target": "母",
+                "full_reading": "はは",
+                "meaning": "Mi madre",
+                "rule": "KUN",
+                "etymology": "Tu propia madre.",
+                "dummy_pieces": [
+                  "父",
+                  "女",
+                  "妹"
+                ],
+                "distractors": [
+                  "ぼ",
+                  "かあ",
+                  "は"
+                ]
+              },
+              {
+                "word": "お母さん",
+                "target": "母",
+                "full_reading": "おかあさん",
+                "meaning": "Madre (de otra)",
+                "rule": "KUN",
+                "etymology": "Madre con respeto.",
+                "dummy_pieces": [
+                  "お",
+                  "さん",
+                  "父"
+                ],
+                "distractors": [
+                  "おははさん",
+                  "おぼさん",
+                  "おかあ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k077",
+            "kanji": "友",
+            "meaning": "Amigo",
+            "onyomi": [
+              "ユウ"
+            ],
+            "kunyomi": [
+              "とも"
+            ],
+            "mnemonic": "Dos manos derechas (ナ, 又) unidas en señal de amistad.",
+            "radicals": [
+              "友",
+              "又",
+              "ナ"
+            ],
+            "dummy_radicals": [
+              "人",
+              "支",
+              "父"
+            ],
+            "context_words": [
+              {
+                "word": "友だち",
+                "target": "友",
+                "full_reading": "ともだち",
+                "meaning": "Amigo",
+                "rule": "KUN",
+                "etymology": "Palabra nativa (a veces escrita con 達).",
+                "dummy_pieces": [
+                  "だ",
+                  "ち",
+                  "人"
+                ],
+                "distractors": [
+                  "ゆうだち",
+                  "ともたち",
+                  "とも"
+                ]
+              },
+              {
+                "word": "友人",
+                "target": "友",
+                "full_reading": "ゆうじん",
+                "meaning": "Amigo (Formal)",
+                "rule": "ON",
+                "etymology": "Amigo (Yuu) + Persona (Jin).",
+                "dummy_pieces": [
+                  "人",
+                  "男",
+                  "女"
+                ],
+                "distractors": [
+                  "ともひと",
+                  "ともじん",
+                  "ようにん"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "k5_t21",
+        "theme_title": "Opuestos Finales",
+        "items": [
+          {
+            "id": "k5_k078",
+            "kanji": "新",
+            "meaning": "Nuevo",
+            "onyomi": [
+              "シン"
+            ],
+            "kunyomi": [
+              "あたら-しい"
+            ],
+            "mnemonic": "Estar de pie (立) sobre un árbol (木) cortado con un hacha (斤) para hacer madera.",
+            "radicals": [
+              "斤",
+              "立",
+              "木"
+            ],
+            "dummy_radicals": [
+              "親",
+              "辛",
+              "近"
+            ],
+            "context_words": [
+              {
+                "word": "新しい",
+                "target": "新",
+                "full_reading": "あたらしい",
+                "meaning": "Nuevo",
+                "rule": "KUN",
+                "etymology": "Adjetivo para novedad.",
+                "dummy_pieces": [
+                  "し",
+                  "い",
+                  "古"
+                ],
+                "distractors": [
+                  "しんしい",
+                  "あらちい",
+                  "あたら"
+                ]
+              },
+              {
+                "word": "新聞",
+                "target": "新",
+                "full_reading": "しんぶん",
+                "meaning": "Periódico",
+                "rule": "ON",
+                "etymology": "Nuevo (Shin) + Escuchar/Noticia (Bun).",
+                "dummy_pieces": [
+                  "聞",
+                  "紙",
+                  "本"
+                ],
+                "distractors": [
+                  "あたらぶん",
+                  "しんきき",
+                  "しんもん"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k079",
+            "kanji": "古",
+            "meaning": "Viejo",
+            "onyomi": [
+              "コ"
+            ],
+            "kunyomi": [
+              "ふる-い"
+            ],
+            "mnemonic": "Una cruz (十) sobre una boca (口) que cuenta historias antiguas.",
+            "radicals": [
+              "十",
+              "口"
+            ],
+            "dummy_radicals": [
+              "故",
+              "居",
+              "古"
+            ],
+            "context_words": [
+              {
+                "word": "古い",
+                "target": "古",
+                "full_reading": "ふるい",
+                "meaning": "Viejo / Antiguo",
+                "rule": "KUN",
+                "etymology": "Adjetivo para antigüedad.",
+                "dummy_pieces": [
+                  "い",
+                  "新",
+                  "長"
+                ],
+                "distractors": [
+                  "こい",
+                  "ふらい",
+                  "ふい"
+                ]
+              },
+              {
+                "word": "中古",
+                "target": "古",
+                "full_reading": "ちゅうこ",
+                "meaning": "De segunda mano",
+                "rule": "ON",
+                "etymology": "Medio (Chuu) + Viejo (Ko).",
+                "dummy_pieces": [
+                  "中",
+                  "新",
+                  "車"
+                ],
+                "distractors": [
+                  "なかふる",
+                  "ちゅうふる",
+                  "ちゅうご"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k080",
+            "kanji": "長",
+            "meaning": "Largo / Jefe",
+            "onyomi": [
+              "チョウ"
+            ],
+            "kunyomi": [
+              "なが-い"
+            ],
+            "mnemonic": "Un anciano con pelo largo y bastón que lidera la tribu.",
+            "radicals": [
+              "長",
+              "髟"
+            ],
+            "dummy_radicals": [
+              "衣",
+              "氏",
+              "艮"
+            ],
+            "context_words": [
+              {
+                "word": "長い",
+                "target": "長",
+                "full_reading": "ながい",
+                "meaning": "Largo",
+                "rule": "KUN",
+                "etymology": "Adjetivo para longitud.",
+                "dummy_pieces": [
+                  "い",
+                  "短",
+                  "高"
+                ],
+                "distractors": [
+                  "ちょうい",
+                  "なが",
+                  "なかい"
+                ]
+              },
+              {
+                "word": "校長",
+                "target": "長",
+                "full_reading": "こうちょう",
+                "meaning": "Director de escuela",
+                "rule": "ON",
+                "etymology": "Escuela (Kou) + Jefe (Chou).",
+                "dummy_pieces": [
+                  "校",
+                  "学",
+                  "先"
+                ],
+                "distractors": [
+                  "こうなが",
+                  "がくちょう",
+                  "こうちょ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k081",
+            "kanji": "白",
+            "meaning": "Blanco",
+            "onyomi": [
+              "ハク",
+              "ビャク"
+            ],
+            "kunyomi": [
+              "しろ",
+              "しろ-い"
+            ],
+            "mnemonic": "Un grano de arroz (日) con una gota (丿) brillando blanco bajo el sol.",
+            "radicals": [
+              "白",
+              "日"
+            ],
+            "dummy_radicals": [
+              "百",
+              "目",
+              "自"
+            ],
+            "context_words": [
+              {
+                "word": "白い",
+                "target": "白",
+                "full_reading": "しろい",
+                "meaning": "Blanco",
+                "rule": "KUN",
+                "etymology": "Color blanco (Adjetivo).",
+                "dummy_pieces": [
+                  "い",
+                  "黒",
+                  "赤"
+                ],
+                "distractors": [
+                  "はくい",
+                  "しらい",
+                  "しろ"
+                ]
+              },
+              {
+                "word": "面白い",
+                "target": "白",
+                "full_reading": "おもしろい",
+                "meaning": "Interesante / Divertido",
+                "rule": "KUN",
+                "etymology": "Cara (Omo) + Blanco/Clara (Shiroi).",
+                "dummy_pieces": [
+                  "面",
+                  "楽",
+                  "見"
+                ],
+                "distractors": [
+                  "めんしろい",
+                  "おもはくい",
+                  "おもしろ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k082",
+            "kanji": "黒",
+            "meaning": "Negro",
+            "onyomi": [
+              "コク"
+            ],
+            "kunyomi": [
+              "くろ",
+              "くろ-い"
+            ],
+            "mnemonic": "Un pueblo (里) quemado bajo el fuego (灬), dejando todo negro.",
+            "radicals": [
+              "里",
+              "灬"
+            ],
+            "dummy_radicals": [
+              "田",
+              "土",
+              "白"
+            ],
+            "context_words": [
+              {
+                "word": "黒い",
+                "target": "黒",
+                "full_reading": "くろい",
+                "meaning": "Negro",
+                "rule": "KUN",
+                "etymology": "Color negro (Adjetivo).",
+                "dummy_pieces": [
+                  "い",
+                  "白",
+                  "赤"
+                ],
+                "distractors": [
+                  "こくい",
+                  "くらい",
+                  "くろ"
+                ]
+              },
+              {
+                "word": "黒猫",
+                "target": "黒",
+                "full_reading": "くろねこ",
+                "meaning": "Gato negro",
+                "rule": "KUN",
+                "etymology": "Negro (Kuro) + Gato (Neko).",
+                "dummy_pieces": [
+                  "猫",
+                  "犬",
+                  "白"
+                ],
+                "distractors": [
+                  "こくねこ",
+                  "くろびょう",
+                  "くろいねこ"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "cp_k5_block_08",
+        "type": "checkpoint",
+        "theme_title": "Examen: Naturaleza y Familia",
+        "requires_count": 2,
+        "items": []
+      }
+    ]
+  },
+  {
+    "block_id": "k5_block_09",
+    "block_title": "Bloque 9: Esenciales Restantes",
+    "themes": [
+      {
+        "theme_id": "k5_t22",
+        "theme_title": "Números del 5 al 10",
+        "items": [
+          {
+            "id": "k5_k083",
+            "kanji": "五",
+            "meaning": "Cinco",
+            "onyomi": [
+              "ゴ"
+            ],
+            "kunyomi": [
+              "いつ",
+              "いつ-つ"
+            ],
+            "mnemonic": "Cinco líneas entrelazadas o un carrete de hilo.",
+            "radicals": [
+              "二",
+              "彐",
+              "一"
+            ],
+            "dummy_radicals": [
+              "口",
+              "日",
+              "田"
+            ],
+            "context_words": [
+              {
+                "word": "五",
+                "target": "五",
+                "full_reading": "ご",
+                "meaning": "Cinco",
+                "rule": "ON",
+                "etymology": "Para matemáticas y fechas.",
+                "dummy_pieces": [
+                  "六",
+                  "七",
+                  "八"
+                ],
+                "distractors": [
+                  "いつ",
+                  "ごう",
+                  "ごつ"
+                ]
+              },
+              {
+                "word": "五つ",
+                "target": "五",
+                "full_reading": "いつつ",
+                "meaning": "Cinco cosas (contador)",
+                "rule": "KUN",
+                "etymology": "Contador universal nativo.",
+                "dummy_pieces": [
+                  "つ",
+                  "六",
+                  "個"
+                ],
+                "distractors": [
+                  "ごつ",
+                  "いつ",
+                  "ごいつ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k084",
+            "kanji": "六",
+            "meaning": "Seis",
+            "onyomi": [
+              "ロク"
+            ],
+            "kunyomi": [
+              "む",
+              "むっ-つ"
+            ],
+            "mnemonic": "Un animal con dos patas (八) bajo un sombrero (亠).",
+            "radicals": [
+              "亠",
+              "八"
+            ],
+            "dummy_radicals": [
+              "穴",
+              "木",
+              "水"
+            ],
+            "context_words": [
+              {
+                "word": "六",
+                "target": "六",
+                "full_reading": "ろく",
+                "meaning": "Seis",
+                "rule": "ON",
+                "etymology": "Para matemáticas y conteos exactos.",
+                "dummy_pieces": [
+                  "七",
+                  "八",
+                  "九"
+                ],
+                "distractors": [
+                  "む",
+                  "ろっ",
+                  "ろご"
+                ]
+              },
+              {
+                "word": "六日",
+                "target": "六",
+                "full_reading": "むいか",
+                "meaning": "Día 6 del mes",
+                "rule": "KUN",
+                "etymology": "Excepción de lectura de calendario.",
+                "dummy_pieces": [
+                  "日",
+                  "月",
+                  "火"
+                ],
+                "distractors": [
+                  "ろくにち",
+                  "むか",
+                  "ろっか"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k085",
+            "kanji": "七",
+            "meaning": "Siete",
+            "onyomi": [
+              "シチ"
+            ],
+            "kunyomi": [
+              "なな",
+              "なな-つ"
+            ],
+            "mnemonic": "Un trazo cortado (乚) por el centro (一), símbolo de siete.",
+            "radicals": [
+              "一",
+              "乚"
+            ],
+            "dummy_radicals": [
+              "十",
+              "匕",
+              "厂"
+            ],
+            "context_words": [
+              {
+                "word": "七",
+                "target": "七",
+                "full_reading": "なな",
+                "meaning": "Siete",
+                "rule": "KUN",
+                "etymology": "Lectura nativa más común.",
+                "dummy_pieces": [
+                  "八",
+                  "九",
+                  "十"
+                ],
+                "distractors": [
+                  "しち",
+                  "なっ",
+                  "しつ"
+                ]
+              },
+              {
+                "word": "七月",
+                "target": "七",
+                "full_reading": "しちがつ",
+                "meaning": "Julio",
+                "rule": "ON",
+                "etymology": "Mes siete (excepción fonética).",
+                "dummy_pieces": [
+                  "月",
+                  "日",
+                  "年"
+                ],
+                "distractors": [
+                  "なながつ",
+                  "しちげつ",
+                  "ななつき"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k086",
+            "kanji": "八",
+            "meaning": "Ocho",
+            "onyomi": [
+              "ハチ"
+            ],
+            "kunyomi": [
+              "や",
+              "やっ-つ"
+            ],
+            "mnemonic": "Dos trazos que se separan o dividen, indicando abundancia.",
+            "radicals": [
+              "八",
+              "丿"
+            ],
+            "dummy_radicals": [
+              "人",
+              "入",
+              "大"
+            ],
+            "context_words": [
+              {
+                "word": "八",
+                "target": "八",
+                "full_reading": "はち",
+                "meaning": "Ocho",
+                "rule": "ON",
+                "etymology": "Lectura china básica.",
+                "dummy_pieces": [
+                  "九",
+                  "十",
+                  "七"
+                ],
+                "distractors": [
+                  "や",
+                  "はっ",
+                  "やっ"
+                ]
+              },
+              {
+                "word": "八つ",
+                "target": "八",
+                "full_reading": "やっつ",
+                "meaning": "Ocho cosas",
+                "rule": "KUN",
+                "etymology": "Contador universal nativo.",
+                "dummy_pieces": [
+                  "つ",
+                  "九",
+                  "個"
+                ],
+                "distractors": [
+                  "はちつ",
+                  "やつ",
+                  "やっ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k087",
+            "kanji": "九",
+            "meaning": "Nueve",
+            "onyomi": [
+              "キュウ",
+              "ク"
+            ],
+            "kunyomi": [
+              "ここの",
+              "ここの-つ"
+            ],
+            "mnemonic": "Un brazo flexionando un músculo (乙) al máximo límite de un dígito.",
+            "radicals": [
+              "丿",
+              "乙"
+            ],
+            "dummy_radicals": [
+              "七",
+              "匕",
+              "九"
+            ],
+            "context_words": [
+              {
+                "word": "九",
+                "target": "九",
+                "full_reading": "きゅう",
+                "meaning": "Nueve",
+                "rule": "ON",
+                "etymology": "Lectura china.",
+                "dummy_pieces": [
+                  "十",
+                  "八",
+                  "七"
+                ],
+                "distractors": [
+                  "く",
+                  "ここの",
+                  "きゅ"
+                ]
+              },
+              {
+                "word": "九日",
+                "target": "九",
+                "full_reading": "ここのか",
+                "meaning": "Día 9 del mes",
+                "rule": "KUN",
+                "etymology": "Lectura nativa de tiempo.",
+                "dummy_pieces": [
+                  "日",
+                  "月",
+                  "火"
+                ],
+                "distractors": [
+                  "きゅうにち",
+                  "くか",
+                  "きゅうか"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k088",
+            "kanji": "十",
+            "meaning": "Diez",
+            "onyomi": [
+              "ジュウ",
+              "ジッ"
+            ],
+            "kunyomi": [
+              "とお"
+            ],
+            "mnemonic": "Una cruz que marca la plenitud de los números básicos.",
+            "radicals": [
+              "十",
+              "一",
+              "丨"
+            ],
+            "dummy_radicals": [
+              "土",
+              "士",
+              "木"
+            ],
+            "context_words": [
+              {
+                "word": "十",
+                "target": "十",
+                "full_reading": "じゅう",
+                "meaning": "Diez",
+                "rule": "ON",
+                "etymology": "Lectura china.",
+                "dummy_pieces": [
+                  "百",
+                  "千",
+                  "万"
+                ],
+                "distractors": [
+                  "とお",
+                  "じっ",
+                  "じゅ"
+                ]
+              },
+              {
+                "word": "十日",
+                "target": "十",
+                "full_reading": "とおか",
+                "meaning": "Día 10 del mes",
+                "rule": "KUN",
+                "etymology": "Lectura de calendario.",
+                "dummy_pieces": [
+                  "日",
+                  "月",
+                  "火"
+                ],
+                "distractors": [
+                  "じゅうにち",
+                  "とか",
+                  "じゅっか"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "k5_t23",
+        "theme_title": "Grandes Cifras y Dinero",
+        "items": [
+          {
+            "id": "k5_k089",
+            "kanji": "百",
+            "meaning": "Cien",
+            "onyomi": [
+              "ヒャク"
+            ],
+            "kunyomi": [
+              "もも"
+            ],
+            "mnemonic": "Un uno (一) sobre un sol (白) que brilla 100 veces más fuerte.",
+            "radicals": [
+              "一",
+              "白"
+            ],
+            "dummy_radicals": [
+              "日",
+              "目",
+              "自"
+            ],
+            "context_words": [
+              {
+                "word": "百",
+                "target": "百",
+                "full_reading": "ひゃく",
+                "meaning": "Cien",
+                "rule": "ON",
+                "etymology": "Lectura china.",
+                "dummy_pieces": [
+                  "千",
+                  "万",
+                  "円"
+                ],
+                "distractors": [
+                  "もも",
+                  "びゃく",
+                  "ぴゃく"
+                ]
+              },
+              {
+                "word": "三百",
+                "target": "百",
+                "full_reading": "さんびゃく",
+                "meaning": "Trescientos",
+                "rule": "ON",
+                "etymology": "Tres + Cien (con mutación fonética).",
+                "dummy_pieces": [
+                  "三",
+                  "千",
+                  "万"
+                ],
+                "distractors": [
+                  "さんひゃく",
+                  "みひゃく",
+                  "さんぴゃく"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k090",
+            "kanji": "千",
+            "meaning": "Mil",
+            "onyomi": [
+              "セン"
+            ],
+            "kunyomi": [
+              "ち"
+            ],
+            "mnemonic": "Una persona (人) con un trazo extra caminando miles de millas.",
+            "radicals": [
+              "丿",
+              "十"
+            ],
+            "dummy_radicals": [
+              "人",
+              "干",
+              "木"
+            ],
+            "context_words": [
+              {
+                "word": "千",
+                "target": "千",
+                "full_reading": "せん",
+                "meaning": "Mil",
+                "rule": "ON",
+                "etymology": "Lectura china.",
+                "dummy_pieces": [
+                  "万",
+                  "百",
+                  "円"
+                ],
+                "distractors": [
+                  "ち",
+                  "ぜん",
+                  "せっ"
+                ]
+              },
+              {
+                "word": "三千",
+                "target": "千",
+                "full_reading": "さんぜん",
+                "meaning": "Tres mil",
+                "rule": "ON",
+                "etymology": "Tres + Mil (con mutación fonética).",
+                "dummy_pieces": [
+                  "三",
+                  "万",
+                  "百"
+                ],
+                "distractors": [
+                  "さんせん",
+                  "みせん",
+                  "さんち"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k091",
+            "kanji": "万",
+            "meaning": "Diez mil",
+            "onyomi": [
+              "マン",
+              "バン"
+            ],
+            "kunyomi": [],
+            "mnemonic": "Esvástica estilizada que representa el infinito o 10.000.",
+            "radicals": [
+              "一",
+              "勹"
+            ],
+            "dummy_radicals": [
+              "方",
+              "刀",
+              "力"
+            ],
+            "context_words": [
+              {
+                "word": "一万",
+                "target": "万",
+                "full_reading": "いちまん",
+                "meaning": "Diez mil",
+                "rule": "ON",
+                "etymology": "Uno (Ichi) + Diez mil (Man).",
+                "dummy_pieces": [
+                  "一",
+                  "千",
+                  "百"
+                ],
+                "distractors": [
+                  "いちばん",
+                  "ひとまん",
+                  "かずまん"
+                ]
+              },
+              {
+                "word": "万年筆",
+                "target": "万",
+                "full_reading": "まんねんひつ",
+                "meaning": "Pluma estilográfica",
+                "rule": "ON",
+                "etymology": "Diez mil + Años + Pincel.",
+                "dummy_pieces": [
+                  "年",
+                  "筆",
+                  "鉛"
+                ],
+                "distractors": [
+                  "ばんねんひつ",
+                  "まんねんか",
+                  "まんとしひつ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k092",
+            "kanji": "円",
+            "meaning": "Yen / Círculo",
+            "onyomi": [
+              "エン"
+            ],
+            "kunyomi": [
+              "まる-い"
+            ],
+            "mnemonic": "Una moneda circular rodeada por una caja (冂).",
+            "radicals": [
+              "冂",
+              "亠",
+              "丨"
+            ],
+            "dummy_radicals": [
+              "月",
+              "日",
+              "丹"
+            ],
+            "context_words": [
+              {
+                "word": "百円",
+                "target": "円",
+                "full_reading": "ひゃくえん",
+                "meaning": "Cien yenes",
+                "rule": "ON",
+                "etymology": "Cien (Hyaku) + Yen (En).",
+                "dummy_pieces": [
+                  "百",
+                  "千",
+                  "万"
+                ],
+                "distractors": [
+                  "ひゃくまる",
+                  "ももえん",
+                  "ひゃくえ"
+                ]
+              },
+              {
+                "word": "円い",
+                "target": "円",
+                "full_reading": "まるい",
+                "meaning": "Circular / Redondo",
+                "rule": "KUN",
+                "etymology": "Adjetivo para formas redondas.",
+                "dummy_pieces": [
+                  "い",
+                  "丸",
+                  "玉"
+                ],
+                "distractors": [
+                  "えんい",
+                  "まる",
+                  "まろい"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "k5_t24",
+        "theme_title": "Tiempo y Frecuencia",
+        "items": [
+          {
+            "id": "k5_k093",
+            "kanji": "年",
+            "meaning": "Año",
+            "onyomi": [
+              "ネン"
+            ],
+            "kunyomi": [
+              "とし"
+            ],
+            "mnemonic": "Una persona (人) cargando una cosecha tras un año de trabajo.",
+            "radicals": [
+              "干",
+              "丿",
+              "一"
+            ],
+            "dummy_radicals": [
+              "午",
+              "牛",
+              "生"
+            ],
+            "context_words": [
+              {
+                "word": "今年",
+                "target": "年",
+                "full_reading": "ことし",
+                "meaning": "Este año",
+                "rule": "Irregular",
+                "etymology": "Ateji (lectura especial) para Ahora + Año.",
+                "dummy_pieces": [
+                  "今",
+                  "来",
+                  "去"
+                ],
+                "distractors": [
+                  "こんねん",
+                  "いまとし",
+                  "こんとし"
+                ]
+              },
+              {
+                "word": "来年",
+                "target": "年",
+                "full_reading": "らいねん",
+                "meaning": "El año que viene",
+                "rule": "ON",
+                "etymology": "Venir (Rai) + Año (Nen).",
+                "dummy_pieces": [
+                  "来",
+                  "去",
+                  "今"
+                ],
+                "distractors": [
+                  "らいとし",
+                  "くるねん",
+                  "きとし"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k094",
+            "kanji": "曜",
+            "meaning": "Día de la semana",
+            "onyomi": [
+              "ヨウ"
+            ],
+            "kunyomi": [],
+            "mnemonic": "El sol (日) y un ave con plumas (ヨ, ��) marcando los días.",
+            "radicals": [
+              "日",
+              "隹",
+              "ヨ"
+            ],
+            "dummy_radicals": [
+              "月",
+              "火",
+              "水"
+            ],
+            "context_words": [
+              {
+                "word": "日曜日",
+                "target": "曜",
+                "full_reading": "にちようび",
+                "meaning": "Domingo",
+                "rule": "ON/KUN",
+                "etymology": "Sol (Nichi) + Día semana (You) + Día (Bi).",
+                "dummy_pieces": [
+                  "日",
+                  "月",
+                  "火"
+                ],
+                "distractors": [
+                  "にちようにち",
+                  "ひようび",
+                  "じつようび"
+                ]
+              },
+              {
+                "word": "曜日",
+                "target": "曜",
+                "full_reading": "ようび",
+                "meaning": "Día de la semana",
+                "rule": "ON/KUN",
+                "etymology": "Semana (You) + Día (Bi).",
+                "dummy_pieces": [
+                  "日",
+                  "週",
+                  "月"
+                ],
+                "distractors": [
+                  "よう日",
+                  "ようひ",
+                  "ようにち"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k095",
+            "kanji": "毎",
+            "meaning": "Cada / Todo",
+            "onyomi": [
+              "マイ"
+            ],
+            "kunyomi": [],
+            "mnemonic": "Una persona que su madre (母) cuida todos los días.",
+            "radicals": [
+              "母",
+              "人",
+              "一"
+            ],
+            "dummy_radicals": [
+              "海",
+              "女",
+              "父"
+            ],
+            "context_words": [
+              {
+                "word": "毎日",
+                "target": "毎",
+                "full_reading": "まいにち",
+                "meaning": "Todos los días",
+                "rule": "ON",
+                "etymology": "Cada (Mai) + Día (Nichi).",
+                "dummy_pieces": [
+                  "日",
+                  "月",
+                  "年"
+                ],
+                "distractors": [
+                  "まいひ",
+                  "まいじつ",
+                  "まにか"
+                ]
+              },
+              {
+                "word": "毎月",
+                "target": "毎",
+                "full_reading": "まいつき",
+                "meaning": "Todos los meses",
+                "rule": "ON/KUN",
+                "etymology": "Cada (Mai) + Mes (Tsuki).",
+                "dummy_pieces": [
+                  "月",
+                  "年",
+                  "日"
+                ],
+                "distractors": [
+                  "まいげつ",
+                  "まいがつ",
+                  "まいづき"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k096",
+            "kanji": "午",
+            "meaning": "Mediodía",
+            "onyomi": [
+              "ゴ"
+            ],
+            "kunyomi": [],
+            "mnemonic": "Un mortero para moler el grano a la hora del mediodía.",
+            "radicals": [
+              "十",
+              "一",
+              "丨"
+            ],
+            "dummy_radicals": [
+              "牛",
+              "年",
+              "千"
+            ],
+            "context_words": [
+              {
+                "word": "午前",
+                "target": "午",
+                "full_reading": "ごぜん",
+                "meaning": "Mañana (AM)",
+                "rule": "ON",
+                "etymology": "Mediodía (Go) + Antes (Zen).",
+                "dummy_pieces": [
+                  "前",
+                  "後",
+                  "日"
+                ],
+                "distractors": [
+                  "ごまえ",
+                  "午ぜん",
+                  "ごせん"
+                ]
+              },
+              {
+                "word": "午後",
+                "target": "午",
+                "full_reading": "ごご",
+                "meaning": "Tarde (PM)",
+                "rule": "ON",
+                "etymology": "Mediodía (Go) + Después (Go).",
+                "dummy_pieces": [
+                  "後",
+                  "前",
+                  "日"
+                ],
+                "distractors": [
+                  "ごあと",
+                  "午ご",
+                  "ごう"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k097",
+            "kanji": "間",
+            "meaning": "Intervalo / Espacio",
+            "onyomi": [
+              "カン",
+              "ケン"
+            ],
+            "kunyomi": [
+              "あいだ",
+              "ま"
+            ],
+            "mnemonic": "El sol (日) brillando a través de las dos hojas de una puerta (門).",
+            "radicals": [
+              "門",
+              "日"
+            ],
+            "dummy_radicals": [
+              "月",
+              "聞",
+              "開"
+            ],
+            "context_words": [
+              {
+                "word": "時間",
+                "target": "間",
+                "full_reading": "じかん",
+                "meaning": "Tiempo / Horas",
+                "rule": "ON",
+                "etymology": "Hora (Ji) + Intervalo (Kan).",
+                "dummy_pieces": [
+                  "時",
+                  "分",
+                  "半"
+                ],
+                "distractors": [
+                  "ときかん",
+                  "じま",
+                  "じけん"
+                ]
+              },
+              {
+                "word": "間",
+                "target": "間",
+                "full_reading": "あいだ",
+                "meaning": "Entre (espacio)",
+                "rule": "KUN",
+                "etymology": "Lectura nativa para separación.",
+                "dummy_pieces": [
+                  "中",
+                  "外",
+                  "前"
+                ],
+                "distractors": [
+                  "かん",
+                  "ま",
+                  "けん"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "k5_t25",
+        "theme_title": "Conceptos Clave",
+        "items": [
+          {
+            "id": "k5_k098",
+            "kanji": "本",
+            "meaning": "Libro / Origen",
+            "onyomi": [
+              "ホン"
+            ],
+            "kunyomi": [
+              "もと"
+            ],
+            "mnemonic": "Un árbol (木) con una línea (一) en la base que marca su raíz.",
+            "radicals": [
+              "木",
+              "一"
+            ],
+            "dummy_radicals": [
+              "体",
+              "休",
+              "大"
+            ],
+            "context_words": [
+              {
+                "word": "日本",
+                "target": "本",
+                "full_reading": "にほん",
+                "meaning": "Japón",
+                "rule": "ON",
+                "etymology": "Sol (Ni) + Origen (Hon). El origen del sol.",
+                "dummy_pieces": [
+                  "日",
+                  "国",
+                  "語"
+                ],
+                "distractors": [
+                  "にちほん",
+                  "にっぽん",
+                  "ひもと"
+                ]
+              },
+              {
+                "word": "本",
+                "target": "本",
+                "full_reading": "ほん",
+                "meaning": "Libro",
+                "rule": "ON",
+                "etymology": "Palabra básica para un libro físico.",
+                "dummy_pieces": [
+                  "書",
+                  "読",
+                  "紙"
+                ],
+                "distractors": [
+                  "もと",
+                  "ぽん",
+                  "ぼん"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k099",
+            "kanji": "何",
+            "meaning": "Qué",
+            "onyomi": [
+              "カ"
+            ],
+            "kunyomi": [
+              "なに",
+              "なん"
+            ],
+            "mnemonic": "Una persona (亻) cargando una caja (可) sin saber qué hay dentro.",
+            "radicals": [
+              "亻",
+              "可",
+              "口"
+            ],
+            "dummy_radicals": [
+              "河",
+              "人",
+              "同"
+            ],
+            "context_words": [
+              {
+                "word": "何",
+                "target": "何",
+                "full_reading": "なに",
+                "meaning": "Qué",
+                "rule": "KUN",
+                "etymology": "Pronombre interrogativo.",
+                "dummy_pieces": [
+                  "誰",
+                  "いつ",
+                  "どこ"
+                ],
+                "distractors": [
+                  "なん",
+                  "か",
+                  "な"
+                ]
+              },
+              {
+                "word": "何か",
+                "target": "何",
+                "full_reading": "なにか",
+                "meaning": "Algo",
+                "rule": "KUN",
+                "etymology": "Qué (Nani) + Partícula interrogativa (Ka).",
+                "dummy_pieces": [
+                  "か",
+                  "誰",
+                  "どこ"
+                ],
+                "distractors": [
+                  "なんか",
+                  "なにかが",
+                  "なにが"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k100",
+            "kanji": "先",
+            "meaning": "Antes / Previo",
+            "onyomi": [
+              "セン"
+            ],
+            "kunyomi": [
+              "さき"
+            ],
+            "mnemonic": "Alguien que va delante caminando con sus piernas (儿).",
+            "radicals": [
+              "土",
+              "儿",
+              "一"
+            ],
+            "dummy_radicals": [
+              "生",
+              "学",
+              "行"
+            ],
+            "context_words": [
+              {
+                "word": "先生",
+                "target": "先",
+                "full_reading": "せんせい",
+                "meaning": "Profesor",
+                "rule": "ON",
+                "etymology": "Antes (Sen) + Nacer (Sei).",
+                "dummy_pieces": [
+                  "生",
+                  "学",
+                  "人"
+                ],
+                "distractors": [
+                  "さきせい",
+                  "せんしょう",
+                  "せんいき"
+                ]
+              },
+              {
+                "word": "先月",
+                "target": "先",
+                "full_reading": "せんげつ",
+                "meaning": "El mes pasado",
+                "rule": "ON",
+                "etymology": "Previo (Sen) + Mes (Getsu).",
+                "dummy_pieces": [
+                  "月",
+                  "週",
+                  "年"
+                ],
+                "distractors": [
+                  "さきげつ",
+                  "せんつき",
+                  "せんがつ"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k101",
+            "kanji": "口",
+            "meaning": "Boca",
+            "onyomi": [
+              "コウ",
+              "ク"
+            ],
+            "kunyomi": [
+              "くち"
+            ],
+            "mnemonic": "Un cuadrado que representa una boca abierta.",
+            "radicals": [
+              "口"
+            ],
+            "dummy_radicals": [
+              "日",
+              "囗",
+              "田"
+            ],
+            "context_words": [
+              {
+                "word": "口",
+                "target": "口",
+                "full_reading": "くち",
+                "meaning": "Boca",
+                "rule": "KUN",
+                "etymology": "Palabra nativa.",
+                "dummy_pieces": [
+                  "目",
+                  "耳",
+                  "手"
+                ],
+                "distractors": [
+                  "こう",
+                  "く",
+                  "ぐち"
+                ]
+              },
+              {
+                "word": "入口",
+                "target": "口",
+                "full_reading": "いりぐち",
+                "meaning": "Entrada",
+                "rule": "KUN",
+                "etymology": "Entrar (Iri) + Boca (Guchi).",
+                "dummy_pieces": [
+                  "入",
+                  "出",
+                  "中"
+                ],
+                "distractors": [
+                  "はいぐち",
+                  "いりくち",
+                  "にゅうこう"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "k5_k102",
+            "kanji": "社",
+            "meaning": "Compañía / Sociedad",
+            "onyomi": [
+              "シャ"
+            ],
+            "kunyomi": [
+              "やしろ"
+            ],
+            "mnemonic": "Un altar (ネ) de tierra (土) donde la comunidad se reúne.",
+            "radicals": [
+              "ネ",
+              "土"
+            ],
+            "dummy_radicals": [
+              "神",
+              "礼",
+              "礻"
+            ],
+            "context_words": [
+              {
+                "word": "会社",
+                "target": "社",
+                "full_reading": "かいしゃ",
+                "meaning": "Empresa",
+                "rule": "ON",
+                "etymology": "Reunir (Kai) + Sociedad (Sha).",
+                "dummy_pieces": [
+                  "会",
+                  "店",
+                  "仕事"
+                ],
+                "distractors": [
+                  "あうしゃ",
+                  "かいじゃ",
+                  "かいや"
+                ]
+              },
+              {
+                "word": "社会",
+                "target": "社",
+                "full_reading": "しゃかい",
+                "meaning": "Sociedad",
+                "rule": "ON",
+                "etymology": "Inverso a empresa: Sociedad (Sha) + Reunión (Kai).",
+                "dummy_pieces": [
+                  "会",
+                  "人",
+                  "国"
+                ],
+                "distractors": [
+                  "やしろかい",
+                  "しゃがい",
+                  "しゃあう"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "theme_id": "cp_k5_block_09",
+        "type": "checkpoint",
+        "theme_title": "Examen: Esenciales Restantes",
+        "requires_count": 2,
+        "items": []
+      }
+    ]
   }
 ]
