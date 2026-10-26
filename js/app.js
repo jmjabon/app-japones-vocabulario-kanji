@@ -23,6 +23,20 @@ const buildMasterDictionary = async () => {
     return dict;
 };
 
+// Utilidad para renderizar vocabulario: Kana como rey, Kanji como complemento
+const formatVocabDisplay = (item, isLarge = false) => {
+    const hasKanji = item.kanji && item.kanji !== '-' && item.kanji !== '';
+    const sizeKana = isLarge ? 'text-7xl md:text-8xl' : 'text-3xl md:text-4xl';
+    const sizeKanji = isLarge ? 'text-2xl md:text-3xl' : 'text-sm md:text-base';
+    
+    return `
+        <div class="flex flex-col items-center justify-center gap-2">
+            <span class="${sizeKana} font-extrabold text-gray-900 tracking-wide">${item.kana}</span>
+            ${hasKanji ? `<span class="${sizeKanji} font-medium text-gray-500 tracking-wider">【 ${item.kanji} 】</span>` : ''}
+        </div>
+    `;
+};
+
 // --- HOME HUB / PANTALLA DE INICIO ---
 
 const renderDashboard = () => {
@@ -94,7 +108,7 @@ const renderDashboard = () => {
                             </div>
                             <div>
                                 <h4 class="text-xl font-bold text-gray-900 group-hover:text-rose-600 transition-colors">Vocabulario</h4>
-                                <p class="text-sm text-gray-500 mt-1">Palabras en kana, katakana, expresiones y partículas esenciales.</p>
+                                <p class="text-sm text-gray-500 mt-1">Sonido primero en Kana, con apoyo de kanji secundario y audio nativo.</p>
                             </div>
                         </div>
                     </div>
@@ -108,7 +122,7 @@ const renderDashboard = () => {
                             </div>
                             <div>
                                 <h4 class="text-xl font-bold text-gray-900 group-hover:text-slate-900 transition-colors">Kanjis</h4>
-                                <p class="text-sm text-gray-500 mt-1">Despiece de radicales, forja visual y lectura en contexto (Jukugos).</p>
+                                <p class="text-sm text-gray-500 mt-1">Aprende con Flashcards previas, despiece de radicales y palabras compuestas.</p>
                             </div>
                         </div>
                     </div>
@@ -132,7 +146,6 @@ const renderSRSStats = async () => {
     const boxes = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     const box1Items = [];
 
-    // Contar cuántos elementos hay en cada caja de memoria
     Object.keys(appState.leitner).forEach(itemId => {
         const itemData = appState.leitner[itemId];
         if (boxes[itemData.box] !== undefined) boxes[itemData.box]++;
@@ -143,7 +156,7 @@ const renderSRSStats = async () => {
         ? `<div class="mt-4 bg-white/60 p-4 rounded-2xl shadow-inner border border-rose-100 max-h-48 overflow-y-auto">
             <p class="text-[11px] font-bold text-rose-400 uppercase tracking-widest mb-3">Palabras atascadas:</p>
             <div class="flex flex-wrap gap-2">
-                ${box1Items.map(item => `<span class="bg-white text-gray-700 px-3 py-1.5 rounded-xl text-sm font-bold border border-gray-200 shadow-sm">${item.kanji || item.kana}</span>`).join('')}
+                ${box1Items.map(item => `<span class="bg-white text-gray-700 px-3 py-1.5 rounded-xl text-sm font-bold border border-gray-200 shadow-sm">${item.kana || item.kanji}</span>`).join('')}
             </div>
            </div>
            <button id="btn-train-mistakes" class="w-full bg-rose-500 text-white py-4 rounded-2xl font-bold shadow-sm hover:bg-rose-600 mt-4 text-base transition-transform active:scale-95 flex items-center justify-center gap-2"><i data-lucide="dumbbell" class="w-5 h-5"></i> Entrenar Fallos</button>`
@@ -231,7 +244,7 @@ const renderSuccessScreen = (type, currentTheme, itemsCount, backCallback) => {
 };
 
 const renderBlockList = (blocksData, type) => {
-    appState = loadProgress(); // REFRESH OBLIGATORIO
+    appState = loadProgress();
     const validBlocks = blocksData.filter(b => b && Array.isArray(b.themes));
     const flatThemes = validBlocks.flatMap(b => b.themes);
     const isVocab = type === 'vocab';
@@ -245,7 +258,6 @@ const renderBlockList = (blocksData, type) => {
         const isUnlocked = index === 0 || (firstThemeId && appState.progress[unlockedKey]?.includes(firstThemeId));
         const isMastered = completedInBlock === themesInBlock && themesInBlock > 0;
 
-        // Auto-reparación visual si es la primera unidad
         if (index === 0 && firstThemeId && !appState.progress[unlockedKey]?.includes(firstThemeId)) {
             appState.progress[unlockedKey].push(firstThemeId);
             localStorage.setItem('kanjimaster_state', JSON.stringify(appState));
@@ -323,7 +335,8 @@ const startSRSSession = async (dueItemsIds) => {
             return renderDashboard();
         }
         const item = sessionQueue[currentIndex];
-        const targetDisplay = item.kanji || item.kana;
+        const isVocab = item.type === 'vocab';
+        const displayHtml = isVocab ? formatVocabDisplay(item, true) : `<div class="text-9xl font-bold text-gray-800 drop-shadow-sm tracking-wider">${item.kanji}</div>`;
         const correctAnswer = item.meaning;
         const options = shuffleArray([correctAnswer, ...getDistractors(item, item.allItems, 'meaning', 3)]);
 
@@ -335,9 +348,9 @@ const startSRSSession = async (dueItemsIds) => {
                     <button id="btn-quit" class="active:opacity-50 p-2 transition-opacity"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
                 <div class="flex-grow flex flex-col items-center justify-center text-center mb-10 gap-6">
-                    <p class="text-gray-400 text-sm font-bold uppercase tracking-widest">${item.type === 'kanji' ? 'Significado' : 'Traducción'}</p>
-                    <div class="text-8xl md:text-9xl font-bold text-gray-800 drop-shadow-sm mb-4 tracking-wider">${targetDisplay}</div>
-                    ${item.type === 'vocab' && item.kana ? `<button id="btn-audio" class="p-5 bg-blue-50 text-blue-600 rounded-full shadow-sm transition-transform active:scale-95"><i data-lucide="volume-2" class="w-8 h-8"></i></button>` : ''}
+                    <p class="text-gray-400 text-sm font-bold uppercase tracking-widest">${item.type === 'kanji' ? 'Kanji' : 'Palabra'}</p>
+                    <div class="mb-4">${displayHtml}</div>
+                    ${isVocab && item.kana ? `<button id="btn-audio" class="p-5 bg-blue-50 text-blue-600 rounded-full shadow-sm transition-transform active:scale-95"><i data-lucide="volume-2" class="w-8 h-8"></i></button>` : ''}
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="options-container">
                     ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-xl text-gray-800 text-center md:text-left shadow-sm active:bg-gray-100 active:scale-[0.98] transition-all" data-answer="${opt}">${opt}</button>`).join('')}
@@ -346,7 +359,7 @@ const startSRSSession = async (dueItemsIds) => {
         `;
         lucide.createIcons();
         document.getElementById('btn-quit').addEventListener('click', renderDashboard);
-        if (item.type === 'vocab' && item.kana) {
+        if (isVocab && item.kana) {
             document.getElementById('btn-audio').addEventListener('click', () => playJapaneseAudio(item.kana));
         }
 
@@ -356,7 +369,6 @@ const startSRSSession = async (dueItemsIds) => {
                 const isCorrect = e.currentTarget.getAttribute('data-answer') === correctAnswer;
                 optionButtons.forEach(b => b.disabled = true);
                 
-                // Limpieza del botón presionado para evitar el "fantasma" en Safari
                 e.target.classList.remove('border-gray-200', 'bg-white', 'text-gray-800');
                 
                 if (isCorrect) {
@@ -391,6 +403,11 @@ const startMistakesReview = (box1Items) => {
         let flipped = false;
 
         const renderState = () => {
+            const isVocab = item.type === 'vocab';
+            const cardFrontContent = isVocab 
+                ? formatVocabDisplay(item, true)
+                : `<h2 class="text-8xl md:text-9xl font-bold text-gray-900 tracking-wider">${item.kanji}</h2>`;
+
             document.getElementById('app-view').innerHTML = `
                 <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
                     <div class="flex justify-between items-center text-gray-500 font-bold mb-8 px-2">
@@ -401,8 +418,7 @@ const startMistakesReview = (box1Items) => {
                     
                     <div id="flashcard" class="flex-grow flex flex-col items-center justify-center text-center gap-8 cursor-pointer bg-white border-2 ${flipped ? 'border-indigo-400' : 'border-gray-200'} rounded-3xl apple-shadow p-8 mb-8 hover:bg-gray-50 transition-all active:scale-[0.98]">
                         <p class="text-gray-400 font-bold uppercase tracking-widest text-sm flex items-center gap-2"><i data-lucide="hand" class="w-4 h-4"></i> ${flipped ? 'Solución revelada' : 'Toca la tarjeta para revelar'}</p>
-                        ${flipped && item.kana ? `<p class="text-2xl text-gray-500 font-medium">${item.kana}</p>` : ''}
-                        <h2 class="text-8xl md:text-9xl font-bold text-gray-900 tracking-wider">${item.kanji || item.kana}</h2>
+                        ${cardFrontContent}
                         ${flipped ? `<div class="bg-indigo-50 text-indigo-700 font-bold text-3xl py-4 px-8 rounded-2xl border border-indigo-200 mt-6 w-full shadow-inner">${item.meaning}</div>` : ''}
                     </div>
 
@@ -442,7 +458,8 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
         if (questionIndex >= examQuestions.length) return renderCheckpointResults();
 
         const item = examQuestions[questionIndex];
-        const targetDisplay = item.kanji || item.kana;
+        const isVocab = ctx.type === 'vocab';
+        const displayHtml = isVocab ? formatVocabDisplay(item, true) : `<div class="text-8xl md:text-9xl font-bold text-gray-900 drop-shadow-sm tracking-wider">${item.kanji}</div>`;
         const options = shuffleArray([item.meaning, ...getDistractors(item, item.allItems, 'meaning', 3)]);
 
         document.getElementById('app-view').innerHTML = `
@@ -453,7 +470,7 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
                     <button id="btn-quit" class="active:opacity-50 p-2 transition-opacity"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
                 <div class="flex-grow flex flex-col items-center justify-center text-center mb-10 gap-6">
-                    <div class="text-8xl md:text-9xl font-bold text-gray-900 drop-shadow-sm tracking-wider">${targetDisplay}</div>
+                    ${displayHtml}
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="options-container">
                     ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-xl text-gray-700 text-center md:text-left shadow-sm active:bg-gray-100 active:scale-[0.98] transition-all" data-answer="${opt}">${opt}</button>`).join('')}
@@ -499,7 +516,6 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
         const passed = finalScore >= 80;
 
         if (passed) {
-            // Cálculo matemático del siguiente ID para el Checkpoint
             const realNextId = ctx.flat[flatIndex + 1] ? ctx.flat[flatIndex + 1].theme_id : null;
             appState = markThemeCompleted(ctx.type, checkpointData.theme_id, realNextId, []);
         }
@@ -528,7 +544,6 @@ const startCheckpoint = (checkpointData, flatIndex, ctx) => {
     showExamQuestion();
 };
 
-// --- GENERADOR DE TARJETAS DE TEMA (Faltaba esta función) ---
 const generateThemeListHtml = (ctx) => {
     return ctx.blocks[ctx.bIdx].themes.map((theme, index) => {
         const unlockedKey = `unlocked_${ctx.type}_themes`;
@@ -561,7 +576,7 @@ const generateThemeListHtml = (ctx) => {
 // --- MÓDULO VOCABULARIO ---
 
 const renderVocabThemeList = (ctx) => {
-    appState = loadProgress(); // REFRESH OBLIGATORIO
+    appState = loadProgress(); 
     
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col gap-5 w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
@@ -592,13 +607,13 @@ const renderVocabSubmenu = (vocabTheme, nextThemeId, ctx) => {
         <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
             <button id="btn-back-submenu" class="text-gray-500 flex items-center gap-1 self-start mb-6 py-2 hover:text-indigo-600"><i data-lucide="arrow-left" class="w-6 h-6"></i> Volver a temas</button>
             <h2 class="text-3xl font-extrabold text-gray-900 mb-2">${vocabTheme.theme_title}</h2>
-            <p class="text-gray-500 mb-8 text-base">Entrena libremente. Supera el Examen al 100% para guardar progreso.</p>
+            <p class="text-gray-500 mb-8 text-base">Entrena libremente con sonido y lectura. Supera el Examen al 100% para guardar progreso.</p>
             
             <h3 class="font-bold text-gray-400 uppercase tracking-widest text-sm mb-4">Entrenamiento Libre</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                 <button id="btn-v-study" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-primary transition-all flex items-center gap-5 text-left active:scale-95">
                     <div class="bg-blue-100 text-blue-600 p-4 rounded-2xl"><i data-lucide="book-open" class="w-6 h-6"></i></div>
-                    <div><h3 class="font-bold text-gray-900 text-lg">Flashcards</h3><p class="text-sm text-gray-500">Aprende sin presión.</p></div>
+                    <div><h3 class="font-bold text-gray-900 text-lg">Flashcards</h3><p class="text-sm text-gray-500">Aprende Kana y significado.</p></div>
                 </button>
                 <button id="btn-v-listen" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-primary transition-all flex items-center gap-5 text-left active:scale-95">
                     <div class="bg-purple-100 text-purple-600 p-4 rounded-2xl"><i data-lucide="headphones" class="w-6 h-6"></i></div>
@@ -606,11 +621,11 @@ const renderVocabSubmenu = (vocabTheme, nextThemeId, ctx) => {
                 </button>
                 <button id="btn-v-inverse" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-primary transition-all flex items-center gap-5 text-left active:scale-95">
                     <div class="bg-orange-100 text-orange-600 p-4 rounded-2xl"><i data-lucide="arrow-left-right" class="w-6 h-6"></i></div>
-                    <div><h3 class="font-bold text-gray-900 text-lg">Inversa</h3><p class="text-sm text-gray-500">Español -> Japonés.</p></div>
+                    <div><h3 class="font-bold text-gray-900 text-lg">Inversa</h3><p class="text-sm text-gray-500">Español -> Kana.</p></div>
                 </button>
                 <button id="btn-v-read" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-primary transition-all flex items-center gap-5 text-left active:scale-95">
                     <div class="bg-green-100 text-green-600 p-4 rounded-2xl"><i data-lucide="eye" class="w-6 h-6"></i></div>
-                    <div><h3 class="font-bold text-gray-900 text-lg">Lectura Rápida</h3><p class="text-sm text-gray-500">Japonés -> Español.</p></div>
+                    <div><h3 class="font-bold text-gray-900 text-lg">Lectura Rápida</h3><p class="text-sm text-gray-500">Kana -> Español.</p></div>
                 </button>
             </div>
 
@@ -643,11 +658,11 @@ const startVocabStudy = (vocabTheme, ctx) => {
                     <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
                 <div class="flex-grow flex flex-col items-center justify-center gap-6 mb-10 text-center">
-                    <p class="text-gray-400 font-bold tracking-widest text-lg">${item.kana}</p>
-                    <h2 class="text-8xl md:text-9xl font-bold text-gray-900 tracking-wider">${item.kanji || item.kana}</h2>
-                    <div class="bg-blue-50 text-blue-700 font-bold text-2xl py-3 px-8 rounded-2xl border border-blue-200 mt-4">${item.meaning}</div>
+                    <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Lectura / Sonido Principal</p>
+                    ${formatVocabDisplay(item, true)}
+                    <div class="bg-blue-50 text-blue-700 font-bold text-2xl py-3 px-8 rounded-2xl border border-blue-200 mt-2">${item.meaning}</div>
                     
-                    <button id="btn-audio" class="mt-8 p-6 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 apple-shadow transition-transform hover:scale-110 active:scale-95 flex flex-col items-center gap-2">
+                    <button id="btn-audio" class="mt-6 p-6 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 apple-shadow transition-transform hover:scale-110 active:scale-95 flex flex-col items-center gap-2">
                         <i data-lucide="volume-2" class="w-10 h-10 text-blue-600"></i>
                     </button>
                 </div>
@@ -673,14 +688,17 @@ const startVocabPractice = (mode, vocabTheme, ctx) => {
         let correct = '', options = [], topHtml = '';
 
         if(mode === 'listening') {
-            correct = item.meaning; options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
+            correct = item.meaning; 
+            options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
             topHtml = `<button id="btn-audio-q" class="p-8 bg-purple-100 text-purple-600 rounded-full apple-shadow animate-pulse mb-6 hover:scale-105 active:scale-95 transition-transform"><i data-lucide="volume-2" class="w-12 h-12"></i></button><p class="text-gray-500 font-bold uppercase tracking-widest text-sm flex items-center gap-2"><i data-lucide="hand" class="w-4 h-4"></i> Toca para escuchar</p>`;
         } else if (mode === 'inverse') {
-            correct = item.kanji || item.kana; options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, item.kanji ? 'kanji' : 'kana', 3)]);
-            topHtml = `<p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Traduce al Japonés</p><h2 class="text-5xl md:text-6xl font-bold text-gray-900 text-center leading-tight px-4">${item.meaning}</h2>`;
+            correct = item.kana; 
+            options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'kana', 3)]);
+            topHtml = `<p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Traduce al Japonés (Kana)</p><h2 class="text-5xl md:text-6xl font-bold text-gray-900 text-center leading-tight px-4">${item.meaning}</h2>`;
         } else if (mode === 'reading') {
-            correct = item.meaning; options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
-            topHtml = `<p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Traduce al Español</p><h2 class="text-7xl md:text-8xl font-bold text-gray-900 text-center tracking-widest mb-4">${item.kanji || item.kana}</h2><button id="btn-audio-q" class="p-4 bg-gray-100 text-gray-600 rounded-full apple-shadow active:scale-95"><i data-lucide="volume-2" class="w-6 h-6 text-blue-600"></i></button>`;
+            correct = item.meaning; 
+            options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, 'meaning', 3)]);
+            topHtml = `<p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Traduce al Español</p><div class="mb-4">${formatVocabDisplay(item, true)}</div><button id="btn-audio-q" class="p-4 bg-gray-100 text-gray-600 rounded-full apple-shadow active:scale-95"><i data-lucide="volume-2" class="w-6 h-6 text-blue-600"></i></button>`;
         }
 
         document.getElementById('app-view').innerHTML = `
@@ -723,7 +741,6 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
     const showQuestion = () => {
         if(currentIndex >= exerciseItems.length) {
             if(mistakes === 0) {
-                // Cálculo matemático del siguiente ID 
                 const flatIdx = ctx.flat.findIndex(t => t.theme_id === vocabTheme.theme_id);
                 const realNextId = ctx.flat[flatIdx + 1] ? ctx.flat[flatIdx + 1].theme_id : null;
                 
@@ -740,8 +757,8 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
 
         const item = exerciseItems[currentIndex];
         const isInverse = currentIndex % 2 !== 0; 
-        const correct = isInverse ? (item.kanji || item.kana) : item.meaning;
-        const options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, isInverse ? (item.kanji ? 'kanji' : 'kana') : 'meaning', 3)]);
+        const correct = isInverse ? item.kana : item.meaning;
+        const options = shuffleArray([correct, ...getDistractors(item, vocabTheme.items, isInverse ? 'kana' : 'meaning', 3)]);
 
         document.getElementById('app-view').innerHTML = `
             <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
@@ -751,8 +768,8 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
                     <button id="btn-quit" class="active:opacity-50 p-2 transition-opacity"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
                 <div class="flex-grow flex flex-col items-center justify-center mb-10 text-center">
-                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">${isInverse ? 'Traduce al Japonés' : 'Traduce al Español'}</p>
-                    <h2 class="${isInverse ? 'text-5xl md:text-6xl px-4' : 'text-7xl md:text-8xl tracking-widest'} font-bold text-gray-900 leading-tight">${isInverse ? item.meaning : (item.kanji || item.kana)}</h2>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">${isInverse ? 'Traduce al Japonés (Kana)' : 'Traduce al Español'}</p>
+                    ${isInverse ? `<h2 class="text-5xl md:text-6xl px-4 font-bold text-gray-900 leading-tight">${item.meaning}</h2>` : formatVocabDisplay(item, true)}
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="options-container">
                     ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-6 px-6 rounded-2xl font-bold text-gray-800 text-center md:text-left text-xl shadow-sm active:bg-gray-100 active:scale-[0.98] transition-all" data-answer="${opt}">${opt}</button>`).join('')}
@@ -782,10 +799,11 @@ const startVocabExam = (vocabTheme, nextThemeId, ctx) => {
     };
     showQuestion();
 };
+
 // --- MÓDULO KANJI ---
 
 const renderKanjiThemeList = (ctx) => {
-    appState = loadProgress(); // REFRESH OBLIGATORIO
+    appState = loadProgress(); 
     document.getElementById('app-view').innerHTML = `
         <div class="flex flex-col gap-5 w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
             <button id="btn-back-blocks" class="text-gray-500 flex items-center gap-1 self-start mb-2 py-2 hover:text-indigo-600 transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i> Volver a Bloques</button>
@@ -814,14 +832,26 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, ctx) => {
         <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
             <button id="btn-back-submenu" class="text-gray-500 flex items-center gap-1 self-start mb-6 py-2 hover:text-indigo-600"><i data-lucide="arrow-left" class="w-6 h-6"></i> Volver a temas</button>
             <h2 class="text-3xl font-extrabold text-gray-900 mb-2">${kanjiTheme.theme_title}</h2>
-            <p class="text-gray-500 mb-8 text-base">Entrena libremente. Supera el Examen al 100% para avanzar.</p>
+            <p class="text-gray-500 mb-8 text-base">Aprende primero los kanjis y sus palabras compuestas. Después practica con los ejercicios interactivos.</p>
             
-            <h3 class="font-bold text-gray-400 uppercase tracking-widest text-sm mb-4">Zona de Entrenamiento</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                <button id="btn-k-gallery" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-secondary transition-all flex items-center gap-5 text-left active:scale-95">
-                    <div class="bg-blue-100 text-blue-600 p-4 rounded-2xl"><i data-lucide="book-open" class="w-6 h-6"></i></div>
-                    <div><h3 class="font-bold text-gray-900 text-lg">Galería</h3><p class="text-sm text-gray-500">Mnemotecnias y trazos.</p></div>
+            <h3 class="font-bold text-indigo-600 uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4"></i> Paso 1: Exposición y Memoria
+            </h3>
+            <div class="mb-8">
+                <button id="btn-k-study" class="w-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white p-6 rounded-[1.75rem] shadow-lg shadow-indigo-500/20 hover:from-indigo-600 hover:to-indigo-800 transition-all flex items-center justify-between active:scale-[0.99]">
+                    <div class="flex items-center gap-5">
+                        <div class="bg-white/20 p-4 rounded-2xl backdrop-blur-md text-white"><i data-lucide="layers" class="w-8 h-8"></i></div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-2xl text-white">Flashcards de Kanjis</h3>
+                            <p class="text-indigo-100 text-sm mt-0.5">Mira los kanjis, lecturas ON/KUN y las palabras del examen.</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-7 h-7 text-indigo-200"></i>
                 </button>
+            </div>
+
+            <h3 class="font-bold text-gray-400 uppercase tracking-widest text-sm mb-4">Paso 2: Práctica y Consolidación</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                 <button id="btn-k-despiece" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-secondary transition-all flex items-center gap-5 text-left active:scale-95">
                     <div class="bg-purple-100 text-purple-600 p-4 rounded-2xl"><i data-lucide="scissors" class="w-6 h-6"></i></div>
                     <div><h3 class="font-bold text-gray-900 text-lg">Despiece</h3><p class="text-sm text-gray-500">Separa en radicales.</p></div>
@@ -830,13 +860,13 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, ctx) => {
                     <div class="bg-orange-100 text-orange-600 p-4 rounded-2xl"><i data-lucide="hammer" class="w-6 h-6"></i></div>
                     <div><h3 class="font-bold text-gray-900 text-lg">Forja</h3><p class="text-sm text-gray-500">Construye desde cero.</p></div>
                 </button>
-                <button id="btn-k-jukugo" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-secondary transition-all flex items-center gap-5 text-left active:scale-95">
+                <button id="btn-k-jukugo" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-secondary transition-all flex items-center gap-5 text-left active:scale-95 md:col-span-2">
                     <div class="bg-indigo-100 text-indigo-600 p-4 rounded-2xl"><i data-lucide="message-circle" class="w-6 h-6"></i></div>
-                    <div><h3 class="font-bold text-gray-900 text-lg">Jukugos</h3><p class="text-sm text-gray-500">Palabras y lecturas.</p></div>
+                    <div><h3 class="font-bold text-gray-900 text-lg">Jukugos</h3><p class="text-sm text-gray-500">Entrenamiento guiado de palabras compuestas.</p></div>
                 </button>
             </div>
 
-            <h3 class="font-bold text-red-400 uppercase tracking-widest text-sm mb-4">Evaluación</h3>
+            <h3 class="font-bold text-red-400 uppercase tracking-widest text-sm mb-4">Paso 3: Evaluación</h3>
             <button id="btn-k-exam" class="bg-red-50 border-2 border-red-500 p-6 rounded-2xl apple-shadow hover:bg-red-100 transition-all flex items-center gap-5 text-left md:w-1/2 active:scale-95">
                 <div class="bg-red-500 text-white p-4 rounded-2xl"><i data-lucide="award" class="w-6 h-6"></i></div>
                 <div><h3 class="font-bold text-red-900 text-xl">Examen del Tema</h3><p class="text-sm text-red-700">Requiere 100% aciertos.</p></div>
@@ -845,43 +875,139 @@ const renderKanjiSubmenu = (kanjiTheme, nextThemeId, ctx) => {
     `;
     lucide.createIcons();
     document.getElementById('btn-back-submenu').addEventListener('click', () => { appState = loadProgress(); renderKanjiThemeList(ctx); });
-    document.getElementById('btn-k-gallery').addEventListener('click', () => startKanjiGallery(kanjiTheme, ctx));
+    document.getElementById('btn-k-study').addEventListener('click', () => startKanjiFlashcardStudy(kanjiTheme, ctx));
     document.getElementById('btn-k-despiece').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, ctx, 1));
     document.getElementById('btn-k-forja').addEventListener('click', () => startKanjiPuzzle(kanjiTheme, ctx, 2));
     document.getElementById('btn-k-jukugo').addEventListener('click', () => startKanjiJukugo(kanjiTheme, ctx));
     document.getElementById('btn-k-exam').addEventListener('click', () => startKanjiExam(kanjiTheme, nextThemeId, ctx));
 };
 
-const startKanjiGallery = (kanjiTheme, ctx) => {
+// MODO FLASHCARD DE KANJIS (Aprender antes de que te pregunten)
+const startKanjiFlashcardStudy = (kanjiTheme, ctx) => {
     let currentIndex = 0;
+    let flipped = false;
+
     const showCard = () => {
         if(currentIndex >= kanjiTheme.items.length) return renderKanjiSubmenu(kanjiTheme, null, ctx);
         const item = kanjiTheme.items[currentIndex];
-        document.getElementById('app-view').innerHTML = `
-            <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
-                <div class="flex justify-between items-center text-gray-500 font-bold mb-6 px-2">
-                    <span class="bg-blue-100 text-blue-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">Galería</span>
-                    <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
-                </div>
-                <div class="flex-grow flex flex-col items-center justify-center gap-6 mb-10 text-center">
-                    <h2 class="text-9xl font-bold text-gray-900 tracking-wider">${item.kanji}</h2>
-                    <div class="bg-secondary text-white font-bold text-2xl py-3 px-8 rounded-2xl apple-shadow mt-4">${item.meaning}</div>
-                    
-                    <div class="w-full md:max-w-md bg-gray-50 border border-gray-200 p-6 rounded-3xl text-left apple-shadow mt-6">
-                        <p class="text-xs font-bold text-gray-500 uppercase mb-2 tracking-widest">Mnemotecnia</p>
-                        <p class="text-base text-gray-800 italic leading-relaxed">"${item.mnemonic}"</p>
-                        <div class="mt-5 flex gap-3 justify-center items-center">
-                            ${item.radicals.map(r => `<span class="bg-white border-2 border-gray-200 px-4 py-2 rounded-xl text-2xl font-bold text-gray-700">${r}</span>`).join('<span class="text-gray-400 font-bold">+</span>')}
+        flipped = false;
+
+        const renderCurrentState = () => {
+            const onReadings = (item.onyomi && item.onyomi.length > 0) ? item.onyomi.join('、 ') : 'ー';
+            const kunReadings = (item.kunyomi && item.kunyomi.length > 0) ? item.kunyomi.join('、 ') : 'ー';
+
+            const contextWordsHtml = (item.context_words && item.context_words.length > 0) 
+                ? `
+                    <div class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left mt-2">
+                        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i> Palabras de este Kanji en el examen:
+                        </p>
+                        <div class="space-y-2">
+                            ${item.context_words.map(cw => `
+                                <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-slate-100 shadow-sm">
+                                    <div class="flex items-baseline gap-2">
+                                        <span class="text-lg font-bold text-gray-900">${cw.word}</span>
+                                        <span class="text-xs text-indigo-600 font-bold">${cw.full_reading}</span>
+                                    </div>
+                                    <span class="text-xs text-gray-500 font-medium">${cw.meaning}</span>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
+                  `
+                : '';
+
+            document.getElementById('app-view').innerHTML = `
+                <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
+                    <div class="flex justify-between items-center text-gray-500 font-bold mb-4 px-2">
+                        <span class="bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">
+                            Aprender Kanji (${currentIndex + 1}/${kanjiTheme.items.length})
+                        </span>
+                        <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    </div>
+
+                    <div id="kanji-flashcard" class="flex-grow flex flex-col items-center justify-center text-center cursor-pointer bg-white border-2 ${flipped ? 'border-indigo-400' : 'border-gray-200'} rounded-3xl apple-shadow p-6 mb-6 hover:bg-gray-50/50 transition-all active:scale-[0.99] select-none">
+                        
+                        ${!flipped ? `
+                            <div class="flex flex-col items-center justify-center gap-4 py-8">
+                                <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full">Toca para voltear</span>
+                                <h1 class="text-9xl font-black text-gray-900 tracking-wider my-4 font-serif">${item.kanji}</h1>
+                                <p class="text-sm text-gray-400 flex items-center gap-1.5">
+                                    <i data-lucide="rotate-cw" class="w-4 h-4"></i> Ver lecturas, significado y compuestos
+                                </p>
+                            </div>
+                        ` : `
+                            <div class="w-full flex flex-col items-center gap-4 animate-fade-in">
+                                <div class="flex items-center gap-4">
+                                    <h2 class="text-6xl font-black text-gray-900 font-serif">${item.kanji}</h2>
+                                    <div class="text-left">
+                                        <span class="text-2xl font-extrabold text-indigo-600 block">${item.meaning}</span>
+                                        <span class="text-xs text-gray-400 font-medium">${item.radicals?.join(' + ')}</span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 w-full mt-2">
+                                    <div class="bg-blue-50 border border-blue-100 p-2.5 rounded-xl text-left">
+                                        <span class="text-[10px] font-extrabold text-blue-500 uppercase tracking-widest block">Lectura ON (Chino)</span>
+                                        <span class="text-sm font-bold text-blue-900">${onReadings}</span>
+                                    </div>
+                                    <div class="bg-emerald-50 border border-emerald-100 p-2.5 rounded-xl text-left">
+                                        <span class="text-[10px] font-extrabold text-emerald-500 uppercase tracking-widest block">Lectura KUN (Japonés)</span>
+                                        <span class="text-sm font-bold text-emerald-900">${kunReadings}</span>
+                                    </div>
+                                </div>
+
+                                ${item.mnemonic ? `
+                                    <div class="w-full bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 text-left">
+                                        <p class="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                            <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i> Mnemotecnia:
+                                        </p>
+                                        <p class="text-xs text-amber-900 leading-relaxed italic">"${item.mnemonic}"</p>
+                                    </div>
+                                ` : ''}
+
+                                ${contextWordsHtml}
+                            </div>
+                        `}
+                    </div>
+
+                    <div class="flex gap-3">
+                        ${currentIndex > 0 ? `
+                            <button id="btn-prev" class="w-1/3 bg-gray-100 text-gray-700 py-5 rounded-2xl font-bold apple-shadow hover:bg-gray-200 transition-all flex justify-center items-center gap-2 text-lg">
+                                <i data-lucide="arrow-left" class="w-5 h-5"></i> Anterior
+                            </button>
+                        ` : ''}
+                        <button id="btn-next" class="${currentIndex > 0 ? 'w-2/3' : 'w-full'} bg-gray-900 text-white py-5 rounded-2xl font-bold apple-shadow hover:bg-gray-800 transition-all flex justify-center items-center gap-2 text-lg">
+                            ${currentIndex === kanjiTheme.items.length - 1 ? 'Terminar' : 'Siguiente'} <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
                 </div>
-                <button id="btn-next" class="w-full md:max-w-md mx-auto bg-gray-900 text-white py-6 rounded-2xl font-bold apple-shadow hover:bg-gray-800 flex justify-center items-center gap-2 text-xl transition-transform hover:-translate-y-1">Siguiente <i data-lucide="arrow-right" class="w-6 h-6"></i></button>
-            </div>
-        `;
-        lucide.createIcons();
-        document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, ctx));
-        document.getElementById('btn-next').addEventListener('click', () => { currentIndex++; showCard(); });
+            `;
+            lucide.createIcons();
+
+            document.getElementById('btn-quit').addEventListener('click', () => renderKanjiSubmenu(kanjiTheme, null, ctx));
+            
+            document.getElementById('kanji-flashcard').addEventListener('click', () => {
+                flipped = !flipped;
+                renderCurrentState();
+            });
+
+            if(document.getElementById('btn-prev')) {
+                document.getElementById('btn-prev').addEventListener('click', () => {
+                    currentIndex--;
+                    showCard();
+                });
+            }
+
+            document.getElementById('btn-next').addEventListener('click', () => {
+                currentIndex++;
+                showCard();
+            });
+        };
+
+        renderCurrentState();
     };
+
     showCard();
 };
 
@@ -1099,7 +1225,6 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
     const showQuestion = () => {
         if (currentIndex >= exerciseQueue.length) {
             if(mistakes === 0) {
-                // Cálculo matemático del siguiente ID
                 const flatIdx = ctx.flat.findIndex(t => t.theme_id === kanjiTheme.theme_id);
                 const realNextId = ctx.flat[flatIdx + 1] ? ctx.flat[flatIdx + 1].theme_id : null;
                 
@@ -1222,16 +1347,15 @@ const renderSettingsModal = () => {
                     </div>
                 </div>
             </div>
-        `;
-        document.body.appendChild(modal);
-        lucide.createIcons();
-    }
+        </div>
+    `;
+    document.body.appendChild(modal);
+    lucide.createIcons();
 
     const overlay = document.getElementById('settings-overlay');
     const sheet = document.getElementById('settings-sheet');
     const fileInput = document.getElementById('file-import-hidden');
 
-    // Animación de entrada
     requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
         sheet.classList.remove('translate-y-full', 'md:translate-y-4', 'md:scale-95');
