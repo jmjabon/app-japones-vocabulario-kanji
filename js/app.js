@@ -1315,6 +1315,7 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
 
 const renderKanaSubmenu = (kanaData) => {
     let selectedSyllabary = 'h'; // 'h' = Hiragana, 'k' = Katakana, 'mix' = Mixto
+    let selectedTurns = 10;      // 10, 20, 'all'
 
     const render = () => {
         document.getElementById('app-view').innerHTML = `
@@ -1341,11 +1342,24 @@ const renderKanaSubmenu = (kanaData) => {
 
                 <h3 class="font-bold text-gray-400 uppercase tracking-widest text-sm mb-4">Paso 2: Entrenamiento Libre</h3>
                 
-                <!-- Selector de Silabario para los ejercicios -->
-                <div class="bg-gray-100 p-1.5 rounded-2xl mb-5 flex gap-1 w-full">
-                    <button class="sel-btn flex-1 py-3 text-sm font-bold rounded-xl transition-all ${selectedSyllabary === 'h' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-s="h">Hiragana</button>
-                    <button class="sel-btn flex-1 py-3 text-sm font-bold rounded-xl transition-all ${selectedSyllabary === 'k' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-s="k">Katakana</button>
-                    <button class="sel-btn flex-1 py-3 text-sm font-bold rounded-xl transition-all ${selectedSyllabary === 'mix' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-s="mix">Mixto</button>
+                <!-- Panel de Ajustes del Ejercicio -->
+                <div class="flex flex-col gap-3 mb-6 bg-white p-4 rounded-[1.5rem] border border-gray-100 shadow-sm">
+                    <div>
+                        <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-2 block">Silabario</span>
+                        <div class="bg-gray-100 p-1 rounded-xl flex gap-1 w-full">
+                            <button class="sel-btn flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${selectedSyllabary === 'h' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-s="h">Hiragana</button>
+                            <button class="sel-btn flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${selectedSyllabary === 'k' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-s="k">Katakana</button>
+                            <button class="sel-btn flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${selectedSyllabary === 'mix' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-s="mix">Mixto</button>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1 mb-2 block mt-1">Extensión</span>
+                        <div class="bg-gray-100 p-1 rounded-xl flex gap-1 w-full">
+                            <button class="turn-btn flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${selectedTurns === 10 ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-t="10">10</button>
+                            <button class="turn-btn flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${selectedTurns === 20 ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-t="20">20</button>
+                            <button class="turn-btn flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${selectedTurns === 'all' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-t="all">Todo</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
@@ -1372,17 +1386,24 @@ const renderKanaSubmenu = (kanaData) => {
         document.getElementById('btn-back-dash').addEventListener('click', renderDashboard);
         document.getElementById('btn-kana-table').addEventListener('click', () => renderKanaTable(kanaData));
         
-        // Manejo del selector
+        // Manejo del selector de silabario
         document.querySelectorAll('.sel-btn').forEach(btn => btn.addEventListener('click', (e) => {
             selectedSyllabary = e.currentTarget.getAttribute('data-s');
-            render(); // Refresca el UI
+            render();
         }));
 
-        // Pasamos la variable de entorno a los ejercicios
-        document.getElementById('btn-kana-flash').addEventListener('click', () => startKanaPractice(kanaData, 'flash', selectedSyllabary));
-        document.getElementById('btn-kana-quiz').addEventListener('click', () => startKanaPractice(kanaData, 'quiz', selectedSyllabary));
-        document.getElementById('btn-kana-listen').addEventListener('click', () => startKanaPractice(kanaData, 'listen', selectedSyllabary));
-        document.getElementById('btn-kana-forge').addEventListener('click', () => startKanaForge(kanaData, selectedSyllabary));
+        // Manejo del selector de turnos
+        document.querySelectorAll('.turn-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            const val = e.currentTarget.getAttribute('data-t');
+            selectedTurns = val === 'all' ? 'all' : parseInt(val);
+            render();
+        }));
+
+        // Pasamos las variables a los ejercicios
+        document.getElementById('btn-kana-flash').addEventListener('click', () => startKanaPractice(kanaData, 'flash', selectedSyllabary, selectedTurns));
+        document.getElementById('btn-kana-quiz').addEventListener('click', () => startKanaPractice(kanaData, 'quiz', selectedSyllabary, selectedTurns));
+        document.getElementById('btn-kana-listen').addEventListener('click', () => startKanaPractice(kanaData, 'listen', selectedSyllabary, selectedTurns));
+        document.getElementById('btn-kana-forge').addEventListener('click', () => startKanaForge(kanaData, selectedSyllabary, selectedTurns));
     };
     render();
 };
@@ -1454,16 +1475,19 @@ const renderKanaTable = (kanaData) => {
     render();
 };
 
-const startKanaPractice = (kanaData, mode, syllabary) => {
+const startKanaPractice = (kanaData, mode, syllabary, turns) => {
     let pool = [...kanaData.seion, ...kanaData.dakuon].filter(item => item.h !== '');
-    let queue = shuffleArray(pool).slice(0, 20);
+    
+    // Limitar la cantidad de turnos según el selector
+    let maxItems = turns === 'all' ? pool.length : turns;
+    let queue = shuffleArray(pool).slice(0, maxItems);
+    
     let currentIndex = 0;
 
     const showStep = () => {
         if (currentIndex >= queue.length) return renderKanaSubmenu(kanaData);
         
         const item = queue[currentIndex];
-        // Determina el silabario en base a la selección
         const isHiragana = syllabary === 'h' ? true : (syllabary === 'k' ? false : Math.random() > 0.5);
         const targetChar = isHiragana ? item.h : item.k;
         const targetType = isHiragana ? 'Hiragana' : 'Katakana';
@@ -1557,22 +1581,22 @@ const startKanaPractice = (kanaData, mode, syllabary) => {
     showStep();
 };
 
-const startKanaForge = (kanaData, syllabary) => {
-    let queue = shuffleArray(kanaData.puzzle_words);
+const startKanaForge = (kanaData, syllabary, turns) => {
+    // Limitar la cantidad de turnos según el selector
+    let maxItems = turns === 'all' ? kanaData.puzzle_words.length : turns;
+    let queue = shuffleArray(kanaData.puzzle_words).slice(0, maxItems);
+    
     let currentIndex = 0;
 
     const showQuestion = () => {
         if (currentIndex >= queue.length) return renderKanaSubmenu(kanaData);
         
         const item = queue[currentIndex];
-        
-        // Decidimos la palabra en base al silabario seleccionado
         const isHiragana = syllabary === 'h' ? true : (syllabary === 'k' ? false : Math.random() > 0.5);
         const targetWord = isHiragana ? item.word_h : item.word_k;
         const correctChars = targetWord.split('');
         const totalSlots = correctChars.length;
         
-        // El pool de relleno debe corresponder al silabario elegido
         const poolBasic = kanaData.seion.filter(k => k.h !== '').map(k => isHiragana ? k.h : k.k);
         const dummyChars = [poolBasic[Math.floor(Math.random()*poolBasic.length)], poolBasic[Math.floor(Math.random()*poolBasic.length)]];
         const availablePieces = shuffleArray([...correctChars, ...dummyChars]);
