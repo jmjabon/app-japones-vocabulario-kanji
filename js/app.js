@@ -3,6 +3,7 @@ import { getManifest, getVocabData, getKanjiData } from './dataService.js';
 import { shuffleArray, getDistractors } from './utils.js';
 import { playJapaneseAudio } from './audio.js';
 import { getDueItems, processReview } from './srs.js';
+import { getManifest, getVocabData, getKanjiData, getKanaData } from './dataService.js';
 
 let appState = null;
 let manifestData = null;
@@ -99,11 +100,30 @@ const renderDashboard = () => {
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- NUEVA TARJETA KANA (Ancho completo arriba) -->
+                    <div id="btn-start-kana" class="group md:col-span-2 relative overflow-hidden bg-white p-6 rounded-[2rem] border border-gray-200/80 shadow-sm hover:shadow-md hover:border-cyan-300 active:scale-[0.99] transition-all cursor-pointer">
+                        <div class="absolute right-4 -bottom-3 text-8xl font-black text-cyan-500/[0.05] select-none font-serif group-hover:scale-105 transition-transform">あ</div>
+                        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                            <div class="flex items-center gap-5">
+                                <div class="w-14 h-14 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 font-serif font-black text-2xl shadow-sm">あ</div>
+                                <div>
+                                    <div class="flex items-center gap-3">
+                                        <h4 class="text-xl font-bold text-gray-900 group-hover:text-cyan-600 transition-colors">Silabarios Kana</h4>
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-700 uppercase tracking-widest">Paso 0</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">Hiragana y Katakana. Tabla guía, audios, quiz y forja visual.</p>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-6 h-6 text-gray-300 group-hover:text-cyan-500 transition-colors"></i>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA VOCABULARIO -->
                     <div id="btn-start-vocab" class="group relative overflow-hidden bg-white p-6 rounded-[2rem] border border-gray-200/80 shadow-sm hover:shadow-md hover:border-rose-200 active:scale-[0.99] transition-all cursor-pointer">
                         <div class="absolute right-4 -bottom-3 text-8xl font-black text-rose-500/[0.05] select-none font-serif group-hover:scale-105 transition-transform">語</div>
                         <div class="relative z-10 flex flex-col h-full justify-between gap-6">
                             <div class="flex items-start justify-between">
-                                <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-serif font-black text-2xl shadow-sm">あ</div>
+                                <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-serif font-black text-2xl shadow-sm">語</div>
                                 <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-rose-50 group-hover:text-rose-600 transition-colors">800 Palabras</span>
                             </div>
                             <div>
@@ -113,6 +133,7 @@ const renderDashboard = () => {
                         </div>
                     </div>
 
+                    <!-- TARJETA KANJIS -->
                     <div id="btn-start-kanji" class="group relative overflow-hidden bg-white p-6 rounded-[2rem] border border-gray-200/80 shadow-sm hover:shadow-md hover:border-slate-300 active:scale-[0.99] transition-all cursor-pointer">
                         <div class="absolute right-4 -bottom-3 text-8xl font-black text-slate-800/[0.05] select-none font-serif group-hover:scale-105 transition-transform">字</div>
                         <div class="relative z-10 flex flex-col h-full justify-between gap-6">
@@ -137,6 +158,10 @@ const renderDashboard = () => {
     document.getElementById('btn-start-vocab').addEventListener('click', async () => renderBlockList(await getVocabData(manifestData.levels[0].vocab_file), 'vocab'));
     document.getElementById('btn-start-kanji').addEventListener('click', async () => renderBlockList(await getKanjiData(manifestData.levels[0].kanji_file), 'kanji'));
     document.getElementById('btn-export-quick')?.addEventListener('click', renderSettingsModal);
+    document.getElementById('btn-start-kana').addEventListener('click', async () => {
+    const kanaData = await getKanaData();
+    renderKanaSubmenu(kanaData); // ¡Esta es la función que construiremos en la Fase 2!
+});
 };
 
 // --- ESTADÍSTICAS DE MEMORIA SRS ---
@@ -1281,6 +1306,313 @@ const startKanjiExam = (kanjiTheme, nextThemeId, ctx) => {
             }
             setTimeout(() => { currentIndex++; showQuestion(); }, 1200);
         }));
+    };
+    showQuestion();
+};
+
+// ==========================================
+// --- MÓDULO KANA (HIRAGANA / KATAKANA) ---
+// ==========================================
+
+const renderKanaSubmenu = (kanaData) => {
+    document.getElementById('app-view').innerHTML = `
+        <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
+            <button id="btn-back-dash" class="text-gray-500 flex items-center gap-1 self-start mb-6 py-2 hover:text-cyan-600 transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i> Volver al Inicio</button>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Silabarios Kana</h2>
+            <p class="text-gray-500 mb-8 text-base">Domina los cimientos del japonés. Empieza por la tabla guía y luego ponte a prueba.</p>
+            
+            <h3 class="font-bold text-cyan-600 uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
+                <i data-lucide="map" class="w-4 h-4"></i> Paso 1: Exploración
+            </h3>
+            <div class="mb-8">
+                <button id="btn-kana-table" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white p-6 rounded-[1.75rem] shadow-lg shadow-cyan-500/20 hover:from-cyan-600 hover:to-blue-600 transition-all flex items-center justify-between active:scale-[0.99]">
+                    <div class="flex items-center gap-5">
+                        <div class="bg-white/20 p-4 rounded-2xl backdrop-blur-md text-white"><i data-lucide="grid" class="w-8 h-8"></i></div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-2xl text-white">Tabla Interactiva</h3>
+                            <p class="text-cyan-100 text-sm mt-0.5">Hiragana, Katakana y audios nativos.</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-7 h-7 text-cyan-100"></i>
+                </button>
+            </div>
+
+            <h3 class="font-bold text-gray-400 uppercase tracking-widest text-sm mb-4">Paso 2: Entrenamiento Libre</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                <button id="btn-kana-flash" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-cyan-400 transition-all flex items-center gap-5 text-left active:scale-95">
+                    <div class="bg-indigo-100 text-indigo-600 p-4 rounded-2xl"><i data-lucide="book-open" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-gray-900 text-lg">Flashcards</h3><p class="text-sm text-gray-500">Memorización pasiva.</p></div>
+                </button>
+                <button id="btn-kana-quiz" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-cyan-400 transition-all flex items-center gap-5 text-left active:scale-95">
+                    <div class="bg-emerald-100 text-emerald-600 p-4 rounded-2xl"><i data-lucide="eye" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-gray-900 text-lg">Quiz Visual</h3><p class="text-sm text-gray-500">Identifica el kana.</p></div>
+                </button>
+                <button id="btn-kana-listen" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-cyan-400 transition-all flex items-center gap-5 text-left active:scale-95">
+                    <div class="bg-purple-100 text-purple-600 p-4 rounded-2xl"><i data-lucide="headphones" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-gray-900 text-lg">Dictado</h3><p class="text-sm text-gray-500">Afina tu oído.</p></div>
+                </button>
+                <button id="btn-kana-forge" class="bg-white border-2 border-gray-100 p-5 rounded-2xl apple-shadow hover:border-cyan-400 transition-all flex items-center gap-5 text-left active:scale-95">
+                    <div class="bg-orange-100 text-orange-600 p-4 rounded-2xl"><i data-lucide="hammer" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-gray-900 text-lg">Forja Inicial</h3><p class="text-sm text-gray-500">Forma tus primeras palabras.</p></div>
+                </button>
+            </div>
+        </div>
+    `;
+    lucide.createIcons();
+    document.getElementById('btn-back-dash').addEventListener('click', renderDashboard);
+    document.getElementById('btn-kana-table').addEventListener('click', () => renderKanaTable(kanaData));
+    document.getElementById('btn-kana-flash').addEventListener('click', () => startKanaPractice(kanaData, 'flash'));
+    document.getElementById('btn-kana-quiz').addEventListener('click', () => startKanaPractice(kanaData, 'quiz'));
+    document.getElementById('btn-kana-listen').addEventListener('click', () => startKanaPractice(kanaData, 'listen'));
+    document.getElementById('btn-kana-forge').addEventListener('click', () => startKanaForge(kanaData));
+};
+
+const renderKanaTable = (kanaData) => {
+    let currentMode = 'h'; // 'h' para Hiragana, 'k' para Katakana
+    let currentTab = 'seion';
+
+    const render = () => {
+        const items = kanaData[currentTab];
+        // En seion y dakuon usamos grid de 5, en yoon grid de 3
+        const gridCols = currentTab === 'yoon' ? 'grid-cols-3' : 'grid-cols-5';
+
+        const tableHtml = items.map(item => {
+            if (!item.h) return `<div class="w-full aspect-square"></div>`; // Hueco vacío
+            const char = currentMode === 'h' ? item.h : item.k;
+            return `
+                <button class="kana-cell w-full aspect-square bg-white border border-gray-200 rounded-xl flex flex-col items-center justify-center shadow-sm hover:border-cyan-400 active:bg-cyan-50 transition-all active:scale-95" data-kana="${char}">
+                    <span class="text-3xl md:text-4xl font-bold text-gray-900 mb-1">${char}</span>
+                    <span class="text-xs font-bold text-gray-400">${item.r}</span>
+                </button>
+            `;
+        }).join('');
+
+        document.getElementById('app-view').innerHTML = `
+            <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
+                <div class="flex justify-between items-center text-gray-500 font-bold mb-6 px-2">
+                    <span class="bg-cyan-100 text-cyan-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">Gojūon</span>
+                    <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                </div>
+                
+                <!-- Toggle Hiragana / Katakana -->
+                <div class="flex bg-gray-100 p-1 rounded-2xl mb-6 mx-auto w-full md:max-w-sm">
+                    <button id="tab-h" class="flex-1 py-3 text-sm font-bold rounded-xl transition-all ${currentMode === 'h' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}">Hiragana</button>
+                    <button id="tab-k" class="flex-1 py-3 text-sm font-bold rounded-xl transition-all ${currentMode === 'k' ? 'bg-white text-cyan-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}">Katakana</button>
+                </div>
+
+                <!-- Pestañas de grupo -->
+                <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+                    <button class="grp-tab px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${currentTab === 'seion' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-500'}" data-tab="seion">Básicos</button>
+                    <button class="grp-tab px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${currentTab === 'dakuon' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-500'}" data-tab="dakuon">Modificados</button>
+                    <button class="grp-tab px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${currentTab === 'yoon' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-500'}" data-tab="yoon">Diptongos</button>
+                </div>
+
+                <div class="grid ${gridCols} gap-2 md:gap-3 md:max-w-2xl mx-auto w-full">
+                    ${tableHtml}
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanaSubmenu(kanaData));
+        document.getElementById('tab-h').addEventListener('click', () => { currentMode = 'h'; render(); });
+        document.getElementById('tab-k').addEventListener('click', () => { currentMode = 'k'; render(); });
+        
+        document.querySelectorAll('.grp-tab').forEach(btn => btn.addEventListener('click', (e) => {
+            currentTab = e.currentTarget.getAttribute('data-tab');
+            render();
+        }));
+
+        document.querySelectorAll('.kana-cell').forEach(btn => btn.addEventListener('click', (e) => {
+            const char = e.currentTarget.getAttribute('data-kana');
+            playJapaneseAudio(char);
+            // Efecto visual rápido
+            e.currentTarget.classList.add('ring-4', 'ring-cyan-200');
+            setTimeout(() => e.currentTarget.classList.remove('ring-4', 'ring-cyan-200'), 200);
+        }));
+    };
+    render();
+};
+
+const startKanaPractice = (kanaData, mode) => {
+    // Usamos los 46 básicos + 25 modificados para practicar
+    let pool = [...kanaData.seion, ...kanaData.dakuon].filter(item => item.h !== '');
+    let queue = shuffleArray(pool).slice(0, 20); // Sesión de 20 preguntas
+    let currentIndex = 0;
+
+    const showStep = () => {
+        if (currentIndex >= queue.length) return renderKanaSubmenu(kanaData);
+        
+        const item = queue[currentIndex];
+        // Decidimos aleatoriamente si preguntamos Hiragana o Katakana
+        const isHiragana = Math.random() > 0.5;
+        const targetChar = isHiragana ? item.h : item.k;
+        const targetType = isHiragana ? 'Hiragana' : 'Katakana';
+
+        if (mode === 'flash') {
+            let flipped = false;
+            const renderCard = () => {
+                document.getElementById('app-view').innerHTML = `
+                    <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
+                        <div class="flex justify-between items-center text-gray-500 font-bold mb-8 px-2">
+                            <span class="bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">Flashcards Kana</span>
+                            <span class="text-sm bg-gray-100 px-3 py-1 rounded-full">${currentIndex + 1} / ${queue.length}</span>
+                            <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                        </div>
+                        
+                        <div id="flashcard" class="flex-grow flex flex-col items-center justify-center text-center cursor-pointer bg-white border-2 ${flipped ? 'border-cyan-400' : 'border-gray-200'} rounded-3xl apple-shadow p-8 mb-8 hover:bg-gray-50 transition-all active:scale-[0.98]">
+                            <p class="text-gray-400 font-bold uppercase tracking-widest text-sm flex items-center gap-2 mb-4"><i data-lucide="hand" class="w-4 h-4"></i> ${flipped ? 'Rōmaji' : targetType}</p>
+                            <h2 class="text-9xl font-bold text-gray-900 tracking-wider mb-6">${targetChar}</h2>
+                            ${flipped ? `<div class="bg-cyan-50 text-cyan-700 font-bold text-5xl py-4 px-10 rounded-2xl border border-cyan-200">${item.r}</div>` : ''}
+                        </div>
+
+                        ${flipped ? `<button id="btn-next" class="w-full md:max-w-md mx-auto bg-gray-900 text-white py-6 rounded-2xl font-bold apple-shadow hover:bg-gray-800 flex justify-center gap-2 text-xl transition-transform hover:-translate-y-1">Siguiente <i data-lucide="arrow-right" class="w-6 h-6"></i></button>` : ''}
+                    </div>
+                `;
+                lucide.createIcons();
+                document.getElementById('btn-quit').addEventListener('click', () => renderKanaSubmenu(kanaData));
+                
+                if (!flipped) {
+                    document.getElementById('flashcard').addEventListener('click', () => {
+                        flipped = true;
+                        playJapaneseAudio(targetChar);
+                        renderCard();
+                    });
+                } else {
+                    document.getElementById('btn-next').addEventListener('click', () => { currentIndex++; showStep(); });
+                }
+            };
+            renderCard();
+
+        } else if (mode === 'quiz' || mode === 'listen') {
+            const correctAns = mode === 'quiz' ? item.r : targetChar;
+            // Generar distractores
+            let distractors = [];
+            while (distractors.length < 3) {
+                let rnd = pool[Math.floor(Math.random() * pool.length)];
+                let distractor = mode === 'quiz' ? rnd.r : (isHiragana ? rnd.h : rnd.k);
+                if (distractor !== correctAns && !distractors.includes(distractor)) distractors.push(distractor);
+            }
+            const options = shuffleArray([correctAns, ...distractors]);
+
+            const topContent = mode === 'listen' 
+                ? `<button id="btn-audio-q" class="p-8 bg-purple-100 text-purple-600 rounded-full apple-shadow animate-pulse mb-6 hover:scale-105 active:scale-95 transition-transform"><i data-lucide="volume-2" class="w-12 h-12"></i></button><p class="text-gray-500 font-bold uppercase tracking-widest text-sm mb-4">Escucha e identifica el ${targetType}</p>`
+                : `<p class="text-gray-400 font-bold uppercase tracking-widest text-sm mb-4">¿Cómo se lee en Rōmaji?</p><h2 class="text-9xl font-bold text-gray-900 mb-6">${targetChar}</h2>`;
+
+            document.getElementById('app-view').innerHTML = `
+                <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-fade-in">
+                    <div class="flex justify-between items-center text-gray-500 font-bold mb-8 px-2">
+                        <span class="bg-cyan-100 text-cyan-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">Práctica</span>
+                        <span class="text-sm bg-gray-100 px-3 py-1 rounded-full">${currentIndex + 1} / ${queue.length}</span>
+                        <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    </div>
+                    
+                    <div class="flex-grow flex flex-col items-center justify-center text-center mb-10">${topContent}</div>
+                    
+                    <div class="grid grid-cols-2 gap-4" id="options-container">
+                        ${options.map(opt => `<button class="option-btn bg-white border-2 border-gray-200 py-8 rounded-2xl font-bold text-3xl text-gray-800 hover:border-cyan-400 apple-shadow active:bg-gray-50" data-answer="${opt}">${opt}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+            document.getElementById('btn-quit').addEventListener('click', () => renderKanaSubmenu(kanaData));
+            
+            if(mode === 'listen') {
+                const btnAudio = document.getElementById('btn-audio-q');
+                btnAudio.addEventListener('click', () => playJapaneseAudio(targetChar));
+                // Auto-play
+                setTimeout(() => playJapaneseAudio(targetChar), 300);
+            }
+
+            const optionButtons = document.querySelectorAll('.option-btn');
+            optionButtons.forEach(btn => btn.addEventListener('click', (e) => {
+                const ans = e.target.getAttribute('data-answer');
+                optionButtons.forEach(b => b.disabled = true);
+                if (ans === correctAns) {
+                    e.target.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                    if(mode === 'quiz') playJapaneseAudio(targetChar);
+                } else {
+                    e.target.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+                    Array.from(optionButtons).find(b => b.getAttribute('data-answer') === correctAns).classList.add('bg-green-100', 'border-green-500');
+                }
+                setTimeout(() => { currentIndex++; showStep(); }, 1000);
+            }));
+        }
+    };
+    showStep();
+};
+
+const startKanaForge = (kanaData) => {
+    let queue = shuffleArray(kanaData.puzzle_words);
+    let currentIndex = 0;
+
+    const showQuestion = () => {
+        if (currentIndex >= queue.length) return renderKanaSubmenu(kanaData);
+        
+        const item = queue[currentIndex];
+        const correctChars = item.word_h.split('');
+        const totalSlots = correctChars.length;
+        
+        // Coger un par de kanas trampa de seion
+        const poolBasic = kanaData.seion.filter(k => k.h !== '').map(k => k.h);
+        const dummyChars = [poolBasic[Math.floor(Math.random()*poolBasic.length)], poolBasic[Math.floor(Math.random()*poolBasic.length)]];
+        const availablePieces = shuffleArray([...correctChars, ...dummyChars]);
+        
+        let selectedPieces = [];
+
+        const updateBoard = () => {
+            document.getElementById('slots-container').innerHTML = Array.from({ length: totalSlots }).map((_, i) => `<div class="w-16 h-16 md:w-20 md:h-20 border-4 border-dashed ${selectedPieces[i] ? 'border-orange-400 bg-orange-50' : 'border-gray-300'} rounded-2xl flex items-center justify-center text-4xl font-bold text-gray-800 cursor-pointer transition-colors" data-slot-index="${i}">${selectedPieces[i] ? selectedPieces[i].char : ''}</div>`).join('');
+            
+            document.getElementById('pieces-container').innerHTML = availablePieces.map((char, index) => {
+                if (selectedPieces.some(p => p.originalIndex === index)) return `<div class="w-14 h-14 md:w-16 md:h-16 opacity-0"></div>`;
+                return `<button class="piece-btn w-14 h-14 md:w-16 md:h-16 bg-white border-2 border-gray-200 rounded-2xl apple-shadow text-3xl font-bold text-gray-700 hover:border-orange-400 hover:text-orange-500 transition-all active:scale-95" data-char="${char}" data-original-index="${index}">${char}</button>`;
+            }).join('');
+
+            document.querySelectorAll('.piece-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                if (selectedPieces.length >= totalSlots) return;
+                selectedPieces.push({ char: e.target.getAttribute('data-char'), originalIndex: parseInt(e.target.getAttribute('data-original-index')) });
+                updateBoard(); checkVictory();
+            }));
+            
+            document.querySelectorAll('#slots-container > div').forEach(slot => slot.addEventListener('click', (e) => {
+                const idx = e.currentTarget.getAttribute('data-slot-index');
+                if (selectedPieces[idx]) { selectedPieces.splice(idx, 1); updateBoard(); }
+            }));
+        };
+
+        const checkVictory = () => {
+            if (selectedPieces.length !== totalSlots) return;
+            if (selectedPieces.map(p => p.char).join('') === item.word_h) {
+                document.getElementById('slots-container').innerHTML = `<div class="text-5xl font-bold text-green-700 bg-green-100 px-10 py-4 rounded-3xl border-4 border-green-500 apple-shadow scale-110 transition-transform tracking-widest">${item.word_h}</div>`;
+                playJapaneseAudio(item.word_h); // Suponiendo que audio.js lee palabras enteras si el TTS está activado, sino sonará por silabas
+                setTimeout(() => { currentIndex++; showQuestion(); }, 1500);
+            } else {
+                const sc = document.getElementById('slots-container');
+                sc.classList.add('animate-pulse', 'border-red-500');
+                setTimeout(() => { selectedPieces = []; sc.classList.remove('animate-pulse', 'border-red-500'); updateBoard(); }, 800);
+            }
+        };
+
+        document.getElementById('app-view').innerHTML = `
+            <div class="flex flex-col h-full w-full pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))]">
+                <div class="flex justify-between items-center text-gray-500 font-bold mb-8 px-2">
+                    <span class="bg-orange-100 text-orange-800 border border-orange-200 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">Forja (Puzzle)</span>
+                    <span class="text-sm bg-gray-100 px-3 py-1 rounded-full">${currentIndex + 1} / ${queue.length}</span>
+                    <button id="btn-quit" class="hover:text-primary p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                </div>
+                
+                <div class="text-center mb-6">
+                    <div class="text-[120px] leading-none mb-4 drop-shadow-md select-none">${item.emoji}</div>
+                    <h3 class="text-3xl font-extrabold text-gray-900 tracking-wider">${item.meaning}</h3>
+                </div>
+                
+                <div class="flex-grow flex flex-col items-center justify-center mb-8"><div id="slots-container" class="flex gap-3 p-4 min-h-[6rem]"></div></div>
+                <div class="bg-gray-50 p-6 rounded-t-[2.5rem] -mx-4 pb-12 shadow-[inset_0_4px_10px_rgba(0,0,0,0.05)] border-t border-gray-200 md:max-w-xl md:mx-auto md:rounded-[2.5rem] md:mb-4"><div id="pieces-container" class="flex flex-wrap justify-center gap-3"></div></div>
+            </div>
+        `;
+        lucide.createIcons();
+        document.getElementById('btn-quit').addEventListener('click', () => renderKanaSubmenu(kanaData));
+        updateBoard();
     };
     showQuestion();
 };
