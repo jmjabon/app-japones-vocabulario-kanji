@@ -1351,7 +1351,7 @@ const renderSettingsModal = () => {
     `;
     document.body.appendChild(modal);
     lucide.createIcons();
-
+    }
     const overlay = document.getElementById('settings-overlay');
     const sheet = document.getElementById('settings-sheet');
     const fileInput = document.getElementById('file-import-hidden');
