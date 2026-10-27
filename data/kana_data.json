@@ -40,6 +40,26 @@
         { "word_h": "はれ", "word_k": "ハレ", "r": "hare", "meaning": "Soleado", "emoji": "☀️" },
         { "word_h": "つき", "word_k": "ツキ", "r": "tsuki", "meaning": "Luna", "emoji": "🌙" },
         { "word_h": "りんご", "word_k": "リンゴ", "r": "ringo", "meaning": "Manzana", "emoji": "🍎" },
-        { "word_h": "かえる", "word_k": "カエル", "r": "kaeru", "meaning": "Rana", "emoji": "🐸" }
+        { "word_h": "かえる", "word_k": "カエル", "r": "kaeru", "meaning": "Rana", "emoji": "🐸" },
+        { "word_h": "とり", "word_k": "トリ", "r": "tori", "meaning": "Pájaro", "emoji": "🐦" },
+        { "word_h": "さる", "word_k": "サル", "r": "saru", "meaning": "Mono", "emoji": "🐵" },
+        { "word_h": "みず", "word_k": "ミズ", "r": "mizu", "meaning": "Agua", "emoji": "💧" },
+        { "word_h": "はな", "word_k": "ハナ", "r": "hana", "meaning": "Flor", "emoji": "🌺" },
+        { "word_h": "うみ", "word_k": "ウミ", "r": "umi", "meaning": "Mar", "emoji": "🌊" },
+        { "word_h": "くつ", "word_k": "クツ", "r": "kutsu", "meaning": "Zapatos", "emoji": "👞" },
+        { "word_h": "みみ", "word_k": "ミミ", "r": "mimi", "meaning": "Oreja", "emoji": "👂" },
+        { "word_h": "ほし", "word_k": "ホシ", "r": "hoshi", "meaning": "Estrella", "emoji": "⭐" },
+        { "word_h": "ほん", "word_k": "ホン", "r": "hon", "meaning": "Libro", "emoji": "📖" },
+        { "word_h": "とけい", "word_k": "トケイ", "r": "tokei", "meaning": "Reloj", "emoji": "⌚" },
+        { "word_h": "にく", "word_k": "ニク", "r": "niku", "meaning": "Carne", "emoji": "🥩" },
+        { "word_h": "さかな", "word_k": "サカナ", "r": "sakana", "meaning": "Pescado", "emoji": "🐟" },
+        { "word_h": "ゆき", "word_k": "ユキ", "r": "yuki", "meaning": "Nieve", "emoji": "❄️" },
+        { "word_h": "くも", "word_k": "クモ", "r": "kumo", "meaning": "Nube", "emoji": "☁️" },
+        { "word_h": "いえ", "word_k": "イエ", "r": "ie", "meaning": "Casa", "emoji": "🏠" },
+        { "word_h": "かぎ", "word_k": "カギ", "r": "kagi", "meaning": "Llave", "emoji": "🔑" },
+        { "word_h": "くま", "word_k": "クマ", "r": "kuma", "meaning": "Oso", "emoji": "🐻" },
+        { "word_h": "とら", "word_k": "トラ", "r": "tora", "meaning": "Tigre", "emoji": "🐯" },
+        { "word_h": "うし", "word_k": "ウシ", "r": "ushi", "meaning": "Vaca", "emoji": "🐮" },
+        { "word_h": "もも", "word_k": "モモ", "r": "momo", "meaning": "Melocotón", "emoji": "🍑" }
     ]
 }
