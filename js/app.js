@@ -1,5 +1,4 @@
 import { loadProgress, exportProgress, importProgress, markThemeCompleted } from './storage.js';
-import { getManifest, getVocabData, getKanjiData } from './dataService.js';
 import { shuffleArray, getDistractors } from './utils.js';
 import { playJapaneseAudio } from './audio.js';
 import { getDueItems, processReview } from './srs.js';
