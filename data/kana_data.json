@@ -60,6 +60,25 @@
         { "word_h": "くま", "word_k": "クマ", "r": "kuma", "meaning": "Oso", "emoji": "🐻" },
         { "word_h": "とら", "word_k": "トラ", "r": "tora", "meaning": "Tigre", "emoji": "🐯" },
         { "word_h": "うし", "word_k": "ウシ", "r": "ushi", "meaning": "Vaca", "emoji": "🐮" },
-        { "word_h": "もも", "word_k": "モモ", "r": "momo", "meaning": "Melocotón", "emoji": "🍑" }
+        { "word_h": "もも", "word_k": "モモ", "r": "momo", "meaning": "Melocotón", "emoji": "🍑" },
+        { "word_h": "わさび", "word_k": "ワサビ", "r": "wasabi", "meaning": "Wasabi", "emoji": "🌿" },
+        { "word_h": "じゅーす", "word_k": "ジュース", "r": "juusu", "meaning": "Zumo", "emoji": "🧃" },
+        { "word_h": "こーひー", "word_k": "コーヒー", "r": "koohii", "meaning": "Café", "emoji": "☕" },
+        { "word_h": "ちょこれーと", "word_k": "チョコレート", "r": "chokoreeto", "meaning": "Chocolate", "emoji": "🍫" },
+        { "word_h": "ぎゅうにゅう", "word_k": "ギュウニュウ", "r": "gyuunyuu", "meaning": "Leche", "emoji": "🥛" },
+        { "word_h": "しょうゆ", "word_k": "ショウユ", "r": "shouyu", "meaning": "Salsa de soja", "emoji": "🍶" },
+        { "word_h": "きっさてん", "word_k": "キッサテン", "r": "kissaten", "meaning": "Cafetería", "emoji": "🏪" },
+        { "word_h": "べんとう", "word_k": "ベントウ", "r": "bentou", "meaning": "Bento", "emoji": "🍱" },
+        { "word_h": "めがね", "word_k": "メガネ", "r": "megane", "meaning": "Gafas", "emoji": "👓" },
+        { "word_h": "でんわ", "word_k": "デンワ", "r": "denwa", "meaning": "Teléfono", "emoji": "☎️" },
+        { "word_h": "えんぴつ", "word_k": "エンピツ", "r": "enpitsu", "meaning": "Lápiz", "emoji": "✏️" },
+        { "word_h": "ぼうし", "word_k": "ボウシ", "r": "boushi", "meaning": "Sombrero", "emoji": "🧢" },
+        { "word_h": "にんじん", "word_k": "ニンジン", "r": "ninjin", "meaning": "Zanahoria", "emoji": "🥕" },
+        { "word_h": "ふね", "word_k": "フネ", "r": "fune", "meaning": "Barco", "emoji": "🚢" },
+        { "word_h": "おかね", "word_k": "オカネ", "r": "okane", "meaning": "Dinero", "emoji": "💰" },
+        { "word_h": "きっぷ", "word_k": "キップ", "r": "kippu", "meaning": "Billete", "emoji": "🎫" },
+        { "word_h": "てんぷら", "word_k": "テンプラ", "r": "tenpura", "meaning": "Tempura", "emoji": "🍤" },
+        { "word_h": "かばん", "word_k": "カバン", "r": "kaban", "meaning": "Bolso", "emoji": "👜" },
+        { "word_h": "ひこうき", "word_k": "ヒコウキ", "r": "hikouki", "meaning": "Avión", "emoji": "✈️" }
     ]
 }
